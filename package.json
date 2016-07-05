@@ -1,0 +1,11 @@
+{
+  "name": "network_vis",
+  "version": "1.0.0",
+  "authors": [
+  "David Moreno Lumbreras <dmorenolumb@gmail.com>"
+  ],
+  "dependencies" : {
+    "vis": "4.15.1",
+    "randomcolor": "0.4.4"
+  }
+}
