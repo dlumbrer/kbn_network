@@ -43,8 +43,8 @@
           showAuthorRepoRelationship : true,
           showAuthorSameRepoRelationship: false,
           showRepoSameAuthorRelationship: false,
-          firstNodeColor: 'blue',
-          secondNodeColor: 'green',
+          firstNodeColor: '#ffffff',
+          secondNodeColor: '#00d1ff',
           shapeFirstNode: 'dot',
           shapeSecondNode: 'box'
         },
