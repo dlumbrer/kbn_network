@@ -223,7 +223,7 @@ a:focus {
     -moz-animation-timing-function: linear;
 }
 
-@-webkit-keyframes pulse {    
+@-webkit-keyframes pulse {
     0 {
         -webkit-transform: scale(1);
         transform: scale(1);
@@ -240,7 +240,7 @@ a:focus {
     }
 }
 
-@-moz-keyframes pulse {    
+@-moz-keyframes pulse {
     0 {
         -moz-transform: scale(1);
         transform: scale(1);
@@ -261,10 +261,9 @@ a:focus {
     padding-top: 100px;
 }
 
-.proyectos-section {
+.screenshots-section {
     width: 100%;
     color: #fff;
-    background: url(../img/proyectos.jpg) no-repeat center center scroll;
     background-color: #000;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -272,7 +271,7 @@ a:focus {
     -o-background-size: cover;
 }
 
-.colaboraciones-section {
+.developer-section {
     width: 100%;
     color: #4C0000;
     background-color: #fff;
@@ -282,21 +281,27 @@ a:focus {
     -o-background-size: cover;
 }
 
-.colaboraciones-section p{
+.developer-section p{
 	font-size: 13px;
 }
+
+.carousel-inner > .item > img,
+  .carousel-inner > .item > a > img {
+      width: 70%;
+      margin: auto;
+  }
 
 
 @media(min-width:767px) {
     .content-section {
-        padding-top: 125px;
+        padding-top: 70px;
     }
 
-    .proyectos-section {
+    .screenshots-section {
         padding: 40px;
     }
-    
-    .colaboraciones-section {
+
+    .developer-section {
         padding: 40px;
     }
 
