@@ -203,13 +203,23 @@ define(function (require) {
                   "solver": "repulsion"
                 }
               }
+
+              var options2 = {
+                physics:{
+                  barnesHut:{
+                    gravitationalConstant: -60000,
+                    springConstant:0.02
+                  }
+                },
+                "edges": {
+                  "smooth": {
+                    "forceDirection": "none",
+                    "type": "continuous"
+                  }
+                },
+              };
             }
-            var network = new visN.Network(container, data, options);
-            var options2 = {
-              autoResize: true,
-              width: '100%'
-            }
-            network.setOptions(options2);
+            var network = new visN.Network(container, data, options2);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }else if($scope.vis.params.showAuthorSameRepoRelationship){
@@ -347,7 +357,7 @@ define(function (require) {
               "edges": {
                 "smooth": {
                   "forceDirection": "none",
-                  "type": "continous"
+                  "type": "continuous"
                 }
               },
               "physics": {
@@ -355,8 +365,32 @@ define(function (require) {
                 "solver": "repulsion"
               }
             }
+
+            var options2 = {
+              physics:{
+                barnesHut:{
+                  gravitationalConstant: -60000,
+                  springConstant:0.02
+                },
+                "minVelocity": 0.75,
+                "solver": "barnesHut",
+                barnesHut:{
+                  springLength: 400,
+                  gravitationalConstant: -50000
+                }
+              },
+              "edges": {
+                "smooth": {
+                  "forceDirection": "none",
+                  "type": "continuous"
+                }
+              },
+              interaction: {
+                hideEdgesOnDrag: true,
+              }
+            }
           }
-          var network = new visN.Network(container, data, options);
+          var network = new visN.Network(container, data, options2);
         }else if($scope.vis.params.showRepoSameAuthorRelationship){
         //  alert("RELACION ENTRE REPOSITORIOS")
         // Retrieve the id of the configured tags aggregation
