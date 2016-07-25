@@ -190,6 +190,7 @@ define(function (require) {
             };
             //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA PARA QUE LOS NODOS ESTÉN PARADOS Y NO EN CONTINUO MOVIMIENTO
             var options = {};
+            var options2 = {};
             if(dataEdges2.length > 200){
               var options = {
                 "edges": {
@@ -352,6 +353,7 @@ define(function (require) {
 
           //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA
           var options = {};
+          var options2 = {};
           if(dataEdges2.length > 200){
             var options = {
               "edges": {
@@ -496,6 +498,7 @@ define(function (require) {
          };
          //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA
          var options = {};
+         var options2 = {};
          if(dataEdges2.length > 200){
            var options = {
              "edges": {
@@ -509,8 +512,32 @@ define(function (require) {
                "solver": "repulsion"
              }
            }
+
+           var options2 = {
+             physics:{
+               barnesHut:{
+                 gravitationalConstant: -60000,
+                 springConstant:0.02
+               },
+               "minVelocity": 0.75,
+               "solver": "barnesHut",
+               barnesHut:{
+                 springLength: 400,
+                 gravitationalConstant: -50000
+               }
+             },
+             "edges": {
+               "smooth": {
+                 "forceDirection": "none",
+                 "type": "continuous"
+               }
+             },
+             interaction: {
+               hideEdgesOnDrag: true,
+             }
+           }
          }
-         var network = new visN.Network(container, data, options);
+         var network = new visN.Network(container, data, options2);
         }
       }
 

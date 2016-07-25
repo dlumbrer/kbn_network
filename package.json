@@ -5,7 +5,7 @@
   "David Moreno Lumbreras <dmorenolumb@gmail.com>"
   ],
   "dependencies" : {
-    "vis": "4.15.1",
+    "vis": "4.16.1",
     "randomcolor": "0.4.4"
   }
 }
