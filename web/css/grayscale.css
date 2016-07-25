@@ -384,3 +384,8 @@ img::-moz-selection {
 body {
     webkit-tap-highlight-color: rgba(255,255,255,.2);
 }
+
+.item > div > h3 > span, .item > div > p > span{
+  color: #4c0000;
+  background-color: white;
+}
