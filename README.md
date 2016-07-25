@@ -1,5 +1,7 @@
 # Network Plugin for Kibana 5
 
+This is a plugin developed for Kibana 5 that displays a network node that link two fields that have been previously selected.
+
 ##Installation Steps
 
 ```
