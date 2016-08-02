@@ -25,6 +25,7 @@ define(function (require) {
               var colorNodeAggId = $scope.vis.aggs.bySchemaName['colornode'][0].id;
               var colorNodeAggName = $scope.vis.aggs.bySchemaName['colornode'][0].params.field.displayName;
               var colorDicc = {};
+              var usedColors = [];
             }
 
             //Nombres de los campos donde has buscado
@@ -94,8 +95,16 @@ define(function (require) {
                   if(colorDicc[buck[colorNodeAggId].buckets[0].key]){
                     datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
                   }else{
-                    colorDicc[buck[colorNodeAggId].buckets[0].key] = randomColor();
-                    datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                    while(true){
+                      var confirmColor = randomColor();
+                      if(usedColors.indexOf(confirmColor) == -1){
+                        colorDicc[buck[colorNodeAggId].buckets[0].key] = confirmColor;
+                        datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                        usedColors.push(confirmColor);
+                        break;
+                      }
+                    }
+
                   }
                 }
 
@@ -220,6 +229,7 @@ define(function (require) {
                 },
               };
             }
+            console.log("Create network now");
             var network = new visN.Network(container, data, options2);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -271,10 +281,22 @@ define(function (require) {
 
 
             datosParseados[i].commitsEnRepos = bucket[secondFieldAggId].buckets.map(function(buck) {
-                return {
-                  repositorio: buck.key,
-                  commits: buck.doc_count
-                };
+              if(metricsAgg_sizeEdge){
+                var value_sizeEdge = metricsAgg_sizeEdge.getValue(buck);
+                var min = 0.1,
+                  max = 20;
+                var valor = (((value_sizeEdge - 1) * (max - min)) / (200 - 1)) + min
+
+                var sizeEdgeVal = Math.min(max, valor);
+              }else{
+                var sizeEdgeVal = 1;
+              }
+
+              return {
+                repositorio: buck.key,
+                commits: buck.doc_count,
+                widthOfEdge: sizeEdgeVal
+              };
             });
 
             i++;
@@ -293,7 +315,6 @@ define(function (require) {
 
           //Recorro autores
           for(var n = 0; n<datosParseados.length; n++){
-            console.log("n="+n);
             //Saco su id del nodo
             var NodoFrom = $.grep(dataNodes2, function(e){ return e.label == datosParseados[n].nombreAutor;   });
             if (NodoFrom.length == 0) {
@@ -302,10 +323,8 @@ define(function (require) {
               var id_from = NodoFrom[0].id;
               //Recorro respos en los que ha participado
               for(var p = 0; p<datosParseados[n].commitsEnRepos.length; p++){
-                console.log("p="+p);
                 //Recorro otra vez autores
                 for(var z = 0; z<datosParseados.length; z++){
-                  console.log("z="+z);
                   //Compruebo que no se compara el mismo autor
                   if(datosParseados[n] != datosParseados[z]){
                       var NodoTo = $.grep(dataNodes2, function(e){ return e.label == datosParseados[z].nombreAutor;   });
@@ -319,9 +338,12 @@ define(function (require) {
                           //HAN HECHO COMMIT AL MISMO REPO, AÑADO ENLACE
                           var existeEnlace = $.grep(dataEdges2, function(e){ return (e.to == id_from && e.from == id_to) || (e.to == id_to && e.from == id_from);   });
                           if (existeEnlace.length == 0) {
+                            //EL TAMAÑO TOTAL DEL ENLACE ES LA SUMA DE LOS DOS QUE TIENEN EN COMUN
+                            var sizeEdgeTotal = mismoRepo[0].widthOfEdge + datosParseados[n].commitsEnRepos[p].widthOfEdge;
                             var enlace = {
                               from : id_from,
-                              to : id_to
+                              to : id_to,
+                              width: sizeEdgeTotal
                             };
                             dataEdges2.push(enlace);
                           }
@@ -392,6 +414,7 @@ define(function (require) {
               }
             }
           }
+          console.log("Create network now");
           var network = new visN.Network(container, data, options2);
         }else if($scope.vis.params.showRepoSameAuthorRelationship){
         //  alert("RELACION ENTRE REPOSITORIOS")
