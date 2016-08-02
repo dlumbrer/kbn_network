@@ -217,7 +217,7 @@ define(function (require) {
               var options2 = {
                 physics:{
                   barnesHut:{
-                    gravitationalConstant: -60000,
+                    gravitationalConstant: -35000,
                     springConstant:0.02
                   }
                 },
@@ -239,6 +239,13 @@ define(function (require) {
           // El id de los buckets (que los hemos llamado tags) para luego buscarlos en resp.aggregations[id].buckets
           var firstFieldAggId = $scope.vis.aggs.bySchemaName['first'][0].id;
           var secondFieldAggId = $scope.vis.aggs.bySchemaName['second'][0].id;
+
+          if($scope.vis.aggs.bySchemaName['colornode']){
+            var colorNodeAggId = $scope.vis.aggs.bySchemaName['colornode'][0].id;
+            var colorNodeAggName = $scope.vis.aggs.bySchemaName['colornode'][0].params.field.displayName;
+            var colorDicc = {};
+            var usedColors = [];
+          }
 
           //Nombres de los campos donde has buscado
           var firstFieldAggName = $scope.vis.aggs.bySchemaName['first'][0].params.field.displayName;
@@ -277,7 +284,9 @@ define(function (require) {
             }else{
               var sizeVal = 20;
             }
+
             datosParseados[i].valorSizeNode = sizeVal;
+            datosParseados[i].nodeColorValue = "default";
 
 
             datosParseados[i].commitsEnRepos = bucket[secondFieldAggId].buckets.map(function(buck) {
@@ -292,6 +301,24 @@ define(function (require) {
                 var sizeEdgeVal = 1;
               }
 
+              //Saco el color del nodo y guardo el color en el diccionario de colores para que no se repita
+              if(colorNodeAggId && buck[colorNodeAggId].buckets.length > 0){
+                if(colorDicc[buck[colorNodeAggId].buckets[0].key]){
+                  datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                }else{
+                  while(true){
+                    var confirmColor = randomColor();
+                    if(usedColors.indexOf(confirmColor) == -1){
+                      colorDicc[buck[colorNodeAggId].buckets[0].key] = confirmColor;
+                      datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                      usedColors.push(confirmColor);
+                      break;
+                    }
+                  }
+
+                }
+              }
+
               return {
                 repositorio: buck.key,
                 commits: buck.doc_count,
@@ -299,11 +326,19 @@ define(function (require) {
               };
             });
 
+            //COLOR AHORA
+            if(datosParseados[i].nodeColorValue != "default"){
+              var colorNodeFinal = datosParseados[i].nodeColorValue;
+            }else{
+              var colorNodeFinal = $scope.vis.params.firstNodeColor;
+            }
+
+
             i++;
             return {
               id: i,
               label: bucket.key,
-              color: $scope.vis.params.firstNodeColor,
+              color: colorNodeFinal,
               shape: $scope.vis.params.shapeFirstNode,
               size: sizeVal
             };
@@ -392,15 +427,12 @@ define(function (require) {
 
             var options2 = {
               physics:{
-                barnesHut:{
-                  gravitationalConstant: -60000,
-                  springConstant:0.02
-                },
                 "minVelocity": 0.75,
                 "solver": "barnesHut",
                 barnesHut:{
                   springLength: 400,
-                  gravitationalConstant: -50000
+                  gravitationalConstant: -50000,
+                  springConstant:0.02
                 }
               },
               "edges": {
