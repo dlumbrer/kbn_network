@@ -46,7 +46,9 @@
           firstNodeColor: '#ffffff',
           secondNodeColor: '#00d1ff',
           shapeFirstNode: 'dot',
-          shapeSecondNode: 'box'
+          shapeSecondNode: 'box',
+          maxCutMetricSizeNode: 5000,
+          maxCutMetricSizeEdge: 5000
         },
         editor: '<network-vis-params></network-vis-params>'
       },

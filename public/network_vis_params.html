@@ -22,17 +22,28 @@
 
 <hr>
 
+<h4>Max number of Metrics</h4>
+<div>
+  Node Size
+  <input type="number" ng-model="vis.params.maxCutMetricSizeNode" min="1">
+</div>
+<div>
+  Edge Size
+  <input type="number" ng-model="vis.params.maxCutMetricSizeEdge" min="1">
+</div>
+<hr>
+
 
 <h4>Relationship style</h4>
 <div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
-  <span>Color of first:</span>
+  <span>Default color of first:</span>
   <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
     <button type='button' colorpicker ng-model="vis.params.firstNodeColor" ng-style="{'background-color':vis.params.firstNodeColor}"></button>
   <!--/div-->
 </div>
 
 <div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showRepoSameAuthorRelationship">
-  <span>Color of second:</span>
+  <span>Default color of second:</span>
   <button type='button' colorpicker ng-model="vis.params.secondNodeColor" ng-style="{'background-color':vis.params.secondNodeColor}"></button>
 </div>
 
