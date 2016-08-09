@@ -247,6 +247,9 @@ define(function (require) {
                     min:8,
                     max:80
                   }
+                },
+                layout: {
+                  improvedLayout: false
                 }
               };
             }
@@ -297,11 +300,16 @@ define(function (require) {
             if(metricsAgg_sizeNode){
               // Use the getValue function of the aggregation to get the value of a bucket -- IMPORTANTE, saco el valor de la metrica, que me da el tamaño del nodo de su respectivo bucket
               var value = metricsAgg_sizeNode.getValue(bucket);
+
+              /* TO FIX IT
               var min = 5,
                 max = 300;
               min = Math.min(min, value);
               max = Math.max(max, value);
-              var sizeVal = (value - min) / (max - min) * (32*2 - 12/2) + 12/2;
+              //var sizeVal = (value - min) / (max - min) * (32*2 - 12/2) + 12/2;
+              */
+
+              var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
             }else{
               var sizeVal = 20;
             }
@@ -313,13 +321,17 @@ define(function (require) {
             datosParseados[i].commitsEnRepos = bucket[secondFieldAggId].buckets.map(function(buck) {
               if(metricsAgg_sizeEdge){
                 var value_sizeEdge = metricsAgg_sizeEdge.getValue(buck);
+
+                /* TO FIX IT
                 var min = 0.1,
                   max = 20;
                 var valor = (((value_sizeEdge - 1) * (max - min)) / (200 - 1)) + min
-
                 var sizeEdgeVal = Math.min(max, valor);
+                */
+
+                var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
               }else{
-                var sizeEdgeVal = 1;
+                var sizeEdgeVal = 0.1;
               }
 
               //Saco el color del nodo y guardo el color en el diccionario de colores para que no se repita
@@ -361,7 +373,7 @@ define(function (require) {
               label: bucket.key,
               color: colorNodeFinal,
               shape: $scope.vis.params.shapeFirstNode,
-              size: sizeVal
+              value: sizeVal
             };
           });
 
@@ -399,7 +411,7 @@ define(function (require) {
                             var enlace = {
                               from : id_from,
                               to : id_to,
-                              width: sizeEdgeTotal
+                              value: sizeEdgeTotal
                             };
                             dataEdges2.push(enlace);
                           }
@@ -460,10 +472,23 @@ define(function (require) {
                 "smooth": {
                   "forceDirection": "none",
                   "type": "continuous"
+                },
+                scaling:{
+                  min:0.1,
+                  max:20
                 }
               },
               interaction: {
                 hideEdgesOnDrag: true,
+              },
+              nodes: {
+                scaling:{
+                  min:8,
+                  max:80
+                }
+              },
+              layout: {
+                improvedLayout: false
               }
             }
           }
