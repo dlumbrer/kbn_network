@@ -48,7 +48,11 @@
           shapeFirstNode: 'dot',
           shapeSecondNode: 'box',
           maxCutMetricSizeNode: 5000,
-          maxCutMetricSizeEdge: 5000
+          maxCutMetricSizeEdge: 5000,
+          maxNodeSize: 80,
+          minNodeSize: 8,
+          maxEdgeSize: 20,
+          minEdgeSize: 0.1
         },
         editor: '<network-vis-params></network-vis-params>'
       },

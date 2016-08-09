@@ -35,6 +35,28 @@
 
 
 <h4>Relationship style</h4>
+
+<h5><strong>Size</strong></h5>
+<div>
+  Max Size of Node
+  <input type="number" ng-model="vis.params.maxNodeSize" min="1">
+</div>
+<div>
+  Min Size of Node
+  <input type="number" ng-model="vis.params.minNodeSize" min="1">
+</div>
+<div>
+  Max Size of Edge
+  <input type="number" ng-model="vis.params.maxEdgeSize" min="1">
+</div>
+<div>
+  Min Size of Edge
+  <input type="number" ng-model="vis.params.minEdgeSize" min="0.1">
+</div>
+
+<br>
+
+<h5><strong>Colors</strong></h5>
 <div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
   <span>Default color of first:</span>
   <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
@@ -47,7 +69,9 @@
   <button type='button' colorpicker ng-model="vis.params.secondNodeColor" ng-style="{'background-color':vis.params.secondNodeColor}"></button>
 </div>
 
+<br>
 
+<h5><strong>Shapes</strong></h5>
 <div class="form-group" ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
   <label for="sel1"> Shape of first: </label>
    <select class="form-control" ng-model="vis.params.shapeFirstNode" id="sel1">
@@ -62,9 +86,9 @@
      <option value="triangle">Triangle</option>
      <option value="triangleDown">Triangle Down</option>
      <option value="square">Square</option>
-     <option value="icon">ICONO</option>
+     <!--option value="icon">ICONO</option>
      <option value="image">IMAGEN</option>
-     <option value="circularImage">IMAGENCIRCULAR</option>
+     <option value="circularImage">IMAGENCIRCULAR</option-->
    </select>
 </div>
 
@@ -82,10 +106,8 @@
      <option value="triangle">Triangle</option>
      <option value="triangleDown">Triangle Down</option>
      <option value="square">Square</option>
-     <option value="icon">ICONO</option>
+     <!--option value="icon">ICONO</option>
      <option value="image">IMAGEN</option>
-     <option value="circularImage">IMAGENCIRCULAR</option>
+     <option value="circularImage">IMAGENCIRCULAR</option-->
    </select>
 </div>
-
-{{agg.params.field}}

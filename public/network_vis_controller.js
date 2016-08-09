@@ -238,14 +238,14 @@ define(function (require) {
                     "type": "continuous"
                   },
                   scaling:{
-                    min:0.1,
-                    max:20
+                    min:$scope.vis.params.minEdgeSize,
+                    max:$scope.vis.params.maxEdgeSize
                   }
                 },
                 nodes: {
                   scaling:{
-                    min:8,
-                    max:80
+                    min:$scope.vis.params.minNodeSize,
+                    max:$scope.vis.params.maxNodeSize
                   }
                 },
                 layout: {
@@ -474,8 +474,8 @@ define(function (require) {
                   "type": "continuous"
                 },
                 scaling:{
-                  min:0.1,
-                  max:20
+                  min:$scope.vis.params.minEdgeSize,
+                  max:$scope.vis.params.maxEdgeSize
                 }
               },
               interaction: {
@@ -483,8 +483,8 @@ define(function (require) {
               },
               nodes: {
                 scaling:{
-                  min:8,
-                  max:80
+                  min:$scope.vis.params.minNodeSize,
+                  max:$scope.vis.params.maxNodeSize
                 }
               },
               layout: {
