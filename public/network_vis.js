@@ -40,6 +40,7 @@
       template: networkVisTemplate,
       params: {
         defaults: {
+          hideLabels: false,
           showAuthorRepoRelationship : true,
           showAuthorSameRepoRelationship: false,
           showRepoSameAuthorRelationship: false,

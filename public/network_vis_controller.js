@@ -133,15 +133,32 @@ define(function (require) {
               }
 
               i++;
-              return {
-                id: i,
-                label: bucket.key,
-                color: colorNodeFinal,
-                shape: $scope.vis.params.shapeFirstNode,
-                //Tamño del nodo
-                //size: sizeVal
-                value: sizeVal
-              };
+              //SI ESTA ACTIVADO EL OCULTAR LOS LABELS, PONGO EL HOVER
+              if($scope.vis.params.hideLabels){
+                return {
+                  id: i,
+                  key: bucket.key,
+                  //label: bucket.key,
+                  title: bucket.key,
+                  color: colorNodeFinal,
+                  shape: $scope.vis.params.shapeFirstNode,
+                  //Tamño del nodo
+                  //size: sizeVal
+                  value: sizeVal
+                };
+              }else{
+                return {
+                  id: i,
+                  key: bucket.key,
+                  label: bucket.key,
+                  //title: bucket.key,
+                  color: colorNodeFinal,
+                  shape: $scope.vis.params.shapeFirstNode,
+                  //Tamño del nodo
+                  //size: sizeVal
+                  value: sizeVal
+                };
+              }
             });
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -150,7 +167,7 @@ define(function (require) {
 
             for(var n = 0; n<datosParseados.length; n++){
               //Busco en el array de nodos el del autor
-              var result = $.grep(dataNodes2, function(e){ return e.label == datosParseados[n].nombreAutor;   });
+              var result = $.grep(dataNodes2, function(e){ return e.key == datosParseados[n].nombreAutor;   });
               if (result.length == 0) {
                 console.log("---------------------------------------------NO ENCONTRADO");
               } else if (result.length == 1) {
@@ -158,12 +175,13 @@ define(function (require) {
 
                 for(var r = 0; r<datosParseados[n].commitsEnRepos.length; r++){
                   //Busco en el array de nodos si está el nodo de repositorio
-                  var nodorepo = $.grep(dataNodes2, function(e){ return e.label == datosParseados[n].commitsEnRepos[r].repositorio;   });
+                  var nodorepo = $.grep(dataNodes2, function(e){ return e.key == datosParseados[n].commitsEnRepos[r].repositorio;   });
                   if (nodorepo.length == 0) {
                     //NO EXISTE EL NODO DE ESE REPO, LO CREO Y AÑADO A LA BASE DE NODOS
                     i++;
                     var nuevoNodo = {
                       id : i,
+                      key: datosParseados[n].commitsEnRepos[r].repositorio,
                       label : datosParseados[n].commitsEnRepos[r].repositorio,
                       color: $scope.vis.params.secondNodeColor,
                       shape: $scope.vis.params.shapeSecondNode
@@ -204,6 +222,8 @@ define(function (require) {
 
             // create a network
             var container = document.getElementById('mynetwork');
+            container.style.height = container.getBoundingClientRect().height;
+            container.height = container.getBoundingClientRect().height;
             var data = {
               nodes: nodes2,
               edges: edges2
@@ -226,6 +246,7 @@ define(function (require) {
               }
 
               var options2 = {
+                height: container.getBoundingClientRect().height.toString(),
                 physics:{
                   barnesHut:{
                     gravitationalConstant: -35000,
@@ -250,11 +271,20 @@ define(function (require) {
                 },
                 layout: {
                   improvedLayout: false
+                },
+                interaction: {
+                  hover: true
                 }
               };
             }
             console.log("Create network now");
             var network = new visN.Network(container, data, options2);
+
+            $('.vis-network').resize(function() {
+              console.log("pepe")
+            });
+            //network.setSize('100%', container.getBoundingClientRect().height.toString());
+
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }else if($scope.vis.params.showAuthorSameRepoRelationship){
@@ -368,13 +398,32 @@ define(function (require) {
 
 
             i++;
-            return {
-              id: i,
-              label: bucket.key,
-              color: colorNodeFinal,
-              shape: $scope.vis.params.shapeFirstNode,
-              value: sizeVal
-            };
+            //SI ESTA ACTIVADO EL OCULTAR LOS LABELS, PONGO EL HOVER
+            if($scope.vis.params.hideLabels){
+              return {
+                id: i,
+                key: bucket.key,
+                //label: bucket.key,
+                title: bucket.key,
+                color: colorNodeFinal,
+                shape: $scope.vis.params.shapeFirstNode,
+                //Tamño del nodo
+                //size: sizeVal
+                value: sizeVal
+              };
+            }else{
+              return {
+                id: i,
+                key: bucket.key,
+                label: bucket.key,
+                //title: bucket.key,
+                color: colorNodeFinal,
+                shape: $scope.vis.params.shapeFirstNode,
+                //Tamño del nodo
+                //size: sizeVal
+                value: sizeVal
+              };
+            }
           });
 
           //console.log(datosParseados);
@@ -384,7 +433,7 @@ define(function (require) {
           //Recorro autores
           for(var n = 0; n<datosParseados.length; n++){
             //Saco su id del nodo
-            var NodoFrom = $.grep(dataNodes2, function(e){ return e.label == datosParseados[n].nombreAutor;   });
+            var NodoFrom = $.grep(dataNodes2, function(e){ return e.key == datosParseados[n].nombreAutor;   });
             if (NodoFrom.length == 0) {
               alert("ERROR, NODO NO ENCONTRADO");
             } else if (NodoFrom.length == 1) {
@@ -395,7 +444,7 @@ define(function (require) {
                 for(var z = 0; z<datosParseados.length; z++){
                   //Compruebo que no se compara el mismo autor
                   if(datosParseados[n] != datosParseados[z]){
-                      var NodoTo = $.grep(dataNodes2, function(e){ return e.label == datosParseados[z].nombreAutor;   });
+                      var NodoTo = $.grep(dataNodes2, function(e){ return e.key == datosParseados[z].nombreAutor;   });
                       if (NodoTo.length == 0) {
                         alert("ERROR, NODO NO ENCONTRADO");
                       } else if (NodoTo.length == 1) {
@@ -436,6 +485,8 @@ define(function (require) {
 
           // create a network
           var container = document.getElementById('mynetwork');
+          container.style.height = container.getBoundingClientRect().height;
+          container.height = container.getBoundingClientRect().height;
           var data = {
             nodes: nodes2,
             edges: edges2
@@ -459,6 +510,7 @@ define(function (require) {
             }
 
             var options2 = {
+              height: container.getBoundingClientRect().height.toString(),
               physics:{
                 "minVelocity": 0.75,
                 "solver": "barnesHut",
@@ -480,6 +532,7 @@ define(function (require) {
               },
               interaction: {
                 hideEdgesOnDrag: true,
+                hover: true
               },
               nodes: {
                 scaling:{

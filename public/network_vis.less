@@ -1,6 +1,5 @@
 .network-vis{
   width: 100%;
-  height: 700px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -11,7 +10,7 @@
   flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
-  background-color: gray;
+  background-color: blue;
 }
 
 .vis-network{
@@ -27,4 +26,24 @@
   min-height: 0;
   min-width: 0;
   background-color: gray;
+}
+
+div.vis-network-tooltip {
+  position: absolute;
+  visibility: hidden;
+  padding: 5px;
+  white-space: nowrap;
+
+  font-family: verdana;
+  font-size:14px;
+  color:#000000;
+  background-color: #f5f4ed;
+
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #808074;
+
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
 }
