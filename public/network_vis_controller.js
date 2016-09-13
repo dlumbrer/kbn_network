@@ -5,11 +5,16 @@ define(function (require) {
 
   const visN = require('vis');
   const randomColor = require('randomcolor');
+  const ElementQueries = require('css-element-queries/src/ElementQueries');
+  const ResizeSensor = require('css-element-queries/src/ResizeSensor');
+
 
   // add a controller to tha module, which will transform the esResponse into a
   // tabular format that we can pass to the table directive
   module.controller('KbnNetworkVisController', function ($scope, Private) {
     //const tabifyAggResponse = Private(require('ui/agg_response/tabify/tabify'));
+
+
 
     $scope.$watch('esResponse', function (resp, oldResp) {
       if (resp) {
@@ -280,9 +285,16 @@ define(function (require) {
             console.log("Create network now");
             var network = new visN.Network(container, data, options2);
 
-            $('.vis-network').resize(function() {
-              console.log("pepe")
+            new ResizeSensor(container, function() {
+                console.log('Diiiv');
+                //network.setSize('150px', '150px');
+                network.setSize('100%', container.getBoundingClientRect().height.toString());
             });
+            /*new ResizeSensor(document.body, function() {
+                console.log('BODYYY');
+                //network.setSize('100%', container.getBoundingClientRect().height.toString());
+            });*/
+
             //network.setSize('100%', container.getBoundingClientRect().height.toString());
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -547,6 +559,12 @@ define(function (require) {
           }
           console.log("Create network now");
           var network = new visN.Network(container, data, options2);
+
+          new ResizeSensor(container, function() {
+              console.log('Diiiv');
+              //network.setSize('150px', '150px');
+              network.setSize('100%', container.getBoundingClientRect().height.toString());
+          });
         }else if($scope.vis.params.showRepoSameAuthorRelationship){
         //  alert("RELACION ENTRE REPOSITORIOS")
         // Retrieve the id of the configured tags aggregation
@@ -692,6 +710,11 @@ define(function (require) {
            }
          }
          var network = new visN.Network(container, data, options2);
+         new ResizeSensor(container, function() {
+             console.log('Diiiv');
+             //network.setSize('150px', '150px');
+             network.setSize('100%', container.getBoundingClientRect().height.toString());
+         });
         }
       }
 

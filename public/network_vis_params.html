@@ -1,3 +1,86 @@
+
+<h4>Relationship style</h4>
+
+<h5><strong>Default colors</strong></h5>
+<div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
+  <span>First Node:</span>
+  <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
+    <button type='button' colorpicker ng-model="vis.params.firstNodeColor" ng-style="{'background-color':vis.params.firstNodeColor}"></button>
+  <!--/div-->
+</div>
+
+<div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showRepoSameAuthorRelationship">
+  <span>Second Node:</span>
+  <button type='button' colorpicker ng-model="vis.params.secondNodeColor" ng-style="{'background-color':vis.params.secondNodeColor}"></button>
+</div>
+
+
+<br>
+
+<h5><strong>Size</strong></h5>
+<div>
+  Max of Node
+  <input type="number" ng-model="vis.params.maxNodeSize" min="1">
+</div>
+<div>
+  Min of Node
+  <input type="number" ng-model="vis.params.minNodeSize" min="1">
+</div>
+<div>
+  Max of Edge
+  <input type="number" ng-model="vis.params.maxEdgeSize" min="1">
+</div>
+<div>
+  Min of Edge
+  <input type="number" ng-model="vis.params.minEdgeSize" min="0.1">
+</div>
+
+<br>
+
+<h5><strong>Shapes</strong></h5>
+<div class="form-group" ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
+  <label for="sel1">First Node: </label>
+   <select class="form-control" ng-model="vis.params.shapeFirstNode" id="sel1">
+     <option value="circle">Circle</option>
+     <option value="dot">Dot</option>
+     <option value="ellipse">Ellipse</option>
+     <option value="database">DataBase</option>
+     <option value="box">Box</option>
+     <option value="text">Only Text </option>
+     <option value="diamond">Diamond</option>
+     <option value="star">Star</option>
+     <option value="triangle">Triangle</option>
+     <option value="triangleDown">Triangle Down</option>
+     <option value="square">Square</option>
+     <!--option value="icon">ICONO</option>
+     <option value="image">IMAGEN</option>
+     <option value="circularImage">IMAGENCIRCULAR</option-->
+   </select>
+</div>
+
+<div class="form-group" ng-if="vis.params.showAuthorRepoRelationship || vis.params.showRepoSameAuthorRelationship">
+  <label for="sel2">Second Node: </label>
+   <select class="form-control" ng-model="vis.params.shapeSecondNode" id="sel2">
+     <option value="circle">Circle</option>
+     <option value="dot">Dot</option>
+     <option value="ellipse">Ellipse</option>
+     <option value="database">DataBase</option>
+     <option value="box">Box</option>
+     <option value="text">Only Text </option>
+     <option value="diamond">Diamond</option>
+     <option value="star">Star</option>
+     <option value="triangle">Triangle</option>
+     <option value="triangleDown">Triangle Down</option>
+     <option value="square">Square</option>
+     <!--option value="icon">ICONO</option>
+     <option value="image">IMAGEN</option>
+     <option value="circularImage">IMAGENCIRCULAR</option-->
+   </select>
+</div>
+
+<br>
+
+<h5><strong>Extra</strong></h5>
 <div class="checkbox">
   <label>
     <input type="checkbox" ng-model="vis.params.hideLabels">
@@ -5,7 +88,9 @@
   </label>
 </div>
 
-<h4>Node definition</h4>
+<hr>
+
+<h4>Node definition (DEPRECATED)</h4>
 <div class="checkbox">
   <label>
     <input type="checkbox" ng-model="vis.params.showAuthorRepoRelationship" ng-change="onlyOne('showAuthorRepoRelationship')">
@@ -29,7 +114,7 @@
 
 <hr>
 
-<h4>Max number of Metrics</h4>
+<h4>Top Values</h4>
 <div>
   Node Size
   <input type="number" ng-model="vis.params.maxCutMetricSizeNode" min="1">
@@ -39,82 +124,3 @@
   <input type="number" ng-model="vis.params.maxCutMetricSizeEdge" min="1">
 </div>
 <hr>
-
-
-<h4>Relationship style</h4>
-
-<h5><strong>Size</strong></h5>
-<div>
-  Max Size of Node
-  <input type="number" ng-model="vis.params.maxNodeSize" min="1">
-</div>
-<div>
-  Min Size of Node
-  <input type="number" ng-model="vis.params.minNodeSize" min="1">
-</div>
-<div>
-  Max Size of Edge
-  <input type="number" ng-model="vis.params.maxEdgeSize" min="1">
-</div>
-<div>
-  Min Size of Edge
-  <input type="number" ng-model="vis.params.minEdgeSize" min="0.1">
-</div>
-
-<br>
-
-<h5><strong>Colors</strong></h5>
-<div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
-  <span>Default color of first:</span>
-  <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
-    <button type='button' colorpicker ng-model="vis.params.firstNodeColor" ng-style="{'background-color':vis.params.firstNodeColor}"></button>
-  <!--/div-->
-</div>
-
-<div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showRepoSameAuthorRelationship">
-  <span>Default color of second:</span>
-  <button type='button' colorpicker ng-model="vis.params.secondNodeColor" ng-style="{'background-color':vis.params.secondNodeColor}"></button>
-</div>
-
-<br>
-
-<h5><strong>Shapes</strong></h5>
-<div class="form-group" ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
-  <label for="sel1"> Shape of first: </label>
-   <select class="form-control" ng-model="vis.params.shapeFirstNode" id="sel1">
-     <option value="circle">Circle</option>
-     <option value="dot">Dot</option>
-     <option value="ellipse">Ellipse</option>
-     <option value="database">DataBase</option>
-     <option value="box">Box</option>
-     <option value="text">Only Text </option>
-     <option value="diamond">Diamond</option>
-     <option value="star">Star</option>
-     <option value="triangle">Triangle</option>
-     <option value="triangleDown">Triangle Down</option>
-     <option value="square">Square</option>
-     <!--option value="icon">ICONO</option>
-     <option value="image">IMAGEN</option>
-     <option value="circularImage">IMAGENCIRCULAR</option-->
-   </select>
-</div>
-
-<div class="form-group" ng-if="vis.params.showAuthorRepoRelationship || vis.params.showRepoSameAuthorRelationship">
-  <label for="sel2"> Shape of second: </label>
-   <select class="form-control" ng-model="vis.params.shapeSecondNode" id="sel2">
-     <option value="circle">Circle</option>
-     <option value="dot">Dot</option>
-     <option value="ellipse">Ellipse</option>
-     <option value="database">DataBase</option>
-     <option value="box">Box</option>
-     <option value="text">Only Text </option>
-     <option value="diamond">Diamond</option>
-     <option value="star">Star</option>
-     <option value="triangle">Triangle</option>
-     <option value="triangleDown">Triangle Down</option>
-     <option value="square">Square</option>
-     <!--option value="icon">ICONO</option>
-     <option value="image">IMAGEN</option>
-     <option value="circularImage">IMAGENCIRCULAR</option-->
-   </select>
-</div>

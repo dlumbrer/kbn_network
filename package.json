@@ -6,6 +6,7 @@
   ],
   "dependencies" : {
     "vis": "4.16.1",
-    "randomcolor": "0.4.4"
+    "randomcolor": "0.4.4",
+    "css-element-queries": "0.3.2"
   }
 }
