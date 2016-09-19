@@ -235,7 +235,7 @@ define(function (require) {
             };
             //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA PARA QUE LOS NODOS ESTÉN PARADOS Y NO EN CONTINUO MOVIMIENTO
             var options = {};
-            var options2 = {};
+            var options2 = {height: container.getBoundingClientRect().height.toString()};
             if(dataEdges2.length > 200){
               var options = {
                 "edges": {
@@ -506,7 +506,7 @@ define(function (require) {
 
           //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA
           var options = {};
-          var options2 = {};
+          var options2 = {height: container.getBoundingClientRect().height.toString()};
           if(dataEdges2.length > 200){
             var options = {
               "edges": {
@@ -670,7 +670,7 @@ define(function (require) {
          };
          //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA
          var options = {};
-         var options2 = {};
+         var options2 = {height: container.getBoundingClientRect().height.toString()};
          if(dataEdges2.length > 200){
            var options = {
              "edges": {

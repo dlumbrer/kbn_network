@@ -2,6 +2,11 @@
 <h4>Relationship style</h4>
 
 <h5><strong>Default colors</strong></h5>
+<div>
+  <span>Background Color:</span>
+  <button type='button' colorpicker ng-model="vis.params.canvasBackgroundColor" ng-style="{'background-color':vis.params.canvasBackgroundColor}"></button>
+</div>
+
 <div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
   <span>First Node:</span>
   <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
