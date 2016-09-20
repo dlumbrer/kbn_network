@@ -16,21 +16,6 @@ define(function (require) {
 
           const params = $scope.vis.params;
           console.log(params);
-          $scope.onlyOne = function(param){
-            if(param == 'showAuthorRepoRelationship'){
-              params.showAuthorSameRepoRelationship = false;
-              params.showRepoSameAuthorRelationship = false;
-            }
-            if(param == 'showAuthorSameRepoRelationship'){
-              params.showAuthorRepoRelationship = false;
-              params.showRepoSameAuthorRelationship = false;
-            }
-            if(param == 'showRepoSameAuthorRelationship'){
-              params.showAuthorRepoRelationship = false;
-              params.showAuthorSameRepoRelationship = false;
-            }
-          }
-
         });
       }
     };
