@@ -11,3 +11,4 @@ cd network_vis
 npm install
 ```
 
+###Link to the page: https://dlumbrer.github.io/kbn_network/
