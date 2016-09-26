@@ -61,50 +61,34 @@ define(function (require) {
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            var datosParseados = [];
-            // Iterando en cada bucket, osea en cada autor me voy construyendo los nodos que son de autor
+            var dataParsed = [];
+            // Iterando en cada bucket, osea en cada objeto me voy construyendo los nodos que son del primer nodo
             var i = 0;
-            var dataNodes2 = buckets.map(function(bucket) {
+            var dataNodes = buckets.map(function(bucket) {
 
-              datosParseados[i] = {};
-              datosParseados[i].nombreAutor = bucket.key;
+              dataParsed[i] = {};
+              dataParsed[i].keyFirstNode = bucket.key;
 
 
               //Las metricas son para el tamaño del nodo y enlaces
               if(metricsAgg_sizeNode){
                 // Use the getValue function of the aggregation to get the value of a bucket -- IMPORTANTE, saco el valor de la metrica, que me da el tamaño del nodo de su respectivo bucket
                 var value = metricsAgg_sizeNode.getValue(bucket);
-
-                /* TO FIX IT
-                var min = 5,
-                  max = 300;
-                min = Math.min(min, value);
-                max = Math.max(max, value);
-                //var sizeVal = (value - min) / (max - min) * (32*2 - 12/2) + 12/2;
-                */
-
                 var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
               }else{
                 var sizeVal = 20;
               }
 
-              datosParseados[i].valorSizeNode = sizeVal;
-              datosParseados[i].nodeColorValue = "default";
+              dataParsed[i].valorSizeNode = sizeVal;
+              dataParsed[i].nodeColorValue = "default";
+              dataParsed[i].nodeColorKey = "default";
 
 
-              //Me recorro los subbuckets de cada autor, que son los repositorios que ha participado, aquí es dodne busco el TAMAÑO DEL ENLACE
+              //Me recorro los subbuckets de cada keyFirstNode, que son los keySecondNodes que tiene relación, aquí es dodne busco el TAMAÑO DEL ENLACE
               if($scope.vis.aggs.bySchemaName['first'].length > 1){
-                datosParseados[i].commitsEnRepos = bucket[secondFieldAggId].buckets.map(function(buck) {
+                dataParsed[i].relationWithSecondNode = bucket[secondFieldAggId].buckets.map(function(buck) {
                   if(metricsAgg_sizeEdge){
                     var value_sizeEdge = metricsAgg_sizeEdge.getValue(buck);
-
-                    /* TO FIX IT
-                    var min = 0.1,
-                      max = 20;
-                    var valor = (((value_sizeEdge - 1) * (max - min)) / (200 - 1)) + min
-                    var sizeEdgeVal = Math.min(max, valor);
-                    */
-
                     var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                   }else{
                     var sizeEdgeVal = 0.1;
@@ -113,14 +97,16 @@ define(function (require) {
                   //Saco el color del nodo y guardo el color en el diccionario de colores para que no se repita
                   if(colorNodeAggId && buck[colorNodeAggId].buckets.length > 0){
                     if(colorDicc[buck[colorNodeAggId].buckets[0].key]){
-                      datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                      dataParsed[i].nodeColorKey = buck[colorNodeAggId].buckets[0].key;
+                      dataParsed[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
                     }else{
                       //repito hasta encontrar un color NO utilizado
                       while(true){
                         var confirmColor = randomColor();
                         if(usedColors.indexOf(confirmColor) == -1){
                           colorDicc[buck[colorNodeAggId].buckets[0].key] = confirmColor;
-                          datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                          dataParsed[i].nodeColorKey = buck[colorNodeAggId].buckets[0].key;
+                          dataParsed[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
                           usedColors.push(confirmColor);
                           break;
                         }
@@ -130,93 +116,90 @@ define(function (require) {
                   }
 
                   return {
-                    repositorio: buck.key,
-                    commits: buck.doc_count,
+                    keySecondNode: buck.key,
+                    countMetric: buck.doc_count,
                     widthOfEdge: sizeEdgeVal
                   };
                 });
               }
 
-              //COLOR AHORA
-              if(datosParseados[i].nodeColorValue != "default"){
-                var colorNodeFinal = datosParseados[i].nodeColorValue;
+              //COLOR Y LO QUE VAYA EN EL POPUP AHORA
+              var inPopup = "<p>" + bucket.key + "</p>"
+              if(dataParsed[i].nodeColorValue != "default"){
+                var colorNodeFinal = dataParsed[i].nodeColorValue;
+                inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
               }else{
                 var colorNodeFinal = $scope.vis.params.firstNodeColor;
               }
 
               i++;
-              //SI ESTA ACTIVADO EL OCULTAR LOS LABELS, PONGO EL HOVER
-              if($scope.vis.params.hideLabels){
-                return {
-                  id: i,
-                  key: bucket.key,
-                  //label: bucket.key,
-                  title: bucket.key,
-                  color: colorNodeFinal,
-                  shape: $scope.vis.params.shapeFirstNode,
-                  //Tamño del nodo
-                  //size: sizeVal
-                  value: sizeVal
-                };
-              }else{
-                return {
-                  id: i,
-                  key: bucket.key,
-                  label: bucket.key,
-                  //title: bucket.key,
-                  color: colorNodeFinal,
-                  shape: $scope.vis.params.shapeFirstNode,
-                  //Tamño del nodo
-                  //size: sizeVal
-                  value: sizeVal
-                };
+              //Return the node totally builded
+              var nodeReturn = {
+                id: i,
+                key: bucket.key,
+                color: colorNodeFinal,
+                shape: $scope.vis.params.shapeFirstNode,
+                //size: sizeVal
+                value: sizeVal
               }
+
+              //Si no esta activado el ocultar labels se las pongo
+              if(!$scope.vis.params.hideLabels){
+                nodeReturn.label = bucket.key;
+              }
+
+              //Si esta activado el show popups se los añado
+              if($scope.vis.params.showPopup){
+                nodeReturn.title = inPopup;
+              }
+
+              return nodeReturn;
             });
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-            var dataEdges2 = [];
+            var dataEdges = [];
 
-            for(var n = 0; n<datosParseados.length; n++){
-              //Busco en el array de nodos el del autor
-              var result = $.grep(dataNodes2, function(e){ return e.key == datosParseados[n].nombreAutor;   });
+            for(var n = 0; n<dataParsed.length; n++){
+              //Busco en el array de nodos el del keyFirstNode
+              var result = $.grep(dataNodes, function(e){ return e.key == dataParsed[n].keyFirstNode;   });
               if (result.length == 0) {
                 console.log("---------------------------------------------NO ENCONTRADO");
               } else if (result.length == 1) {
-                //ENCONTRE EL NODO DEL AUTOR, ACCEDO A SU ID CON RESULT.ID
+                //ENCONTRE EL NODO, ACCEDO A SU ID CON RESULT.ID
                 if($scope.vis.aggs.bySchemaName['first'].length > 1){
-                  for(var r = 0; r<datosParseados[n].commitsEnRepos.length; r++){
-                    //Busco en el array de nodos si está el nodo de repositorio
-                    var nodorepo = $.grep(dataNodes2, function(e){ return e.key == datosParseados[n].commitsEnRepos[r].repositorio;   });
-                    if (nodorepo.length == 0) {
-                      //NO EXISTE EL NODO DE ESE REPO, LO CREO Y AÑADO A LA BASE DE NODOS
+                  for(var r = 0; r<dataParsed[n].relationWithSecondNode.length; r++){
+                    //Busco en el array de nodos si está el nodo de keySecondNode
+                    var nodeOfSecondType = $.grep(dataNodes, function(e){ return e.key == dataParsed[n].relationWithSecondNode[r].keySecondNode;   });
+                    if (nodeOfSecondType.length == 0) {
+                      //NO EXISTE EL NODO (Segundo), LO CREO Y AÑADO A LA BASE DE NODOS
                       i++;
-                      var nuevoNodo = {
+                      var newNode = {
                         id : i,
-                        key: datosParseados[n].commitsEnRepos[r].repositorio,
-                        label : datosParseados[n].commitsEnRepos[r].repositorio,
+                        key: dataParsed[n].relationWithSecondNode[r].keySecondNode,
+                        label : dataParsed[n].relationWithSecondNode[r].keySecondNode,
                         color: $scope.vis.params.secondNodeColor,
                         shape: $scope.vis.params.shapeSecondNode
                       };
                       //AÑADO EL NUEVO NODO
-                      dataNodes2.push(nuevoNodo);
+                      dataNodes.push(newNode);
                       //CREO EL ENLACE Y LO AÑADO
-                      var enlace = {
+                      var edge = {
                         from : result[0].id,
-                        to : dataNodes2[dataNodes2.length-1].id,
-                        value: datosParseados[n].commitsEnRepos[r].widthOfEdge
+                        to : dataNodes[dataNodes.length-1].id,
+                        value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                       }
-                      dataEdges2.push(enlace);
+                      dataEdges.push(edge);
 
-                    } else if (nodorepo.length == 1) {
-                      //EXISTE EL REPO, HAGO SOLO LA RELACION
+                    } else if (nodeOfSecondType.length == 1) {
+                      //EXISTE EL Nodo (Segundo), HAGO SOLO LA RELACION
                       //CREO EL ENLACE Y LO AÑADO
                       var enlace = {
                         from : result[0].id,
-                        to : nodorepo[0].id,
-                        value: datosParseados[n].commitsEnRepos[r].widthOfEdge
+                        to : nodeOfSecondType[0].id,
+                        value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                       }
-                      dataEdges2.push(enlace);
+                      dataEdges.push(enlace);
                     } else {
                       console.log("/////////////////////////////////////////////MULTIPLES ENCONTRADOS")
                     }
@@ -230,21 +213,21 @@ define(function (require) {
 
 
             ////////////////////////////////////CONSTRUCCION DE LA RED CON LA LIBRERIA VIS.js//////////////////////////////////
-            var nodes2 = new visN.DataSet(dataNodes2);
-            var edges2 = new visN.DataSet(dataEdges2);
+            var nodesDataSet = new visN.DataSet(dataNodes);
+            var edgesDataSet = new visN.DataSet(dataEdges);
 
             // create a network
             var container = document.getElementById('mynetwork');
             container.style.height = container.getBoundingClientRect().height;
             container.height = container.getBoundingClientRect().height;
             var data = {
-              nodes: nodes2,
-              edges: edges2
+              nodes: nodesDataSet,
+              edges: edgesDataSet
             };
             //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA PARA QUE LOS NODOS ESTÉN PARADOS Y NO EN CONTINUO MOVIMIENTO
             var options = {};
             var options2 = {height: container.getBoundingClientRect().height.toString()};
-            if(dataEdges2.length > 200){
+            if(dataEdges.length > 200){
               var options = {
                 "edges": {
                   "smooth": {
@@ -294,10 +277,36 @@ define(function (require) {
             var network = new visN.Network(container, data, options2);
 
             new ResizeSensor(container, function() {
-                console.log('Diiiv');
-                //network.setSize('150px', '150px');
                 network.setSize('100%', container.getBoundingClientRect().height.toString());
             });
+
+            //LEGEND OF NODE COLORS///////////
+            if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
+              var canvas = document.getElementsByTagName("canvas")[0];
+              network.on("afterDrawing", function (canvasP) {
+
+                  var context = canvas.getContext("2d");
+
+                  context.fillStyle="#FFE8D6";
+                  var totalheight = usedColors.length * 25
+                  context.fillRect(canvas.width*(-2)-10, canvas.height*(-2)-18, 350, totalheight);
+
+                  context.fillStyle = "black";
+                  context.font = "bold 30px Arial";
+                  context.textAlign = "start";
+                  context.fillText("LEGEND OF COLORS:", canvas.width*(-2), canvas.height*(-2));
+
+                  var p=canvas.height*(-2) + 40;
+                  for(var key in colorDicc){
+                    context.fillStyle = colorDicc[key];
+                    context.font = "bold 20px Arial";
+                    context.fillText(key, canvas.width*(-2), p);
+                    p = p +22;
+                  }
+
+              });
+            }
+            ///////////////////////////////////
             /*new ResizeSensor(document.body, function() {
                 console.log('BODYYY');
                 //network.setSize('100%', container.getBoundingClientRect().height.toString());
@@ -343,34 +352,25 @@ define(function (require) {
             var buckets = resp.aggregations[secondFieldAggId].buckets;
           }
 
-          var datosParseados = [];
+          var dataParsed = [];
           // Transform all buckets into tag objects -- iterando en cada bucket
           var i = 0;
-          var dataNodes2 = buckets.map(function(bucket) {
+          var dataNodes = buckets.map(function(bucket) {
 
-            datosParseados[i] = {};
-            datosParseados[i].nombreAutor = bucket.key;
+            dataParsed[i] = {};
+            dataParsed[i].keyNode = bucket.key;
 
             //Las metricas son para el tamaño del nodo y enlaces
             if(metricsAgg_sizeNode){
               // Use the getValue function of the aggregation to get the value of a bucket -- IMPORTANTE, saco el valor de la metrica, que me da el tamaño del nodo de su respectivo bucket
               var value = metricsAgg_sizeNode.getValue(bucket);
-
-              /* TO FIX IT
-              var min = 5,
-                max = 300;
-              min = Math.min(min, value);
-              max = Math.max(max, value);
-              //var sizeVal = (value - min) / (max - min) * (32*2 - 12/2) + 12/2;
-              */
-
               var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
             }else{
               var sizeVal = 20;
             }
 
-            datosParseados[i].valorSizeNode = sizeVal;
-            datosParseados[i].nodeColorValue = "default";
+            dataParsed[i].valorSizeNode = sizeVal;
+            dataParsed[i].nodeColorValue = "default";
 
 
             //Depende de la prioridad tendremos que sacar unos buckets u otros
@@ -380,17 +380,9 @@ define(function (require) {
               var orderId = firstFieldAggId;
             }
 
-            datosParseados[i].commitsEnRepos = bucket[orderId].buckets.map(function(buck) {
+            dataParsed[i].relationWithSecondField = bucket[orderId].buckets.map(function(buck) {
               if(metricsAgg_sizeEdge){
                 var value_sizeEdge = metricsAgg_sizeEdge.getValue(buck);
-
-                /* TO FIX IT
-                var min = 0.1,
-                  max = 20;
-                var valor = (((value_sizeEdge - 1) * (max - min)) / (200 - 1)) + min
-                var sizeEdgeVal = Math.min(max, valor);
-                */
-
                 var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
               }else{
                 var sizeEdgeVal = 0.1;
@@ -399,13 +391,13 @@ define(function (require) {
               //Saco el color del nodo y guardo el color en el diccionario de colores para que no se repita
               if(colorNodeAggId && buck[colorNodeAggId].buckets.length > 0){
                 if(colorDicc[buck[colorNodeAggId].buckets[0].key]){
-                  datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                  dataParsed[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
                 }else{
                   while(true){
                     var confirmColor = randomColor();
                     if(usedColors.indexOf(confirmColor) == -1){
                       colorDicc[buck[colorNodeAggId].buckets[0].key] = confirmColor;
-                      datosParseados[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
+                      dataParsed[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
                       usedColors.push(confirmColor);
                       break;
                     }
@@ -415,86 +407,82 @@ define(function (require) {
               }
 
               return {
-                repositorio: buck.key,
-                commits: buck.doc_count,
+                keyRelation: buck.key,
+                countMetric: buck.doc_count,
                 widthOfEdge: sizeEdgeVal
               };
             });
 
-            //COLOR AHORA
-            if(datosParseados[i].nodeColorValue != "default"){
-              var colorNodeFinal = datosParseados[i].nodeColorValue;
+            var inPopup = "<p>" + bucket.key + "</p>"
+            if(dataParsed[i].nodeColorValue != "default"){
+              var colorNodeFinal = dataParsed[i].nodeColorValue;
+              inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
             }else{
               var colorNodeFinal = $scope.vis.params.firstNodeColor;
             }
 
 
             i++;
-            //SI ESTA ACTIVADO EL OCULTAR LOS LABELS, PONGO EL HOVER
-            if($scope.vis.params.hideLabels){
-              return {
-                id: i,
-                key: bucket.key,
-                //label: bucket.key,
-                title: bucket.key,
-                color: colorNodeFinal,
-                shape: $scope.vis.params.shapeFirstNode,
-                //Tamño del nodo
-                //size: sizeVal
-                value: sizeVal
-              };
-            }else{
-              return {
-                id: i,
-                key: bucket.key,
-                label: bucket.key,
-                //title: bucket.key,
-                color: colorNodeFinal,
-                shape: $scope.vis.params.shapeFirstNode,
-                //Tamño del nodo
-                //size: sizeVal
-                value: sizeVal
-              };
+            //Return the node totally builded
+            var nodeReturn = {
+              id: i,
+              key: bucket.key,
+              color: colorNodeFinal,
+              shape: $scope.vis.params.shapeFirstNode,
+              //size: sizeVal
+              value: sizeVal
             }
+
+            //Si no esta activado el ocultar labels se las pongo
+            if(!$scope.vis.params.hideLabels){
+              nodeReturn.label = bucket.key;
+            }
+
+            //Si esta activado el show popups se los añado
+            if($scope.vis.params.showPopup){
+              nodeReturn.title = inPopup;
+            }
+
+            return nodeReturn;
           });
 
-          //console.log(datosParseados);
+          //console.log(dataParsed);
 
-          var dataEdges2 = [];
+          var dataEdges = [];
 
-          //Recorro autores
-          for(var n = 0; n<datosParseados.length; n++){
+          //Recorro nodos
+          for(var n = 0; n<dataParsed.length; n++){
             //Saco su id del nodo
-            var NodoFrom = $.grep(dataNodes2, function(e){ return e.key == datosParseados[n].nombreAutor;   });
+            var NodoFrom = $.grep(dataNodes, function(e){ return e.key == dataParsed[n].keyNode;   });
             if (NodoFrom.length == 0) {
               alert("ERROR, NODO NO ENCONTRADO");
             } else if (NodoFrom.length == 1) {
               var id_from = NodoFrom[0].id;
-              //Recorro respos en los que ha participado
-              for(var p = 0; p<datosParseados[n].commitsEnRepos.length; p++){
-                //Recorro otra vez autores
-                for(var z = 0; z<datosParseados.length; z++){
-                  //Compruebo que no se compara el mismo autor
-                  if(datosParseados[n] != datosParseados[z]){
-                      var NodoTo = $.grep(dataNodes2, function(e){ return e.key == datosParseados[z].nombreAutor;   });
+              //Recorro relaciones que tiene con el segundo campo elegido
+              for(var p = 0; p<dataParsed[n].relationWithSecondField.length; p++){
+                //Recorro otra vez nodos
+                for(var z = 0; z<dataParsed.length; z++){
+                  //Compruebo que no se compara el mismo nodo
+                  if(dataParsed[n] != dataParsed[z]){
+                      var NodoTo = $.grep(dataNodes, function(e){ return e.key == dataParsed[z].keyNode;   });
                       if (NodoTo.length == 0) {
                         alert("ERROR, NODO NO ENCONTRADO");
                       } else if (NodoTo.length == 1) {
                         var id_to = NodoTo[0].id;
-                        //han hecho commit en el mismo repo
-                        var mismoRepo = $.grep(datosParseados[z].commitsEnRepos, function(e){ return e.repositorio == datosParseados[n].commitsEnRepos[p].repositorio;   });
-                        if (mismoRepo.length == 1) {
-                          //HAN HECHO COMMIT AL MISMO REPO, AÑADO ENLACE
-                          var existeEnlace = $.grep(dataEdges2, function(e){ return (e.to == id_from && e.from == id_to) || (e.to == id_to && e.from == id_from);   });
-                          if (existeEnlace.length == 0) {
+                        //Tienen relación ambos nodos
+                        var sameRelation = $.grep(dataParsed[z].relationWithSecondField, function(e){ return e.keyRelation == dataParsed[n].relationWithSecondField[p].keyRelation;   });
+                        if (sameRelation.length == 1) {
+                          //Tienen relación ambos, AÑADO ENLACE
+                          var edgeExist = $.grep(dataEdges, function(e){ return (e.to == id_from && e.from == id_to) || (e.to == id_to && e.from == id_from);   });
+                          if (edgeExist.length == 0) {
                             //EL TAMAÑO TOTAL DEL ENLACE ES LA SUMA DE LOS DOS QUE TIENEN EN COMUN
-                            var sizeEdgeTotal = mismoRepo[0].widthOfEdge + datosParseados[n].commitsEnRepos[p].widthOfEdge;
-                            var enlace = {
+                            var sizeEdgeTotal = sameRelation[0].widthOfEdge + dataParsed[n].relationWithSecondField[p].widthOfEdge;
+                            var edge = {
                               from : id_from,
                               to : id_to,
                               value: sizeEdgeTotal
                             };
-                            dataEdges2.push(enlace);
+                            dataEdges.push(edge);
                           }
                         }
                       } else {
@@ -511,23 +499,23 @@ define(function (require) {
           }
 
 
-          var nodes2 = new visN.DataSet(dataNodes2);
+          var nodesDataSet = new visN.DataSet(dataNodes);
 
-          var edges2 = new visN.DataSet(dataEdges2);
+          var edgesDataSet = new visN.DataSet(dataEdges);
 
           // create a network
           var container = document.getElementById('mynetwork');
           container.style.height = container.getBoundingClientRect().height;
           container.height = container.getBoundingClientRect().height;
           var data = {
-            nodes: nodes2,
-            edges: edges2
+            nodes: nodesDataSet,
+            edges: edgesDataSet
           };
 
           //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA
           var options = {};
           var options2 = {height: container.getBoundingClientRect().height.toString()};
-          if(dataEdges2.length > 200){
+          if(dataEdges.length > 200){
             var options = {
               "edges": {
                 "smooth": {
@@ -585,6 +573,36 @@ define(function (require) {
               //network.setSize('150px', '150px');
               network.setSize('100%', container.getBoundingClientRect().height.toString());
           });
+
+
+          //LEGEND OF NODE COLORS///////////
+          if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
+            var canvas = document.getElementsByTagName("canvas")[0];
+            network.on("afterDrawing", function (canvasP) {
+
+                var context = canvas.getContext("2d");
+
+                context.fillStyle="#FFE8D6";
+                var totalheight = usedColors.length * 25
+                context.fillRect(canvas.width*(-2)-10, canvas.height*(-2)-18, 350, totalheight);
+
+                context.fillStyle = "black";
+                context.font = "bold 30px Arial";
+                context.textAlign = "start";
+                context.fillText("LEGEND OF COLORS:", canvas.width*(-2), canvas.height*(-2));
+
+                var p=canvas.height*(-2) + 40;
+                for(var key in colorDicc){
+                  context.fillStyle = colorDicc[key];
+                  context.font = "bold 20px Arial";
+                  context.fillText(key, canvas.width*(-2), p);
+                  p = p +22;
+                }
+
+            });
+          }
+          ///////////////////////////////////
+
         }else{
 
           $("#mynetwork").hide();
