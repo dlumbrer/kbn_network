@@ -371,6 +371,7 @@ define(function (require) {
 
             dataParsed[i].valorSizeNode = sizeVal;
             dataParsed[i].nodeColorValue = "default";
+            dataParsed[i].nodeColorKey = "default";
 
 
             //Depende de la prioridad tendremos que sacar unos buckets u otros
@@ -391,6 +392,7 @@ define(function (require) {
               //Saco el color del nodo y guardo el color en el diccionario de colores para que no se repita
               if(colorNodeAggId && buck[colorNodeAggId].buckets.length > 0){
                 if(colorDicc[buck[colorNodeAggId].buckets[0].key]){
+                  dataParsed[i].nodeColorKey = buck[colorNodeAggId].buckets[0].key;
                   dataParsed[i].nodeColorValue = colorDicc[buck[colorNodeAggId].buckets[0].key];
                 }else{
                   while(true){
