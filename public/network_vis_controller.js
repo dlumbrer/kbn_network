@@ -144,7 +144,7 @@ define(function (require) {
               }
 
               //Si no esta activado el ocultar labels se las pongo
-              if(!$scope.vis.params.hideLabels){
+              if($scope.vis.params.showLabels){
                 nodeReturn.label = bucket.key;
               }
 
@@ -436,7 +436,7 @@ define(function (require) {
             }
 
             //Si no esta activado el ocultar labels se las pongo
-            if(!$scope.vis.params.hideLabels){
+            if($scope.vis.params.showLabels){
               nodeReturn.label = bucket.key;
             }
 

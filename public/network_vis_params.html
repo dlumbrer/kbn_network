@@ -7,14 +7,14 @@
   <button type='button' colorpicker ng-model="vis.params.canvasBackgroundColor" ng-style="{'background-color':vis.params.canvasBackgroundColor}"></button>
 </div>
 
-<div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
-  <span>First Node:</span>
+<div>
+  <span>Node:</span>
   <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
     <button type='button' colorpicker ng-model="vis.params.firstNodeColor" ng-style="{'background-color':vis.params.firstNodeColor}"></button>
   <!--/div-->
 </div>
 
-<div ng-if="vis.params.showAuthorRepoRelationship || vis.params.showRepoSameAuthorRelationship">
+<div ng-if="vis.params.nodeNode">
   <span>Second Node:</span>
   <button type='button' colorpicker ng-model="vis.params.secondNodeColor" ng-style="{'background-color':vis.params.secondNodeColor}"></button>
 </div>
@@ -24,27 +24,27 @@
 
 <h5><strong>Size</strong></h5>
 <div>
-  Max of Node
+  Max Node Size
   <input type="number" ng-model="vis.params.maxNodeSize" min="1">
 </div>
 <div>
-  Min of Node
+  Min Node Size
   <input type="number" ng-model="vis.params.minNodeSize" min="1">
 </div>
 <div>
-  Max of Edge
+  Max Edge Width
   <input type="number" ng-model="vis.params.maxEdgeSize" min="1">
 </div>
 <div>
-  Min of Edge
+  Min Edge Width
   <input type="number" ng-model="vis.params.minEdgeSize" min="0.1">
 </div>
 
 <br>
 
 <h5><strong>Shapes</strong></h5>
-<div class="form-group" ng-if="vis.params.showAuthorRepoRelationship || vis.params.showAuthorSameRepoRelationship">
-  <label for="sel1">First Node: </label>
+<div class="form-group">
+  <label for="sel1">Node: </label>
    <select class="form-control" ng-model="vis.params.shapeFirstNode" id="sel1">
      <option value="circle">Circle</option>
      <option value="dot">Dot</option>
@@ -60,7 +60,7 @@
    </select>
 </div>
 
-<div class="form-group" ng-if="vis.params.showAuthorRepoRelationship || vis.params.showRepoSameAuthorRelationship">
+<div class="form-group" ng-if="vis.params.nodeNode">
   <label for="sel2">Second Node: </label>
    <select class="form-control" ng-model="vis.params.shapeSecondNode" id="sel2">
      <option value="circle">Circle</option>
@@ -82,8 +82,8 @@
 <h5><strong>Extra</strong></h5>
 <div class="checkbox">
   <label>
-    <input type="checkbox" ng-model="vis.params.hideLabels">
-    Hide labels
+    <input type="checkbox" ng-model="vis.params.showLabels">
+    Show labels
   </label>
   <label>
     <input type="checkbox" ng-model="vis.params.showPopup">
@@ -91,7 +91,7 @@
   </label>
   <label>
     <input type="checkbox" ng-model="vis.params.showColorLegend">
-    Show Color Legend
+    Show Color Legend (Node Color selected)
   </label>
 </div>
 
