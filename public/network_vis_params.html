@@ -14,7 +14,7 @@
   <!--/div-->
 </div>
 
-<div ng-if="vis.params.nodeNode">
+<div class="secondNode">
   <span>Second Node:</span>
   <button type='button' colorpicker ng-model="vis.params.secondNodeColor" ng-style="{'background-color':vis.params.secondNodeColor}"></button>
 </div>
@@ -60,7 +60,7 @@
    </select>
 </div>
 
-<div class="form-group" ng-if="vis.params.nodeNode">
+<div class="form-group secondNode">
   <label for="sel2">Second Node: </label>
    <select class="form-control" ng-model="vis.params.shapeSecondNode" id="sel2">
      <option value="circle">Circle</option>

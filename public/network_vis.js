@@ -38,7 +38,6 @@ function NetworkVisTypeProvider(Private) {
         showLabels: true,
         showPopup: false,
         showColorLegend: true,
-        nodeNode: true,
         firstNodeColor: '#FD7BC4',
         secondNodeColor: '#00d1ff',
         canvasBackgroundColor: 'white',

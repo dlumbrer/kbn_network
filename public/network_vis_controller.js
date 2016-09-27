@@ -22,6 +22,7 @@ define(function (require) {
         if($scope.vis.aggs.bySchemaName['first'].length >= 1 && !$scope.vis.aggs.bySchemaName['second']){ //This is when we have 2 nodes
             $("#mynetwork").show();
             $("#errorHtml").hide();
+            $(".secondNode").show();
             // Retrieve the id of the configured tags aggregation
             // El id de los buckets (que los hemos llamado tags) para luego buscarlos en resp.aggregations[id].buckets
             var firstFieldAggId = $scope.vis.aggs.bySchemaName['first'][0].id;
@@ -319,6 +320,7 @@ define(function (require) {
         }else if($scope.vis.aggs.bySchemaName['first'].length == 1 && $scope.vis.aggs.bySchemaName['second']){
           $("#mynetwork").show();
           $("#errorHtml").hide();
+          $(".secondNode").hide();
            // Retrieve the id of the configured tags aggregation
           // El id de los buckets (que los hemos llamado tags) para luego buscarlos en resp.aggregations[id].buckets
           var firstFieldAggId = $scope.vis.aggs.bySchemaName['first'][0].id;
