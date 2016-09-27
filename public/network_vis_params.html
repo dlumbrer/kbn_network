@@ -4,19 +4,19 @@
 <h5><strong>Default colors</strong></h5>
 <div>
   <span>Background Color:</span>
-  <button type='button' colorpicker ng-model="vis.params.canvasBackgroundColor" ng-style="{'background-color':vis.params.canvasBackgroundColor}"></button>
+  <input type="color" ng-model="vis.params.canvasBackgroundColor" class="form-control"/>
 </div>
 
 <div>
   <span>Node:</span>
   <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
-    <button type='button' colorpicker ng-model="vis.params.firstNodeColor" ng-style="{'background-color':vis.params.firstNodeColor}"></button>
+  <input type="color" ng-model="vis.params.firstNodeColor" class="form-control"/>
   <!--/div-->
 </div>
 
 <div class="secondNode">
   <span>Second Node:</span>
-  <button type='button' colorpicker ng-model="vis.params.secondNodeColor" ng-style="{'background-color':vis.params.secondNodeColor}"></button>
+  <input type="color" ng-model="vis.params.secondNodeColor" class="form-control"/>
 </div>
 
 
