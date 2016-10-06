@@ -14,13 +14,21 @@ define(function (require) {
   module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
     //const tabifyAggResponse = Private(require('ui/agg_response/tabify/tabify'));
 
+    $scope.errorNodeColor = function(){
+      $("#mynetwork").hide();
+      $("#loading").hide();
+      $("#errorHtml").html("<h1><strong>ERROR</strong>: Node Color must be the LAST selection</h1>");
+      $("#errorHtml").show();
+
+    }
 
 
     $scope.$watch('esResponse', function (resp, oldResp) {
       if (resp) {
-
+        $("#loading").hide();
         if($scope.vis.aggs.bySchemaName['first'].length >= 1 && !$scope.vis.aggs.bySchemaName['second']){ //This is when we have 2 nodes
             $("#mynetwork").show();
+            $("#loading").show();
             $("#errorHtml").hide();
             $(".secondNode").show();
             // Retrieve the id of the configured tags aggregation
@@ -282,31 +290,30 @@ define(function (require) {
             });
 
             //LEGEND OF NODE COLORS///////////
-            if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
-              var canvas = document.getElementsByTagName("canvas")[0];
-              network.on("afterDrawing", function (canvasP) {
+            network.on("afterDrawing", function (canvasP) {
+              $("#loading").hide();
+              if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
+                var canvas = document.getElementsByTagName("canvas")[0];
+                var context = canvas.getContext("2d");
 
-                  var context = canvas.getContext("2d");
+                context.fillStyle="#FFE8D6";
+                var totalheight = usedColors.length * 25
+                context.fillRect(canvas.width*(-2)-10, canvas.height*(-2)-18, 350, totalheight);
 
-                  context.fillStyle="#FFE8D6";
-                  var totalheight = usedColors.length * 25
-                  context.fillRect(canvas.width*(-2)-10, canvas.height*(-2)-18, 350, totalheight);
+                context.fillStyle = "black";
+                context.font = "bold 30px Arial";
+                context.textAlign = "start";
+                context.fillText("LEGEND OF COLORS:", canvas.width*(-2), canvas.height*(-2));
 
-                  context.fillStyle = "black";
-                  context.font = "bold 30px Arial";
-                  context.textAlign = "start";
-                  context.fillText("LEGEND OF COLORS:", canvas.width*(-2), canvas.height*(-2));
-
-                  var p=canvas.height*(-2) + 40;
-                  for(var key in colorDicc){
-                    context.fillStyle = colorDicc[key];
-                    context.font = "bold 20px Arial";
-                    context.fillText(key, canvas.width*(-2), p);
-                    p = p +22;
-                  }
-
-              });
-            }
+                var p=canvas.height*(-2) + 40;
+                for(var key in colorDicc){
+                  context.fillStyle = colorDicc[key];
+                  context.font = "bold 20px Arial";
+                  context.fillText(key, canvas.width*(-2), p);
+                  p = p +22;
+                }
+              }
+            });
             ///////////////////////////////////
             /*new ResizeSensor(document.body, function() {
                 console.log('BODYYY');
@@ -319,6 +326,7 @@ define(function (require) {
 
         }else if($scope.vis.aggs.bySchemaName['first'].length == 1 && $scope.vis.aggs.bySchemaName['second']){
           $("#mynetwork").show();
+          $("#loading").show();
           $("#errorHtml").hide();
           $(".secondNode").hide();
            // Retrieve the id of the configured tags aggregation
@@ -331,6 +339,12 @@ define(function (require) {
             var colorNodeAggName = $scope.vis.aggs.bySchemaName['colornode'][0].params.field.displayName;
             var colorDicc = {};
             var usedColors = [];
+
+            //Compruebo que NodeColor es la ultima
+            if($scope.vis.aggs.indexOf($scope.vis.aggs.bySchemaName['colornode'][0]) <= $scope.vis.aggs.indexOf($scope.vis.aggs.bySchemaName['second'][0])){
+              $scope.errorNodeColor();
+              return;
+            }
           }
 
           //Nombres de los campos donde has buscado
@@ -580,37 +594,37 @@ define(function (require) {
 
 
           //LEGEND OF NODE COLORS///////////
-          if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
-            var canvas = document.getElementsByTagName("canvas")[0];
-            network.on("afterDrawing", function (canvasP) {
+          network.on("afterDrawing", function (canvasP) {
+            $("#loading").hide();
+            if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
+              var canvas = document.getElementsByTagName("canvas")[0];
+              var context = canvas.getContext("2d");
 
-                var context = canvas.getContext("2d");
+              context.fillStyle="#FFE8D6";
+              var totalheight = usedColors.length * 25
+              context.fillRect(canvas.width*(-2)-10, canvas.height*(-2)-18, 350, totalheight);
 
-                context.fillStyle="#FFE8D6";
-                var totalheight = usedColors.length * 25
-                context.fillRect(canvas.width*(-2)-10, canvas.height*(-2)-18, 350, totalheight);
+              context.fillStyle = "black";
+              context.font = "bold 30px Arial";
+              context.textAlign = "start";
+              context.fillText("LEGEND OF COLORS:", canvas.width*(-2), canvas.height*(-2));
 
-                context.fillStyle = "black";
-                context.font = "bold 30px Arial";
-                context.textAlign = "start";
-                context.fillText("LEGEND OF COLORS:", canvas.width*(-2), canvas.height*(-2));
-
-                var p=canvas.height*(-2) + 40;
-                for(var key in colorDicc){
-                  context.fillStyle = colorDicc[key];
-                  context.font = "bold 20px Arial";
-                  context.fillText(key, canvas.width*(-2), p);
-                  p = p +22;
-                }
-
-            });
-          }
+              var p=canvas.height*(-2) + 40;
+              for(var key in colorDicc){
+                context.fillStyle = colorDicc[key];
+                context.font = "bold 20px Arial";
+                context.fillText(key, canvas.width*(-2), p);
+                p = p +22;
+              }
+            }
+          });
           ///////////////////////////////////
 
         }else{
 
           $("#mynetwork").hide();
-          $("#errorHtml").html("<h1>Data Error: You can only choose Node-Node or Node-Relation</h1>");
+          $("#loading").hide();
+          $("#errorHtml").html("<h1><strong>ERROR</strong>: You can only choose Node-Node or Node-Relation</h1>");
           $("#errorHtml").show();
         }
       }
