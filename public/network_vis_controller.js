@@ -549,18 +549,17 @@ define(function (require) {
 
             var options2 = {
               height: container.getBoundingClientRect().height.toString(),
-              physics:{
-                "minVelocity": 0.75,
-                "solver": "barnesHut",
-                barnesHut:{
-                  springLength: 400,
-                  gravitationalConstant: -50000,
-                  springConstant:0.02
+              physics: {
+                //stabilization: false,
+                barnesHut: {
+                  gravitationalConstant: -3500,
+                  springConstant: 0.001,
+                  springLength: 500
                 }
               },
               "edges": {
                 "smooth": {
-                  "forceDirection": "none",
+                  //"forceDirection": "none",
                   "type": "continuous"
                 },
                 scaling:{
