@@ -16,7 +16,7 @@ git clone https://github.com/dlumbrer/kbn_network.git network_vis
 cd network_vis
 npm install
 ```
-> **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0-rc1"**") only change the "version" on the package.json to your Kibana version
+> **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0-rc1"**") only change the value of the "version" tag on the package.json to your Kibana version
 
 
 ####Unistall:
