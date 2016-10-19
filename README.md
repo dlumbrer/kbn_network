@@ -2,6 +2,8 @@
 
 This is a plugin developed for Kibana 5 that displays a network node that link two fields that have been previously selected.
 
+######Link to the page: https://dlumbrer.github.io/kbn_network/
+
 ##Installation Steps
 
 ```
@@ -16,15 +18,12 @@ npm install
 ```
 > **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0-rc1"**") only change the "version" on the package.json to your Kibana version
 
-Unistall:
 
+####Unistall:
 ```
 cd KIBANA_HOME
 rm -rf plugins/network_vis/
 ```
-
-######Link to the page: https://dlumbrer.github.io/kbn_network/
-
 
 ##Types of networks
 
