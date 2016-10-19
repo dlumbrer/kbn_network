@@ -23,7 +23,7 @@ define(function (require) {
     }
 
 
-    $scope.$watch('esResponse', function (resp, oldResp) {
+   $scope.$watchMulti(['esResponse', 'vis.params'], function ([resp]) {
       if (resp) {
         $("#loading").hide();
         if($scope.vis.aggs.bySchemaName['first'].length >= 1 && !$scope.vis.aggs.bySchemaName['second']){ //This is when we have 2 nodes
