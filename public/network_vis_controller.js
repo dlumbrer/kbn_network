@@ -285,8 +285,10 @@ define(function (require) {
             console.log("Create network now");
             var network = new visN.Network(container, data, options2);
 
-            new ResizeSensor(container, function() {
-                network.setSize('100%', container.getBoundingClientRect().height.toString());
+            var viscontainer = $(".vis-container" );
+            new ResizeSensor(viscontainer, function() {
+                //console.log(viscontainer);
+                network.setSize('100%', viscontainer[0].clientHeight);
             });
 
             //LEGEND OF NODE COLORS///////////
@@ -585,10 +587,10 @@ define(function (require) {
           console.log("Create network now");
           var network = new visN.Network(container, data, options2);
 
-          new ResizeSensor(container, function() {
-              console.log('Diiiv');
-              //network.setSize('150px', '150px');
-              network.setSize('100%', container.getBoundingClientRect().height.toString());
+          var viscontainer = $(".vis-container" );
+          new ResizeSensor(viscontainer, function() {
+              //console.log(viscontainer);
+              network.setSize('100%', viscontainer[0].clientHeight);
           });
 
 
