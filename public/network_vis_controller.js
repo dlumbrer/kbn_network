@@ -285,10 +285,13 @@ define(function (require) {
             console.log("Create network now");
             var network = new visN.Network(container, data, options2);
 
-            var viscontainer = $(".vis-container" );
+            for (i = 0; i < $(".vis-container" ).length; i++) {
+               if($(".vis-container")[i].children[0].children[1] && $(".vis-container")[i].children[0].children[1].id == "mynetwork"){
+                 var viscontainer = $(".vis-container")[i];
+               }
+            };
             new ResizeSensor(viscontainer, function() {
-                //console.log(viscontainer);
-                network.setSize('100%', viscontainer[0].clientHeight);
+                network.setSize('100%', viscontainer.clientHeight);
             });
 
             //LEGEND OF NODE COLORS///////////
@@ -587,10 +590,13 @@ define(function (require) {
           console.log("Create network now");
           var network = new visN.Network(container, data, options2);
 
-          var viscontainer = $(".vis-container" );
+          for (i = 0; i < $(".vis-container" ).length; i++) {
+             if($(".vis-container")[i].children[0].children[1] && $(".vis-container")[i].children[0].children[1].id == "mynetwork"){
+               var viscontainer = $(".vis-container")[i];
+             }
+          };
           new ResizeSensor(viscontainer, function() {
-              //console.log(viscontainer);
-              network.setSize('100%', viscontainer[0].clientHeight);
+              network.setSize('100%', viscontainer.clientHeight);
           });
 
 
