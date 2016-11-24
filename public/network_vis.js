@@ -1,9 +1,9 @@
 import "plugins/network_vis/network_vis.less";
 import 'plugins/network_vis/network_vis_controller';
-import 'plugins/network_vis/network_vis_params';
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 import networkVisTemplate from 'plugins/network_vis/network_vis.html';
+import networkVisParamsTemplate from 'plugins/network_vis/network_vis_params.html';
 
 
 // we need to load the css ourselves
@@ -24,7 +24,6 @@ require('ui/registry/vis_types').register(NetworkVisTypeProvider);
 function NetworkVisTypeProvider(Private) {
   const TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
-
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
   return new TemplateVisType({
@@ -50,7 +49,7 @@ function NetworkVisTypeProvider(Private) {
         maxEdgeSize: 20,
         minEdgeSize: 0.1
       },
-      editor: '<network-vis-params></network-vis-params>'
+      editor: networkVisParamsTemplate
     },
 
     ////////MIRAR THIS
