@@ -1,4 +1,4 @@
-# Network Plugin for Kibana 5 (WP)
+# Network Plugin for Kibana 5
 
 This is a plugin developed for Kibana 5 that displays a network node that link two fields that have been previously selected.
 
@@ -44,6 +44,10 @@ First, select 'Node' on buckets for build the network of one type of nodes, it d
 Completly integration on Dashboards with other visualizations.
 
 ![Screenshot](images/Dashboard.png)
+
+##User Guide
+
+You can find an user guide in the file [USER_GUIDE.md](https://github.com/dlumbrer/kbn_network/blob/master/USER_GUIDE.md "Go to the user guide!")
 
 ##Help me to improve! :smile:
 
