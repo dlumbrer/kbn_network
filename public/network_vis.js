@@ -44,6 +44,7 @@ function NetworkVisTypeProvider(Private) {
         shapeSecondNode: 'box',
         maxCutMetricSizeNode: 5000,
         maxCutMetricSizeEdge: 5000,
+        minCutMetricSizeNode: 0,
         maxNodeSize: 80,
         minNodeSize: 8,
         maxEdgeSize: 20,

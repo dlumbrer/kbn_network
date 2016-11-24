@@ -84,6 +84,11 @@ define(function (require) {
                 // Use the getValue function of the aggregation to get the value of a bucket -- IMPORTANTE, saco el valor de la metrica, que me da el tamaño del nodo de su respectivo bucket
                 var value = metricsAgg_sizeNode.getValue(bucket);
                 var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
+
+                //No show nodes under the value
+                if($scope.vis.params.minCutMetricSizeNode > value){
+                  return;
+                }
               }else{
                 var sizeVal = 20;
               }
@@ -166,7 +171,7 @@ define(function (require) {
             });
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+            dataNodes = dataNodes.filter(Boolean);
             var dataEdges = [];
 
             for(var n = 0; n<dataParsed.length; n++){
@@ -255,7 +260,7 @@ define(function (require) {
                 physics:{
                   barnesHut:{
                     gravitationalConstant: -35000,
-                    springConstant:0.02
+                    springConstant:0.01
                   }
                 },
                 "edges": {
