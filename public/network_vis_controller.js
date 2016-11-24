@@ -87,6 +87,7 @@ define(function (require) {
 
                 //No show nodes under the value
                 if($scope.vis.params.minCutMetricSizeNode > value){
+                  dataParsed.splice(i, 1);
                   return;
                 }
               }else{
@@ -171,6 +172,7 @@ define(function (require) {
             });
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            //Clean "undefinded" in the array
             dataNodes = dataNodes.filter(Boolean);
             var dataEdges = [];
 
@@ -391,6 +393,12 @@ define(function (require) {
               // Use the getValue function of the aggregation to get the value of a bucket -- IMPORTANTE, saco el valor de la metrica, que me da el tamaño del nodo de su respectivo bucket
               var value = metricsAgg_sizeNode.getValue(bucket);
               var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
+
+              //No show nodes under the value
+              if($scope.vis.params.minCutMetricSizeNode > value){
+                dataParsed.splice(i, 1);
+                return;
+              }
             }else{
               var sizeVal = 20;
             }
@@ -475,7 +483,8 @@ define(function (require) {
           });
 
           //console.log(dataParsed);
-
+          //Clean "undefinded" in the array
+          dataNodes = dataNodes.filter(Boolean);
           var dataEdges = [];
 
           //Recorro nodos
@@ -540,56 +549,38 @@ define(function (require) {
             edges: edgesDataSet
           };
 
-          //SI HAY MUCHOS ENLACES, CAMBIAMOS LA FISICA
-          var options = {};
-          var options2 = {height: container.getBoundingClientRect().height.toString()};
-          if(dataEdges.length > 200){
-            var options = {
-              "edges": {
-                "smooth": {
-                  "forceDirection": "none",
-                  "type": "continuous"
-                }
-              },
-              "physics": {
-                "minVelocity": 0.75,
-                "solver": "repulsion"
+          var options2 = {
+            height: container.getBoundingClientRect().height.toString(),
+            physics: {
+              //stabilization: false,
+              barnesHut: {
+                gravitationalConstant: -3500,
+                springConstant: 0.001,
+                springLength: 500
               }
-            }
-
-            var options2 = {
-              height: container.getBoundingClientRect().height.toString(),
-              physics: {
-                //stabilization: false,
-                barnesHut: {
-                  gravitationalConstant: -3500,
-                  springConstant: 0.001,
-                  springLength: 500
-                }
+            },
+            "edges": {
+              "smooth": {
+                //"forceDirection": "none",
+                "type": "continuous"
               },
-              "edges": {
-                "smooth": {
-                  //"forceDirection": "none",
-                  "type": "continuous"
-                },
-                scaling:{
-                  min:$scope.vis.params.minEdgeSize,
-                  max:$scope.vis.params.maxEdgeSize
-                }
-              },
-              interaction: {
-                hideEdgesOnDrag: true,
-                hover: true
-              },
-              nodes: {
-                scaling:{
-                  min:$scope.vis.params.minNodeSize,
-                  max:$scope.vis.params.maxNodeSize
-                }
-              },
-              layout: {
-                improvedLayout: false
+              scaling:{
+                min:$scope.vis.params.minEdgeSize,
+                max:$scope.vis.params.maxEdgeSize
               }
+            },
+            interaction: {
+              hideEdgesOnDrag: true,
+              hover: true
+            },
+            nodes: {
+              scaling:{
+                min:$scope.vis.params.minNodeSize,
+                max:$scope.vis.params.maxNodeSize
+              }
+            },
+            layout: {
+              improvedLayout: false
             }
           }
           console.log("Create network now");
