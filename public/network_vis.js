@@ -1,18 +1,12 @@
-import "plugins/network_vis/network_vis.less";
-import 'plugins/network_vis/network_vis_controller';
-import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
-import VisSchemasProvider from 'ui/vis/schemas';
-import networkVisTemplate from 'plugins/network_vis/network_vis.html';
-import networkVisParamsTemplate from 'plugins/network_vis/network_vis_params.html';
-
+define(function (require) {
 
 // we need to load the css ourselves
+require('plugins/network_vis/network_vis.less');
 
 // we also need to load the controller and used by the template
-
+require('plugins/network_vis/network_vis_controller');
 
 // our params are a bit complex so we will manage them with a directive
-
 
 // require the directives that we use as well
 
@@ -22,8 +16,8 @@ require('ui/registry/vis_types').register(NetworkVisTypeProvider);
 
 // define the TableVisType
 function NetworkVisTypeProvider(Private) {
-  const TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
-  const Schemas = Private(VisSchemasProvider);
+  const TemplateVisType = Private(require('ui/template_vis_type/TemplateVisType'));
+  const Schemas = Private(require('ui/Vis/Schemas'));
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
   return new TemplateVisType({
@@ -31,7 +25,7 @@ function NetworkVisTypeProvider(Private) {
     title: 'Network',
     icon: 'fa-cogs',
     description: 'Displays a network node that link two fields that have been selected.',
-    template: networkVisTemplate,
+    template: require('plugins/network_vis/network_vis.html'),
     params: {
       defaults: {
         showLabels: true,
@@ -50,7 +44,7 @@ function NetworkVisTypeProvider(Private) {
         maxEdgeSize: 20,
         minEdgeSize: 0.1
       },
-      editor: networkVisParamsTemplate
+      editor: '<network-vis-params></network-vis-params>'
     },
 
     ////////MIRAR THIS
@@ -108,4 +102,6 @@ function NetworkVisTypeProvider(Private) {
   });
 }
 
-export default NetworkVisTypeProvider;
+ return NetworkVisTypeProvider;
+
+});
