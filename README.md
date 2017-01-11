@@ -8,10 +8,6 @@ This is a plugin developed for Kibana 5 that displays a network node that link t
 
 ```
 cd KIBANA_HOME/plugins
-```
-> If the **plugins** folder does not exist, change to **installedPlugins** and continue.
-
-```
 git clone https://github.com/dlumbrer/kbn_network.git network_vis
 cd network_vis
 npm install
@@ -24,6 +20,12 @@ npm install
 cd KIBANA_HOME
 rm -rf plugins/network_vis/
 ```
+
+##Releases for Kibana 5 and 4
+
+Now this plugin is avalible for differents versions of Kibana, in [releases](https://github.com/dlumbrer/kbn_network/releases "Go to releases!") you can find the code and the binaries of the plugin to use in:
+* [Kibana 5.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-5.x "Go to source")
+* [Kibana 4.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-4.x "Go to source")
 
 ##Types of networks
 
