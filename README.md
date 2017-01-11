@@ -15,7 +15,7 @@ npm install
 > **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0-rc1"**") only change the value of the "version" tag on the package.json to your Kibana version
 
 
-####Unistall:
+####Uninstall:
 ```
 cd KIBANA_HOME
 rm -rf plugins/network_vis/
@@ -23,7 +23,7 @@ rm -rf plugins/network_vis/
 
 ##Releases for Kibana 5 and 4
 
-Now this plugin is avalible for differents versions of Kibana, in [releases](https://github.com/dlumbrer/kbn_network/releases "Go to releases!") you can find the code and the binaries of the plugin to use in:
+Now this plugin is avalible for differents versions of Kibana, in [releases](https://github.com/dlumbrer/kbn_network/releases "Go to releases!") you can find the source code, ZIPs and TARs of the plugin to use in:
 * [Kibana 5.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-5.x "Go to source")
 * [Kibana 4.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-4.x "Go to source")
 
