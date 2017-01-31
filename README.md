@@ -27,6 +27,19 @@ Now this plugin is avalible for differents versions of Kibana, in [releases](htt
 * [Kibana 5.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-5.x "Go to source")
 * [Kibana 4.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-4.x "Go to source")
 
+### Building a Release
+Building a release only means packaging the plugin with all its dependencies into a zip archive. Important is to put the plugin in a folder called kibana before zipping it.
+The following steps would produce a release of the current head master branch.
+```
+mkdir kibana
+cd kibana
+git clone https://github.com/dlumbrer/kbn_network.git
+cd kbn_network
+npm install
+cd ../..
+zip -r kbn-network-<version>.zip kibana --exclude kibana/kbn_network/.git\*
+```
+
 ##Types of networks
 
 ####Two types of Nodes:
