@@ -12,7 +12,7 @@ git clone https://github.com/dlumbrer/kbn_network.git network_vis
 cd network_vis
 npm install
 ```
-> **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0-rc1"**") only change the value of the "version" tag on the package.json to your Kibana version
+> **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0"**") only change the value of the "version" tag on the package.json to your Kibana version
 
 
 ####Uninstall:
@@ -33,11 +33,11 @@ The following steps would produce a release of the current head master branch.
 ```
 mkdir kibana
 cd kibana
-git clone https://github.com/dlumbrer/kbn_network.git
-cd kbn_network
+git clone https://github.com/dlumbrer/kbn_network.git network_vis
+cd network_vis
 npm install
 cd ../..
-zip -r kbn-network-<version>.zip kibana --exclude kibana/kbn_network/.git\*
+zip -r network_vis-<version>.zip kibana --exclude kibana/network_vis/.git\*
 ```
 
 ##Types of networks
