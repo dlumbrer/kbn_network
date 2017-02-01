@@ -42,9 +42,11 @@ function NetworkVisTypeProvider(Private) {
         maxNodeSize: 80,
         minNodeSize: 8,
         maxEdgeSize: 20,
-        minEdgeSize: 0.1
+        minEdgeSize: 0.1,
+        springConstant: 0.001,
+        gravitationalConstant: -35000
       },
-      editor: '<network-vis-params></network-vis-params>'
+      editor: require('plugins/network_vis/network_vis_params.html')
     },
 
     ////////MIRAR THIS

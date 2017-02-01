@@ -282,8 +282,8 @@ define(function (require) {
                 height: container.getBoundingClientRect().height.toString(),
                 physics:{
                   barnesHut:{
-                    gravitationalConstant: -35000,
-                    springConstant:0.01
+                    gravitationalConstant: $scope.vis.params.gravitationalConstant,
+                    springConstant: $scope.vis.params.springConstant
                   }
                 },
                 "edges": {
@@ -540,8 +540,8 @@ define(function (require) {
             height: container.getBoundingClientRect().height.toString(),
             physics: {
               barnesHut: {
-                gravitationalConstant: -3500,
-                springConstant: 0.001,
+                gravitationalConstant: $scope.vis.params.gravitationalConstant,
+                springConstant: $scope.vis.params.springConstant,
                 springLength: 500
               }
             },
