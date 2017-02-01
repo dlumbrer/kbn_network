@@ -4,6 +4,11 @@
   "authors": [
   "David Moreno Lumbreras <dmorenolumb@gmail.com>"
   ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dlumbrer/kbn_network"
+  },
   "dependencies" : {
     "vis": "4.16.1",
     "randomcolor": "0.4.4",
