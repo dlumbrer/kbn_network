@@ -13,31 +13,33 @@ define(function (require) {
   // add a controller to tha module, which will transform the esResponse into a
   // tabular format that we can pass to the table directive
   module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
+    var network_id = "net_" + $scope.$id;
+    var loading_id = "loading_" + $scope.$parent.$id;
 
     $scope.errorNodeColor = function(){
-      $("#mynetwork").hide();
-      $("#loading").hide();
+      $("#" + network_id).hide();
+      $("#" + loading_id).hide();
       $("#errorHtml").html("<h1><strong>ERROR</strong>: Node Color must be the LAST selection</h1>");
       $("#errorHtml").show();
 
     }
 
     $scope.errorNodeNodeRelation = function(){
-      $("#mynetwork").hide();
-      $("#loading").hide();
+      $("#" + network_id).hide();
+      $("#" + loading_id).hide();
       $("#errorHtml").html("<h1><strong>ERROR</strong>: You can only choose Node-Node or Node-Relation</h1>");
       $("#errorHtml").show();
     }
 
     $scope.initialShows = function(){
-      $("#mynetwork").show();
-      $("#loading").show();
+      $("#" + network_id).show();
+      $("#" + loading_id).show();
       $("#errorHtml").hide();
     }
 
     $scope.startDynamicResize = function(network){
       for (i = 0; i < $(".vis-container" ).length; i++) {
-         if($(".vis-container")[i].children[0].children[1] && $(".vis-container")[i].children[0].children[1].id == "mynetwork"){
+         if($(".vis-container")[i].children[0].children[1] && $(".vis-container")[i].children[0].children[1].id == network_id){
            var viscontainer = $(".vis-container")[i];
            break;
          }
@@ -72,7 +74,7 @@ define(function (require) {
 
    $scope.$watchMulti(['esResponse', 'vis.params'], function ([resp]) {
       if (resp) {
-        $("#loading").hide();
+        $("#" + loading_id).hide();
         if($scope.vis.aggs.bySchemaName['first'].length >= 1 && !$scope.vis.aggs.bySchemaName['second']){ //This is when we have 2 nodes
             $scope.initialShows();
             $(".secondNode").show();
@@ -268,7 +270,7 @@ define(function (require) {
             var nodesDataSet = new visN.DataSet(dataNodes);
             var edgesDataSet = new visN.DataSet(dataEdges);
 
-            var container = document.getElementById('mynetwork');
+            var container = document.getElementById(network_id);
             container.style.height = container.getBoundingClientRect().height;
             container.height = container.getBoundingClientRect().height;
             var data = {
@@ -318,7 +320,7 @@ define(function (require) {
             $scope.startDynamicResize(network);
 
             network.on("afterDrawing", function (canvasP) {
-              $("#loading").hide();
+              $("#" + loading_id).hide();
               /// Draw the color legend if Node Color is activated
               if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
                 $scope.drawColorLegend(usedColors, colorDicc);
@@ -527,7 +529,7 @@ define(function (require) {
 
 
           // Creation of the network
-          var container = document.getElementById('mynetwork');
+          var container = document.getElementById(network_id);
           //Set the Heigth
           container.style.height = container.getBoundingClientRect().height;
           container.height = container.getBoundingClientRect().height;
@@ -576,7 +578,7 @@ define(function (require) {
           $scope.startDynamicResize(network);
 
           network.on("afterDrawing", function (canvasP) {
-            $("#loading").hide();
+            $("#" + loading_id).hide();
             /// Draw the color legend if Node Color is activated
             if($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend){
               $scope.drawColorLegend(usedColors, colorDicc);
