@@ -37,11 +37,17 @@ function NetworkVisTypeProvider(Private) {
         showLabels: true,
         showPopup: false,
         showColorLegend: true,
+        nodePhysics: false,
         firstNodeColor: '#FD7BC4',
         secondNodeColor: '#00d1ff',
         canvasBackgroundColor: '#FFFFFF',
         shapeFirstNode: 'dot',
         shapeSecondNode: 'box',
+        displayArrow: false,
+        posArrow: 'to',
+        shapeArrow: 'arrow',
+        smoothType: 'continuous',
+        scaleArrow: 1,
         maxCutMetricSizeNode: 5000,
         maxCutMetricSizeEdge: 5000,
         minCutMetricSizeNode: 0,
@@ -49,8 +55,8 @@ function NetworkVisTypeProvider(Private) {
         minNodeSize: 8,
         maxEdgeSize: 20,
         minEdgeSize: 0.1,
-        springConstant: 0.001,
-        gravitationalConstant: -35000
+        springConstant: 0.04,
+        gravitationalConstant: -2000
       },
       editor: networkVisParamsTemplate
     },
