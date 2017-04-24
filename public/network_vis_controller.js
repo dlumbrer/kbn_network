@@ -558,7 +558,7 @@ define(function (require) {
                                                         value: sizeEdgeTotal
                                                     };
                                                     dataEdges.push(edge);
-                                                }sdqs
+                                                }
                                             }
                                         } else {
                                             console.log("Error: Multiples nodes with same id found");
