@@ -23,22 +23,26 @@
 <br>
 
 <h5><strong>Size</strong></h5>
-<div>
-  Max Node Size
-  <input type="number" ng-model="vis.params.maxNodeSize" min="1">
-</div>
-<div>
-  Min Node Size
-  <input type="number" ng-model="vis.params.minNodeSize" min="1">
-</div>
-<div>
-  Max Edge Width
-  <input type="number" ng-model="vis.params.maxEdgeSize" min="1">
-</div>
-<div>
-  Min Edge Width
-  <input type="number" ng-model="vis.params.minEdgeSize" min="0.1">
-</div>
+<table>
+    <tbody>
+        <tr>
+            <td>Max Node Size&nbsp;</td>
+            <td><input type="number" ng-model="vis.params.maxNodeSize" min="1"></td>
+        </tr>
+        <tr>
+            <td>Min Node Size&nbsp;</td>
+            <td><input type="number" ng-model="vis.params.minNodeSize" min="1"></td>
+        </tr>
+        <tr>
+            <td>Max Edge Width&nbsp;</td>
+            <td><input type="number" ng-model="vis.params.maxEdgeSize" min="1"></td>
+        </tr>
+        <tr>
+            <td>Min Edge Width&nbsp;</td>
+            <td><input type="number" ng-model="vis.params.minEdgeSize" min="0.1"></td>
+        </tr>
+    </tbody>
+</table>
 
 <br>
 
@@ -79,6 +83,58 @@
 
 <br>
 
+<h5><strong>Directional Edges</strong></h5>
+<table>
+    <tbody>
+        <tr>
+            <td>Display directional edge:&nbsp;</td>
+            <td><input type="checkbox" ng-model="vis.params.displayArrow"></td>
+        </tr>
+        <tr>
+            <td>Endpoint position:&nbsp;</td>
+            <td>
+                <select class="form-control" ng-model="vis.params.posArrow" id="sel4">
+                    <option value="from">Beginning</option>
+                    <option value="middle">Middle</option>
+                    <option value="to">End side</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Endpoint Type:</td>
+            <td>
+                <select class="form-control" ng-model="vis.params.shapeArrow" id="sel3">
+                    <option value="arrow">Arrow</option>
+                    <option value="circle">Circle</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Scale Factor:</td>
+            <td><input type="number" ng-model="vis.params.scaleArrow" min="0"></td>
+        </tr>
+        <tr>
+            <td>Smooth type:</td>
+            <td>
+                <select class="form-control" ng-model="vis.params.smoothType" id="sel5">
+                    <option value="dynamic">Dynamic</option>
+                    <option value="continuous">Continuous Anchor</option>
+                    <option value="discrete">Discrete Anchor</option>
+                    <option value="diagonalCross">Diagonal Anchor</option>
+                    <option value="straightCross">Straight Line</option>
+                    <option value="horizontal">Horizontal Anchor</option>
+                    <option value="vertical">Vertical Anchor</option>
+                    <option value="curvedCW">Clock-wise Curve</option>
+                    <option value="curvedCCW">Counter-Clock-wise Curve</option>
+                    <option value="cubicBezier">Cubic Bezier</option>
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+
 <h5><strong>Extra</strong></h5>
 <div class="checkbox">
   <label>
@@ -93,17 +149,21 @@
     <input type="checkbox" ng-model="vis.params.showColorLegend">
     Show Color Legend (Node Color selected)
   </label>
+  <label>
+    <input type="checkbox" ng-model="vis.params.nodePhysics">
+    Nodes Acting like Springs
+  </label>
 </div>
 
 <br>
 
 <h5><strong>Network constants</strong></h5>
 <div>
-  Gravitational
+  Attraction Force
   <input type="number" ng-model="vis.params.gravitationalConstant" id="gravC">
 </div>
 <div>
-  Spring
+  Spring Force
   <input type="number" ng-model="vis.params.springConstant" id="springC">
 </div>
 
