@@ -55,8 +55,8 @@ function NetworkVisTypeProvider(Private) {
         minNodeSize: 8,
         maxEdgeSize: 20,
         minEdgeSize: 0.1,
-        springConstant: 0.04,
-        gravitationalConstant: -2000
+        springConstant: 0.001,
+        gravitationalConstant: -35000
       },
       editor: networkVisParamsTemplate
     },
