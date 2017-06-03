@@ -24,8 +24,8 @@ rm -rf plugins/network_vis/
 ## Releases for Kibana 5 and 4
 
 Now this plugin is avalible for differents versions of Kibana, in [releases](https://github.com/dlumbrer/kbn_network/releases "Go to releases!") you can find the source code, ZIPs and TARs of the plugin to use in:
-* [Kibana 5.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-5.x "Go to source")
-* [Kibana 4.x] (https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-4.x "Go to source")
+* [Kibana 5.x](https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-5.x "Go to source")
+* [Kibana 4.x](https://github.com/dlumbrer/kbn_network/releases/tag/Kibana-4.x "Go to source")
 
 ### Building a Release
 Building a release only means packaging the plugin with all its dependencies into a zip archive. Important is to put the plugin in a folder called kibana before zipping it.
