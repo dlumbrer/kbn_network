@@ -10,6 +10,7 @@ This is a plugin developed for Kibana 5 that displays a network node that link t
 cd KIBANA_HOME/plugins
 git clone https://github.com/dlumbrer/kbn_network.git network_vis
 cd network_vis
+rm -rf images/
 npm install
 ```
 > **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0"**") only change the value of the "version" tag on the package.json to your Kibana version
