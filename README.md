@@ -1,4 +1,4 @@
-# Network Plugin for Kibana 5
+# Network Plugin for Kibana 4.x
 
 This is a plugin developed for Kibana 5 that displays a network node that link two fields that have been previously selected.
 
@@ -7,17 +7,11 @@ This is a plugin developed for Kibana 5 that displays a network node that link t
 ##Installation Steps
 
 ```
-cd KIBANA_HOME/plugins
-```
-> If the **plugins** folder does not exist, change to **installedPlugins** and continue.
-
-```
-git clone https://github.com/dlumbrer/kbn_network.git network_vis
+cd KIBANA_HOME/installedPlugins
+git clone -b 4.x https://github.com/dlumbrer/kbn_network.git network_vis
 cd network_vis
 npm install
 ```
-> **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "5.0.0-rc1"**") only change the value of the "version" tag on the package.json to your Kibana version
-
 
 ####Unistall:
 ```
