@@ -40,7 +40,7 @@ define(function (require) {
 
     $scope.startDynamicResize = function(network){
       for (i = 0; i < $(".vis-container" ).length; i++) {
-         if($(".vis-container")[i].children[0].children[1] && $(".vis-container")[i].children[0].children[1].id == "mynetwork"){
+         if($(".vis-container")[i].children[0].children[1] && $(".vis-container")[i].children[0].children[1].id == network_id){
            var viscontainer = $(".vis-container")[i];
            break;
          }
@@ -271,7 +271,7 @@ define(function (require) {
             var nodesDataSet = new visN.DataSet(dataNodes);
             var edgesDataSet = new visN.DataSet(dataEdges);
 
-            var container = document.getElementById('mynetwork');
+            var container = document.getElementById(network_id);
             container.style.height = container.getBoundingClientRect().height;
             container.height = container.getBoundingClientRect().height;
             var data = {
@@ -529,7 +529,7 @@ define(function (require) {
           var edgesDataSet = new visN.DataSet(dataEdges);
 
           // Creation of the network
-          var container = document.getElementById('mynetwork');
+          var container = document.getElementById(network_id);
           //Set the Heigth
           container.style.height = container.getBoundingClientRect().height;
           container.height = container.getBoundingClientRect().height;
