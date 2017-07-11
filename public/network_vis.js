@@ -1,28 +1,18 @@
 import "plugins/network_vis/network_vis.less";
 import 'plugins/network_vis/network_vis_controller';
-import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
-import VisSchemasProvider from 'ui/vis/schemas';
+import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import { VisSchemasProvider } from 'ui/vis/schemas';
 import networkVisTemplate from 'plugins/network_vis/network_vis.html';
 import networkVisParamsTemplate from 'plugins/network_vis/network_vis_params.html';
 
 
-// we need to load the css ourselves
-
-// we also need to load the controller and used by the template
-
-
-// our params are a bit complex so we will manage them with a directive
-
-
-// require the directives that we use as well
-
-
 // register the provider with the visTypes registry
-require('ui/registry/vis_types').register(NetworkVisTypeProvider);
+VisTypesRegistryProvider.register(NetworkVisTypeProvider);
 
 // define the TableVisType
 function NetworkVisTypeProvider(Private) {
-  const TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
+  const TemplateVisType = Private(TemplateVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
