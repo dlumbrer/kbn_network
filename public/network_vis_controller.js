@@ -73,9 +73,9 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
     $scope.$watchMulti(['esResponse', 'vis.params'], function ([resp]) {
         if (resp) {
             $("#" + loading_id).hide();
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////NODE-NODE Type///////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////NODE-NODE Type///////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if($scope.vis.aggs.bySchemaName['first'].length >= 1 && !$scope.vis.aggs.bySchemaName['second']){
                 $scope.initialShows();
                 $(".secondNode").show();
@@ -193,7 +193,10 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
                         color: colorNodeFinal,
                         shape: $scope.vis.params.shapeFirstNode,
                         //size: sizeVal
-                        value: sizeVal
+                        value: sizeVal,
+                        font : {
+                          color: $scope.vis.params.labelColor
+                        }
                     }
 
                     //If activated, show the labels
@@ -208,9 +211,9 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
 
                     return nodeReturn;
                 });
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////BUILDING EDGES///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////BUILDING EDGES///////////////////////////////////////////////////////////////////////
                 //Clean "undefined" in the array
                 dataNodes = dataNodes.filter(Boolean);
                 var dataEdges = [];
@@ -233,6 +236,9 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
                                         key: dataParsed[n].relationWithSecondNode[r].keySecondNode,
                                         label : dataParsed[n].relationWithSecondNode[r].keySecondNode,
                                         color: $scope.vis.params.secondNodeColor,
+                                        font : {
+                                          color: $scope.vis.params.labelColor
+                                        },
                                         shape: $scope.vis.params.shapeSecondNode
                                     };
                                     //Add new node
@@ -503,7 +509,10 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
                         color: colorNodeFinal,
                         shape: $scope.vis.params.shapeFirstNode,
                         //size: sizeVal
-                        value: sizeVal
+                        value: sizeVal,
+                        font : {
+                          color: $scope.vis.params.labelColor
+                        }
                     }
 
                     //If activated, show the labels
