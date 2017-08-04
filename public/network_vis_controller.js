@@ -193,7 +193,10 @@ define(function (require) {
                             color: colorNodeFinal,
                             shape: $scope.vis.params.shapeFirstNode,
                             //size: sizeVal
-                            value: sizeVal
+                            value: sizeVal,
+                            font : {
+                              color: $scope.vis.params.labelColor
+                            }
                         }
 
                         //If activated, show the labels
@@ -233,6 +236,9 @@ define(function (require) {
                                             key: dataParsed[n].relationWithSecondNode[r].keySecondNode,
                                             label : dataParsed[n].relationWithSecondNode[r].keySecondNode,
                                             color: $scope.vis.params.secondNodeColor,
+                                            font : {
+                                              color: $scope.vis.params.labelColor
+                                            },
                                             shape: $scope.vis.params.shapeSecondNode
                                         };
                                         //Add new node
@@ -503,7 +509,10 @@ define(function (require) {
                             color: colorNodeFinal,
                             shape: $scope.vis.params.shapeFirstNode,
                             //size: sizeVal
-                            value: sizeVal
+                            value: sizeVal,
+                            font : {
+                              color: $scope.vis.params.labelColor
+                            }
                         }
 
                         //If activated, show the labels

@@ -56,7 +56,8 @@ function NetworkVisTypeProvider(Private) {
         maxEdgeSize: 20,
         minEdgeSize: 0.1,
         springConstant: 0.001,
-        gravitationalConstant: -35000
+        gravitationalConstant: -35000,
+        labelColor: '#000000'
       },
       editor: networkVisParamsTemplate
     },
