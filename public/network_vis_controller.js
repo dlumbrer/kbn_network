@@ -37,7 +37,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
     }
 
     $scope.startDynamicResize = function(network){
-        for (i = 0; i < $(".vis-container" ).length; i++) {
+        for (var i = 0; i < $(".vis-container" ).length; i++) {
             if($(".vis-container")[i].children[0].children[1] && $(".vis-container")[i].children[0].children[1].id == network_id){
                 var viscontainer = $(".vis-container")[i];
                 break;
