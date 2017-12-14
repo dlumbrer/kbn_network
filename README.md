@@ -17,7 +17,7 @@ Now this plugin is avalible for differents versions of Kibana (6, 5 and 4), in [
 
 1. Move into plugins folder:  `cd KIBANA_HOME/plugins`
 2. Clone the source code (**it depends on your Kibana's version**):
-    - Kibana 6: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 6-dev`
+    - Kibana 6: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 6-dev`
     - Kibana 5.5.X or 5.6.X: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 5.5.x`
     - Kibana 5.5.X or lower: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 5.4.x`
     - Kibana 4: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 4.x`
