@@ -1,22 +1,35 @@
-# Network Plugin for Kibana 5
+# Network Plugin for Kibana 5 and 6
 
-This is a plugin developed for Kibana 5 that displays a network node that link two fields that have been previously selected.
+This is a plugin developed for Kibana that displays a network node that link two fields that have been previously selected.
 
 ###### Link to the page: https://dlumbrer.github.io/kbn_network/
 
-## First, download the release according your Kibana's version
+## Installation Steps from release
 
-Now this plugin is avalible for differents versions of Kibana, in [releases](https://github.com/dlumbrer/kbn_network/releases "Go to releases!") you can find the source code, ZIPs and TARs of the plugin to use in:
+Now this plugin is avalible for differents versions of Kibana (6, 5 and 4), in [releases](https://github.com/dlumbrer/kbn_network/releases "Go to releases!") you can download the plugin with all its dependencies installed:
 
-## Installation Steps
+1. Go to [releases](https://github.com/dlumbrer/kbn_network/releases "Go to releases!") and download the right one for your Kibana
+2. unzip/untar it into `KIBANA_HOME/plugins`
+3. Start your Kibana
 
-```
-cd KIBANA_HOME/plugins
-git clone https://github.com/dlumbrer/kbn_network.git network_vis
-cd network_vis
-rm -rf images/
-npm install
-```
+
+## Installation Steps from GitHub source code
+
+1. Move into plugins folder:  `cd KIBANA_HOME/plugins`
+2. Clone the source code (**it depends on your Kibana's version**):
+    - Kibana 6: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 6-dev`
+    - Kibana 5.5.X or 5.6.X: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 5.5.x`
+    - Kibana 5.5.X or lower: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 5.4.x`
+    - Kibana 4: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 4.x`
+
+3. Install dependencies:
+      ```
+      cd network_vis
+      rm -rf images/
+      npm install
+      ```
+4. Start Kibana
+
 > **Important:** If you have any problem with the plugin version (like a warning message "**it expected Kibana version "x.x.x", and found "x.x.x"**") only change the value of the "version" tag on the package.json to your Kibana version
 
 
