@@ -511,7 +511,14 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
 
                         //RELATION//////////////////////////////
                         if(metricsAgg_sizeEdge){
-                            var value_sizeEdge = bucket[3];
+                            id_second = 2;
+                            id_colornode = 4;
+                            //if both selected
+                            if(metricsAgg_sizeNode){
+                              id_second = 3;
+                              id_colornode = 6;
+                            }
+                            var value_sizeEdge = bucket[id_second-1];
                             var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                         }else{
                             var sizeEdgeVal = 0.1;
@@ -581,23 +588,30 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
                         return nodeReturn;
                     } else if (result.length == 1) {
                       //Repetido el nodo, solo añadimos sus relaciones
-                        var dataParsed_node_exist = result[0]
-                        if($scope.vis.aggs.bySchemaName['first'].length > 1){
-                            if(metricsAgg_sizeEdge){
-                                var value_sizeEdge = bucket[2];
-                                var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
-                            }else{
-                                var sizeEdgeVal = 0.1;
-                            }
-
-                            var relation = {
-                              keySecondNode: bucket[id_second],
-                              countMetric: bucket[1],
-                              widthOfEdge: sizeEdgeVal
-                            }
-                            dataParsed_node_exist.relationWithSecondNode.push(relation)
+                      var dataParsed_node_exist = result[0]
+                      if($scope.vis.aggs.bySchemaName['second'].length > 0){
+                        if(metricsAgg_sizeEdge){
+                          id_second = 2;
+                          id_colornode = 4;
+                          //if both selected
+                          if(metricsAgg_sizeNode){
+                            id_second = 3;
+                            id_colornode = 6;
+                          }
+                          var value_sizeEdge = bucket[id_second-1];
+                          var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                        }else{
+                          var sizeEdgeVal = 0.1;
                         }
-                        return undefined
+
+                        var relation = {
+                          keyRelation: bucket[id_second],
+                          countMetric: bucket[1],
+                          widthOfEdge: sizeEdgeVal
+                        }
+                        dataParsed_node_exist.relationWithSecondField.push(relation)
+                      }
+                      return undefined
                     }
                 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
