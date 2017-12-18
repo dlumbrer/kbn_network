@@ -68,6 +68,7 @@ function NetworkVisTypeProvider(Private) {
           group: 'metrics',
           name: 'size_node',
           title: 'Node Size',
+          mustBeFirst: 'true',
           max: 1
           /*
           defaults: [

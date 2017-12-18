@@ -145,9 +145,14 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
                     //Iterate rows and choose the edge size
                     if($scope.vis.aggs.bySchemaName['first'].length > 1){
                         if(metricsAgg_sizeEdge){
-                            var value_sizeEdge = bucket[2];
-                            id_second = 3;
-                            id_colornode = 6;
+                            id_second = 2;
+                            id_colornode = 4;
+                            //If both selected
+                            if(metricsAgg_sizeNode){
+                              id_second = 3;
+                              id_colornode = 6;
+                            }
+                            var value_sizeEdge = bucket[id_second-1];
                             var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                         }else{
                             id_second = 2;
@@ -224,14 +229,16 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, Private) {
                       var dataParsed_node_exist = result[0]
                       //Iterate rows and choose the edge size
                       if($scope.vis.aggs.bySchemaName['first'].length > 1){
+                          id_second = 2;
+                          id_colornode = 4;
                           if(metricsAgg_sizeEdge){
-                              var value_sizeEdge = bucket[2];
-                              id_second = 3;
-                              id_colornode = 6;
+                              if(metricsAgg_sizeNode){
+                                id_second = 3;
+                                id_colornode = 6;
+                              }
+                              var value_sizeEdge = bucket[id_second-1];
                               var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                           }else{
-                              id_second = 2;
-                              id_colornode = 4;
                               var sizeEdgeVal = 0.1;
                           }
 
