@@ -114,16 +114,16 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     var id_colornode = 4;
                     var dataNodes = buckets.map(function(bucket) {
 
-                    var result = $.grep(dataParsed, function(e){ return e.keyFirstNode == bucket[0]; });
+                    var result = $.grep(dataParsed, function(e){ return e.keyFirstNode == bucket[0].value; });
                     if (result.length == 0) {
                         dataParsed[i] = {};
 
-                        dataParsed[i].keyFirstNode = bucket[0];
+                        dataParsed[i].keyFirstNode = bucket[0].value;
 
                         //Metrics are for the sizes
                         if(metricsAgg_sizeNode){
                             // Use the getValue function of the aggregation to get the value of a bucket
-                            var value = bucket[1]//metricsAgg_sizeNode.getValue(bucket);
+                            var value = bucket[1].value//metricsAgg_sizeNode.getValue(bucket);
                             var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
 
                             //No show nodes under the value
@@ -153,7 +153,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                 id_second = 3;
                                 id_colornode = 6;
                                 }
-                                var value_sizeEdge = bucket[id_second-1];
+                                var value_sizeEdge = bucket[id_second-1].value;
                                 var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                             }else{
                                 id_second = 2;
@@ -162,17 +162,17 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
 
                             if(colorNodeAggId){
-                                if(colorDicc[bucket[id_colornode]]){
-                                    dataParsed[i].nodeColorKey = bucket[id_colornode];
-                                    dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode]];
+                                if(colorDicc[bucket[id_colornode].value]){
+                                    dataParsed[i].nodeColorKey = bucket[id_colornode].value;
+                                    dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode].value];
                                 }else{
                                     //repeat to find a NO-REPEATED color
                                     while(true){
                                         var confirmColor = randomColor();
                                         if(usedColors.indexOf(confirmColor) == -1){
-                                            colorDicc[bucket[id_colornode]] = confirmColor;
-                                            dataParsed[i].nodeColorKey = bucket[id_colornode];
-                                            dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode]];
+                                            colorDicc[bucket[id_colornode].value] = confirmColor;
+                                            dataParsed[i].nodeColorKey = bucket[id_colornode].value;
+                                            dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode].value];
                                             usedColors.push(confirmColor);
                                             break;
                                         }
@@ -182,15 +182,15 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
 
                             var relation = {
-                            keySecondNode: bucket[id_second],
-                            countMetric: bucket[1],
+                            keySecondNode: bucket[id_second].value,
+                            countMetric: bucket[1].value,
                             widthOfEdge: sizeEdgeVal
                             }
                             dataParsed[i].relationWithSecondNode.push(relation)
                         }
 
                         //assigning color and the content of the popup
-                        var inPopup = "<p>" + bucket[0] + "</p>"
+                        var inPopup = "<p>" + bucket[0].value + "</p>"
                         if(dataParsed[i].nodeColorValue != "default"){
                             var colorNodeFinal = dataParsed[i].nodeColorValue;
                             inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
@@ -202,7 +202,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         //Return the node totally built
                         var nodeReturn = {
                             id: i,
-                            key: bucket[0],
+                            key: bucket[0].value,
                             color: colorNodeFinal,
                             shape: $scope.vis.params.shapeFirstNode,
                             //size: sizeVal
@@ -214,7 +214,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                         //If activated, show the labels
                         if($scope.vis.params.showLabels){
-                            nodeReturn.label = bucket[0];
+                            nodeReturn.label = bucket[0].value;
                         }
 
                         //If activated, show the popups
@@ -237,15 +237,15 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                     id_second = 3;
                                     id_colornode = 6;
                                 }
-                                var value_sizeEdge = bucket[id_second-1];
+                                var value_sizeEdge = bucket[id_second-1].value;
                                 var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                             }else{
                                 var sizeEdgeVal = 0.1;
                             }
 
                             var relation = {
-                                keySecondNode: bucket[id_second],
-                                countMetric: bucket[1],
+                                keySecondNode: bucket[id_second].value,
+                                countMetric: bucket[1].value,
                                 widthOfEdge: sizeEdgeVal
                             }
                             dataParsed_node_exist.relationWithSecondNode.push(relation)
@@ -478,15 +478,15 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     var i = 0;
                     var dataNodes = buckets.map(function(bucket) {
                     //New structure, needed to search after algorimt
-                    var result = $.grep(dataParsed, function(e){ return e.keyNode == bucket[0]; });
+                    var result = $.grep(dataParsed, function(e){ return e.keyNode == bucket[0].value; });
                     if (result.length == 0) {
                             dataParsed[i] = {};
-                            dataParsed[i].keyNode = bucket[0];
+                            dataParsed[i].keyNode = bucket[0].value;
 
                             //Metrics are for the sizes
                             if(metricsAgg_sizeNode){
                                 // Use the getValue function of the aggregation to get the value of a bucket
-                                var value = bucket[1];
+                                var value = bucket[1].value;
                                 var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
 
                                 //No show nodes under the value
@@ -504,7 +504,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             dataParsed[i].relationWithSecondField = []
 
                             //It depends of the priority of the selection to obtain the buckets
-                            if(bucket[secondFieldAggId]){
+                            if(bucket[secondFieldAggId].value){
                                 var orderId = secondFieldAggId;
                             }else{
                                 var orderId = firstFieldAggId;
@@ -519,7 +519,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                 id_second = 3;
                                 id_colornode = 6;
                                 }
-                                var value_sizeEdge = bucket[id_second-1];
+                                var value_sizeEdge = bucket[id_second-1].value;
                                 var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                             }else{
                                 var sizeEdgeVal = 0.1;
@@ -527,17 +527,17 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             //Get the color of the node, save in the dictionary
                             if(colorNodeAggId){
-                                if(colorDicc[bucket[id_colornode]]){
-                                    dataParsed[i].nodeColorKey = bucket[id_colornode];
-                                    dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode]];
+                                if(colorDicc[bucket[id_colornode].value]){
+                                    dataParsed[i].nodeColorKey = bucket[id_colornode].value;
+                                    dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode].value];
                                 }else{
                                     //repeat to find a NO-REPEATED color
                                     while(true){
                                         var confirmColor = randomColor();
                                         if(usedColors.indexOf(confirmColor) == -1){
-                                            colorDicc[bucket[id_colornode]] = confirmColor;
-                                            dataParsed[i].nodeColorKey = bucket[id_colornode];
-                                            dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode]];
+                                            colorDicc[bucket[id_colornode].value] = confirmColor;
+                                            dataParsed[i].nodeColorKey = bucket[id_colornode].value;
+                                            dataParsed[i].nodeColorValue = colorDicc[bucket[id_colornode].value];
                                             usedColors.push(confirmColor);
                                             break;
                                         }
@@ -547,14 +547,14 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
 
                             var relation = {
-                                keyRelation: bucket[id_second],
-                                countMetric: bucket[1],
+                                keyRelation: bucket[id_second].value,
+                                countMetric: bucket[1].value,
                                 widthOfEdge: sizeEdgeVal
                             };
                             dataParsed[i].relationWithSecondField.push(relation)
                             /////////////////////////////
 
-                            var inPopup = "<p>" + bucket[0] + "</p>"
+                            var inPopup = "<p>" + bucket[0].value + "</p>"
                             if(dataParsed[i].nodeColorValue != "default"){
                                 var colorNodeFinal = dataParsed[i].nodeColorValue;
                                 inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
@@ -566,7 +566,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             //Return the node totally built
                             var nodeReturn = {
                                 id: i,
-                                key: bucket[0],
+                                key: bucket[0].value,
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
                                 //size: sizeVal
@@ -578,7 +578,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             //If activated, show the labels
                             if($scope.vis.params.showLabels){
-                                nodeReturn.label = bucket[0];
+                                nodeReturn.label = bucket[0].value;
                             }
 
                             //If activated, show the popups
@@ -599,15 +599,15 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                 id_second = 3;
                                 id_colornode = 6;
                             }
-                            var value_sizeEdge = bucket[id_second-1];
+                            var value_sizeEdge = bucket[id_second-1].value;
                             var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                             }else{
                             var sizeEdgeVal = 0.1;
                             }
 
                             var relation = {
-                            keyRelation: bucket[id_second],
-                            countMetric: bucket[1],
+                            keyRelation: bucket[id_second].value,
+                            countMetric: bucket[1].value,
                             widthOfEdge: sizeEdgeVal
                             }
                             dataParsed_node_exist.relationWithSecondField.push(relation)
