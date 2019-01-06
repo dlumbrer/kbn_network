@@ -68,6 +68,7 @@ function NetworkVisTypeProvider(Private) {
           name: 'size_node',
           title: 'Node Size',
           mustBeFirst: 'true',
+          min: 1,
           max: 1,
           defaults: [
             { type: 'count', schema: 'size_node' }
