@@ -1,10 +1,6 @@
 import "plugins/network_vis/network_vis.less";
-import 'plugins/network_vis/network_vis_controller';
 
-import 'ui/agg_table';
-import 'ui/agg_table/agg_table_group';
-
-import { CATEGORY } from 'ui/vis/vis_category';
+import { KbnNetworkVisController } from './network_vis_controller'
 import { VisFactoryProvider } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
@@ -29,8 +25,6 @@ function NetworkVisTypeProvider(Private) {
     title: 'Network',
     image,
     description: 'Displays a network node that link two fields that have been selected.',
-    category: CATEGORY.OTHER,
-
     visConfig: {
       defaults: {
         showLabels: true,
