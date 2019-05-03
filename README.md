@@ -68,7 +68,12 @@ You can find an user guide in the file [USER_GUIDE.md](https://github.com/dlumbr
 
 ## Help me to improve! :smile:
 
-If there's any problem or doubt, please, open a Github Issue (Pull Request) or contact me via email (dmorenolumb@gmail.com). It would be very helpful if you tried it and tell me what you think of it, the errors and the possible improves that I could make.
+You can contact or helping me if you have any issue by:
 
+- Opening an issue in the repository
+- Opening a PR
+- Sending an email to [me](mailto:dmorenolumb@gmail.com)!
 
-#### For anything, contact me: dmorenolumb@gmail.com
+This is an open source project that I maintain in my free time, as a hobby and my love for open source and data visualization. It is free as you know, but you can help me with a cup of coffee:
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HHPTP787VZVZL)
