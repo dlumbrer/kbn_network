@@ -4,7 +4,7 @@ import { uiModules } from 'ui/modules';
 // didn't already
 const module = uiModules.get('kibana/transform_vis', ['kibana']);
 //import the npm modules
-const visN = require('vis');
+const visN = require('vis-network');
 const randomColor = require('randomcolor');
 const ElementQueries = require('css-element-queries/src/ElementQueries');
 const ResizeSensor = require('css-element-queries/src/ResizeSensor');
@@ -153,7 +153,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             if (metricsAgg_sizeNode) {
                                 // Use the getValue function of the aggregation to get the value of a bucket
                                 var value = bucket[nodeSizeId]//metricsAgg_sizeNode.getValue(bucket);
-                                var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
+                                var sizeVal = Math.max($scope.vis.params.maxCutMetricSizeNode, value);
 
                                 //No show nodes under the value
                                 if ($scope.vis.params.minCutMetricSizeNode > value) {
@@ -176,7 +176,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
                                 if (metricsAgg_sizeEdge) {
                                     var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
@@ -252,7 +252,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
                                 if (metricsAgg_sizeEdge) {
                                     var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
@@ -496,7 +496,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             if (metricsAgg_sizeNode) {
                                 // Use the getValue function of the aggregation to get the value of a bucket
                                 var value = bucket[nodeSizeId];
-                                var sizeVal = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
+                                var sizeVal = Math.max($scope.vis.params.maxCutMetricSizeNode, value);
 
                                 //No show nodes under the value
                                 if ($scope.vis.params.minCutMetricSizeNode > value) {
@@ -515,7 +515,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             //RELATION//////////////////////////////
                             if (metricsAgg_sizeEdge) {
                                 var value_sizeEdge = bucket[edgeSizeId];
-                                var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                             } else {
                                 var sizeEdgeVal = 0.1;
                             }
@@ -588,7 +588,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             if ($scope.vis.aggs.bySchemaName['second'].length > 0) {
                                 if (metricsAgg_sizeEdge) {
                                     var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
