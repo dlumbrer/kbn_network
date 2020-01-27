@@ -18,7 +18,7 @@
     "css-element-queries": "0.3.2",
     "keycharm": "^0.2.0",
     "moment": "^2.24.0",
-    "vis-data": "^6.3.5",
+    "vis-data": "^6.2.1",
     "vis-util": "^1.1.8"
   }
 }
