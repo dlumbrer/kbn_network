@@ -1,7 +1,7 @@
 import "plugins/network_vis/network_vis.less";
 
 import { KbnNetworkVisController } from './network_vis_controller'
-import { VisFactory } from 'ui/vis/vis_factory';
+import { visFactory } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
 import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
 import image from './images/icon-network.svg';
@@ -17,7 +17,7 @@ function NetworkVisTypeProvider(Private) {
 
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
-  return VisFactory.createAngularVisualization({
+  return visFactory.createAngularVisualization({
     name: 'network',
     title: 'Network',
     image,
