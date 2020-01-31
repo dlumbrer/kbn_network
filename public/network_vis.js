@@ -1,22 +1,19 @@
 import "plugins/network_vis/network_vis.less";
 
 import { KbnNetworkVisController } from './network_vis_controller'
-import { VisFactoryProvider } from 'ui/vis/vis_factory';
+import { VisFactory } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
-import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
 import image from './images/icon-network.svg';
 import networkVisTemplate from 'plugins/network_vis/network_vis.html';
 import networkVisParamsTemplate from 'plugins/network_vis/network_vis_params.html';
 
 
-
-
 // register the provider with the visTypes registry
-VisTypesRegistryProvider.register(NetworkVisTypeProvider);
+visualizations.types.registerVisualization(NetworkVisTypeProvider);
 
 // define the TableVisType
 function NetworkVisTypeProvider(Private) {
-  const VisFactory = Private(VisFactoryProvider);
 
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
