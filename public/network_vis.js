@@ -7,7 +7,7 @@ import { setup as visualizations } from '../../../src/legacy/core_plugins/visual
 import image from './images/icon-network.svg';
 import networkVisTemplate from 'plugins/network_vis/network_vis.html';
 import networkVisParamsTemplate from 'plugins/network_vis/network_vis_params.html';
-
+import { AngularVisController } from 'ui/vis/vis_types/angular_vis_type';
 
 // register the provider with the visTypes registry
 visualizations.types.registerVisualization(NetworkVisTypeProvider);
@@ -17,11 +17,12 @@ function NetworkVisTypeProvider(Private) {
 
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
-  return visFactory.createAngularVisualization({
+  return visFactory.createBaseVisualization({
     name: 'network',
     title: 'Network',
     image,
     description: 'Displays a network node that link two fields that have been selected.',
+    visualization: AngularVisController,
     visConfig: {
       defaults: {
         showLabels: true,
