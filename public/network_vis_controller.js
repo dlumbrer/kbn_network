@@ -1,4 +1,6 @@
 import { uiModules } from 'ui/modules';
+//import { AggConfig } from 'ui/agg_types/agg_config';
+import {AggConfig} from '../../../src/legacy/ui/public/agg_types';
 
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
@@ -66,7 +68,9 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
     $scope.$watchMulti(['esResponse', 'vis.params.secondNodeColor'], function ([resp]) {
         let firstFirstBucketId, firstSecondBucketId, secondBucketId, colorBucketId, nodeSizeId, edgeSizeId
         if (resp) {
-            // new in 7.2
+            console.log(resp);
+            console.log($scope.vis.aggs)
+
             // helper function to get column id
             var getColumnIdByAggId = function getColumnIdByAggId(aggId) {
                 return resp.columns.find(function (col) {
@@ -74,27 +78,23 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                 }).id;
             };
 
-            if ($scope.vis.aggs.bySchemaName.size_node) {
-                nodeSizeId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.size_node[0].id);
-            }
-
-            if ($scope.vis.aggs.bySchemaName.size_edge) {
-                edgeSizeId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.size_edge[0].id);
-            }
-
-            if ($scope.vis.aggs.bySchemaName.first) {
-                var nodeAggs = $scope.vis.aggs.bySchemaName.first;
-                firstFirstBucketId = getColumnIdByAggId(nodeAggs[0].id);
-                firstSecondBucketId = nodeAggs.length > 1 ? getColumnIdByAggId(nodeAggs[1].id) : null;
-            }
-
-            if ($scope.vis.aggs.bySchemaName.second) {
-                secondBucketId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.second[0].id);
-            }
-
-            if ($scope.vis.aggs.bySchemaName.colornode) {
-                colorBucketId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.colornode[0].id);
-            }
+            $scope.vis.aggs.aggs.forEach((agg) => {
+                if (agg.__schema.name === "first") {
+                    if (firstFirstBucketId) {
+                        firstSecondBucketId = getColumnIdByAggId(agg.id)
+                    } else {
+                        firstFirstBucketId = getColumnIdByAggId(agg.id)
+                    }
+                } else if (agg.__schema.name === "second") {
+                    secondBucketId = getColumnIdByAggId(agg.id)
+                } else if (agg.__schema.name === "colornode") {
+                    colorBucketId = getColumnIdByAggId(agg.id)
+                } else if (agg.__schema.name === "size_node") {
+                    nodeSizeId = getColumnIdByAggId(agg.id)
+                } else if (agg.__schema.name === "size_edge") {
+                    edgeSizeId = getColumnIdByAggId(agg.id)
+                }
+            });
 
             ///// It is neccessary to add Timeout in order to have more than 1 net in the same dashboard
             $timeout(function () {
