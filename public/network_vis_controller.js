@@ -66,7 +66,18 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
     }
 
     $scope.$watchMulti(['esResponse', 'vis.params.secondNodeColor'], function ([resp]) {
+        // variables for column ids
         let firstFirstBucketId, firstSecondBucketId, secondBucketId, colorBucketId, nodeSizeId, edgeSizeId
+
+        // variable for agg ids
+        let firstFirstFieldAggId, firstSecondFieldAggId, secondBucketAggId, colorNodeAggId
+
+        // variables for names
+        let firstFirstFieldName, firstSecondFieldName, colorNodeAggName
+
+        // variables to hold metrics
+        let metricsAgg_sizeNode, metricsAgg_sizeEdge
+
         if (resp) {
             console.log(resp);
             console.log($scope.vis.aggs)
@@ -81,20 +92,32 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
             $scope.vis.aggs.aggs.forEach((agg) => {
                 if (agg.__schema.name === "first") {
                     if (firstFirstBucketId) {
+                        firstSecondFieldAggId = agg.id
+                        firstSecondFieldName = agg.params.field.displayName
                         firstSecondBucketId = getColumnIdByAggId(agg.id)
                     } else {
+                        firstFirstFieldAggId = agg.id
+                        firstFirstFieldName = agg.params.field.displayName
                         firstFirstBucketId = getColumnIdByAggId(agg.id)
                     }
                 } else if (agg.__schema.name === "second") {
+                    secondBucketAggId = agg.id
                     secondBucketId = getColumnIdByAggId(agg.id)
                 } else if (agg.__schema.name === "colornode") {
+                    colorNodeAggId = agg.id
+                    colorNodeAggName = agg.params.field.displayName;
                     colorBucketId = getColumnIdByAggId(agg.id)
                 } else if (agg.__schema.name === "size_node") {
+                    metricsAgg_sizeNode = agg.params.field
                     nodeSizeId = getColumnIdByAggId(agg.id)
                 } else if (agg.__schema.name === "size_edge") {
+                    metricsAgg_sizeEdge = agg.params.field
                     edgeSizeId = getColumnIdByAggId(agg.id)
                 }
             });
+
+           // Get the buckets of the aggregation
+           var buckets = resp.rows;
 
             ///// It is neccessary to add Timeout in order to have more than 1 net in the same dashboard
             $timeout(function () {
@@ -104,38 +127,14 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////NODE-NODE Type///////////////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                if ($scope.vis.aggs.bySchemaName['first'].length >= 1 && !$scope.vis.aggs.bySchemaName['second']) {
+                if (firstSecondBucketId) {
                     $scope.initialShows();
                     $(".secondNode").show();
-                    // Retrieve the id of the configured tags aggregation
-                    var firstFieldAggId = $scope.vis.aggs.bySchemaName['first'][0].id;
-                    if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
-                        var secondFieldAggId = $scope.vis.aggs.bySchemaName['first'][1].id;
-                    }
 
-                    if ($scope.vis.aggs.bySchemaName['colornode']) {
-                        var colorNodeAggId = $scope.vis.aggs.bySchemaName['colornode'][0].id;
-                        var colorNodeAggName = $scope.vis.aggs.bySchemaName['colornode'][0].params.field.displayName;
+                    if (colorNodeAggId) {
                         var colorDicc = {};
                         var usedColors = [];
                     }
-
-                    //Names of the terms that have been selected
-                    var firstFieldAggName = $scope.vis.aggs.bySchemaName['first'][0].params.field.displayName;
-                    if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
-                        var secondFieldAggName = $scope.vis.aggs.bySchemaName['first'][1].params.field.displayName;
-                    }
-
-                    // Retrieve the metrics aggregation configured
-                    if ($scope.vis.aggs.bySchemaName['size_node']) {
-                        var metricsAgg_sizeNode = $scope.vis.aggs.bySchemaName['size_node'][0];
-                    }
-                    if ($scope.vis.aggs.bySchemaName['size_edge']) {
-                        var metricsAgg_sizeEdge = $scope.vis.aggs.bySchemaName['size_edge'][0];
-                    }
-
-                    // Get the buckets of that aggregation
-                    var buckets = resp.rows;
 
                     ///////////////////////////////////////////////////////////////DATA PARSED AND BUILDING NODES///////////////////////////////////////////////////////////////
                     var dataParsed = [];
@@ -151,9 +150,9 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             //Metrics are for the sizes
                             if (metricsAgg_sizeNode) {
-                                // Use the getValue function of the aggregation to get the value of a bucket
-                                var value = bucket[nodeSizeId]//metricsAgg_sizeNode.getValue(bucket);
-                                var sizeVal = Math.max($scope.vis.params.maxCutMetricSizeNode, value);
+                                // TO-DO: WHAT IS NODESIZEID - SEEMS LIKE IT'S STILL A COL ID HERE:
+                                var value = bucket[nodeSizeId]
+                                var sizeVal = value;
 
                                 //No show nodes under the value
                                 if ($scope.vis.params.minCutMetricSizeNode > value) {
@@ -173,10 +172,10 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
 
                             //Iterate rows and choose the edge size
-                            if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
+                            if (firstSecondBucketId) {
                                 if (metricsAgg_sizeEdge) {
                                     var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                    var sizeEdgeVal = value_sizeEdge;
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
@@ -246,13 +245,12 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
 
                         } else if (result.length == 1) {
-                            //Repetido el nodo, solo añadimos sus relaciones
                             var dataParsed_node_exist = result[0]
                             //Iterate rows and choose the edge size
-                            if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
+                            if (firstSecondBucketId) {
                                 if (metricsAgg_sizeEdge) {
                                     var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                    var sizeEdgeVal = value_sizeEdge;
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
@@ -283,7 +281,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             console.log("Error: Node not found");
                         } else if (result.length == 1) {
                             //Found the node, access to its id
-                            if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
+                            if (firstSecondBucketId) {
                                 for (var r = 0; r < dataParsed[n].relationWithSecondNode.length; r++) {
                                     //Find in the relations the second node to relate
                                     var nodeOfSecondType = $.grep(dataNodes, function (e) { return e.key == dataParsed[n].relationWithSecondNode[r].keySecondNode; });
@@ -334,7 +332,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     var nodesDataSet = new visN.DataSet(dataNodes);
                     var edgesDataSet = new visN.DataSet(dataEdges);
 
-                    //var container = document.getElementById(network_id);
                     var container = document.getElementById(network_id);
                     container.style.height = container.getBoundingClientRect().height;
                     container.height = container.getBoundingClientRect().height;
@@ -342,7 +339,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         nodes: nodesDataSet,
                         edges: edgesDataSet
                     };
-                    //CHANGE: Options controlled by user directly
+                    // Options controlled by user directly
                     var options_1 = {
                         height: container.getBoundingClientRect().height.toString(),
                         physics: {
@@ -439,47 +436,27 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     network.on("afterDrawing", function (canvasP) {
                         $("#" + loading_id).hide();
                         // Draw the color legend if Node Color is activated
-                        if ($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend) {
+                        if (colorBucketId  && $scope.vis.params.showColorLegend) {
                             $scope.drawColorLegend(usedColors, colorDicc);
                         }
                     });
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     /////////////////////////////////////////////////////////////////////NODE-RELATION Type/////////////////////////////////////////////////////////////////////
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                } else if ($scope.vis.aggs.bySchemaName['first'].length == 1 && $scope.vis.aggs.bySchemaName['second']) {
+                } else if (secondBucketId) {
                     $scope.initialShows();
                     $(".secondNode").hide();
-                    // Retrieve the id of the configured tags aggregation
-                    var firstFieldAggId = $scope.vis.aggs.bySchemaName['first'][0].id;
-                    var secondFieldAggId = $scope.vis.aggs.bySchemaName['second'][0].id;
 
-                    if ($scope.vis.aggs.bySchemaName['colornode']) {
-                        var colorNodeAggId = $scope.vis.aggs.bySchemaName['colornode'][0].id;
-                        var colorNodeAggName = $scope.vis.aggs.bySchemaName['colornode'][0].params.field.displayName;
+                    if (colorBucketId) {
                         var colorDicc = {};
                         var usedColors = [];
 
                         //Check if "Node Color" is the last selection
-                        if ($scope.vis.aggs.indexOf($scope.vis.aggs.bySchemaName['colornode'][0]) <= $scope.vis.aggs.indexOf($scope.vis.aggs.bySchemaName['second'][0])) {
+                        if (colorNodeAggId <= secondBucketAggId) {
                             $scope.errorNodeColor();
                             return;
                         }
                     }
-
-                    //Names of the terms that have been selected
-                    var firstFieldAggName = $scope.vis.aggs.bySchemaName['first'][0].params.field.displayName;
-                    var secondFieldAggName = $scope.vis.aggs.bySchemaName['second'][0].params.field.displayName;
-
-                    // Retrieve the metrics aggregation configured
-                    if ($scope.vis.aggs.bySchemaName['size_node']) {
-                        var metricsAgg_sizeNode = $scope.vis.aggs.bySchemaName['size_node'][0];
-                    }
-                    if ($scope.vis.aggs.bySchemaName['size_edge']) {
-                        var metricsAgg_sizeEdge = $scope.vis.aggs.bySchemaName['size_edge'][0];
-                    }
-
-                    // Get the buckets of that aggregation
-                    var buckets = resp.rows;
 
                     ///////////////////////////////////////////////////////////////DATA PARSED AND BUILDING NODES///////////////////////////////////////////////////////////////
                     var dataParsed = [];
@@ -494,9 +471,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             //Metrics are for the sizes
                             if (metricsAgg_sizeNode) {
-                                // Use the getValue function of the aggregation to get the value of a bucket
                                 var value = bucket[nodeSizeId];
-                                var sizeVal = Math.max($scope.vis.params.maxCutMetricSizeNode, value);
+                                var sizeVal = value;
 
                                 //No show nodes under the value
                                 if ($scope.vis.params.minCutMetricSizeNode > value) {
@@ -515,7 +491,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             //RELATION//////////////////////////////
                             if (metricsAgg_sizeEdge) {
                                 var value_sizeEdge = bucket[edgeSizeId];
-                                var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                var sizeEdgeVal = value_sizeEdge;
                             } else {
                                 var sizeEdgeVal = 0.1;
                             }
@@ -564,7 +540,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                 key: bucket[firstFirstBucketId],
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
-                                //size: sizeVal
                                 value: sizeVal,
                                 font: {
                                     color: $scope.vis.params.labelColor
@@ -583,12 +558,11 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             return nodeReturn;
                         } else if (result.length == 1) {
-                            //Repetido el nodo, solo añadimos sus relaciones
                             var dataParsed_node_exist = result[0]
                             if ($scope.vis.aggs.bySchemaName['second'].length > 0) {
                                 if (metricsAgg_sizeEdge) {
                                     var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                                    var sizeEdgeVal = value_sizeEdge;
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
@@ -724,7 +698,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     network.on("afterDrawing", function (canvasP) {
                         $("#" + loading_id).hide();
                         // Draw the color legend if Node Color is activated
-                        if ($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend) {
+                        if (colorBucketId && $scope.vis.params.showColorLegend) {
                             $scope.drawColorLegend(usedColors, colorDicc);
                         }
                     });
