@@ -1,21 +1,18 @@
-
-<h4>Relationship style</h4>
-
-<h5><strong>Default colors</strong></h5>
+<br>
+<h5><strong>Color Options</strong></h5>
+<br>
 <div>
-  <span>Background Color:</span>
+  <span>Background:</span>
   <input type="color" ng-model="vis.params.canvasBackgroundColor" class="form-control"/>
 </div>
 
 <div>
-  <span>Node:</span>
-  <!-- div colorpicker ng-model="vis.params.firstNodeColor"-->
+  <span>Primary Nodes:</span>
   <input type="color" ng-model="vis.params.firstNodeColor" class="form-control"/>
-  <!--/div-->
 </div>
 
-<div class="secondNode">
-  <span>Second Node:</span>
+<div>
+  <span>Secondary Nodes:</span>
   <input type="color" ng-model="vis.params.secondNodeColor" class="form-control"/>
 </div>
 
@@ -24,7 +21,7 @@
   <input type="color" ng-model="vis.params.labelColor" class="form-control"/>
 </div>
 
-
+<br>
 <br>
 
 <h5><strong>Size</strong></h5>
@@ -50,10 +47,12 @@
 </table>
 
 <br>
+<br>
 
-<h5><strong>Shapes</strong></h5>
+<h5><strong>Node Shape Options</strong></h5>
+<br>
 <div class="form-group">
-  <label for="sel1">Node: </label>
+  <label for="sel1">Primary Nodes: </label>
    <select class="form-control" ng-model="vis.params.shapeFirstNode" id="sel1">
      <option value="circle">Circle</option>
      <option value="dot">Dot</option>
@@ -69,8 +68,8 @@
    </select>
 </div>
 
-<div class="form-group secondNode">
-  <label for="sel2">Second Node: </label>
+<div class="form-group">
+  <label for="sel2">Secondary Nodes: </label>
    <select class="form-control" ng-model="vis.params.shapeSecondNode" id="sel2">
      <option value="circle">Circle</option>
      <option value="dot">Dot</option>
@@ -86,6 +85,7 @@
    </select>
 </div>
 
+<br>
 <br>
 
 <h5><strong>Directional Edges</strong></h5>
@@ -139,12 +139,13 @@
 </table>
 
 <br>
+<br>
 
 <h5><strong>Extra</strong></h5>
 <div class="checkbox">
   <label>
     <input type="checkbox" ng-model="vis.params.showLabels">
-    Show labels
+    Show Labels
   </label>
   <label>
     <input type="checkbox" ng-model="vis.params.showPopup">
@@ -161,6 +162,7 @@
 </div>
 
 <br>
+<br>
 
 <h5><strong>Network constants</strong></h5>
 <div>
@@ -172,25 +174,13 @@
   <input type="number" ng-model="vis.params.springConstant" id="springC">
 </div>
 
-<hr>
-
-<h4>Top Values</h4>
-<div>
-  Node Size
-  <input type="number" ng-model="vis.params.maxCutMetricSizeNode" min="1">
-</div>
-<div>
-  Edge Size
-  <input type="number" ng-model="vis.params.maxCutMetricSizeEdge" min="1">
-</div>
-<hr>
+<br>
 
 <h4>Don't show nodes below this value:</h4>
 <div>
   Node Size
   <input type="number" ng-model="vis.params.minCutMetricSizeNode" min="0">
 </div>
-<hr>
 
+<br>
 
-<hr>
