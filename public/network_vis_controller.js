@@ -10,7 +10,6 @@ const randomColor = require('randomcolor');
 const ElementQueries = require('css-element-queries/src/ElementQueries');
 const ResizeSensor = require('css-element-queries/src/ResizeSensor');
 
-
 // add a controller to the module, which will transform the esResponse into a
 // tabular format that we can pass to the table directive
 module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, Private) {
@@ -72,6 +71,19 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
         let secondBucketAggId, colorNodeAggId
         let edgeSizeSet = false
         let primaryNodeTermName, secondaryNodeTermName, edgeSizeTermName, nodeSizeTermName
+
+        function getTooltipTitle(termName, termValue, sizeTerm = null, sizeValue = null) {
+            let tooltipTitle = termName + ": " + termValue;
+            if (sizeTerm !== null) {
+                // Comment graveyard of things that didn't work
+                // tooltipTitle += "&#013;"+sizeTerm + ": " + sizeValue; 
+                // tooltipTitle +='<style type="text/css">\n'+sizeTerm + ": " + sizeValue; 
+                // tooltipTitle += "\n"+sizeTerm + ": " + sizeValue; 
+                tooltipTitle += "<br/><script>alert('hello')</script>"+sizeTerm + ": " + sizeValue; 
+            }
+            return tooltipTitle;
+        }
+
 
         if (resp) {
 
@@ -246,7 +258,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId]
+                                // nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId]
+                                nodeReturn.title = getTooltipTitle(primaryNodeTermName, bucket[firstFirstBucketId], nodeSizeTermName, nodeReturn.value);
                             }
 
                             return nodeReturn;
@@ -304,7 +317,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             shape: $scope.vis.params.shapeSecondNode
                                         };
                                         if ($scope.vis.params.showPopup) {
-                                            secondaryNode.title = secondaryNodeTermName + ": " + dataParsed[n].relationWithSecondNode[r].keySecondNode
+                                            // secondaryNode.title = secondaryNodeTermName + ": " + dataParsed[n].relationWithSecondNode[r].keySecondNode
+                                            secondaryNode.title = getTooltipTitle(secondaryNodeTermName, dataParsed[n].relationWithSecondNode[r].keySecondNode);
                                         }
                                         // Add a new secondary node
                                         dataNodes.push(secondaryNode);
@@ -316,7 +330,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         if ($scope.vis.params.showPopup) {
-                                            edge.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                            // edge.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                            edge.title = getTooltipTitle(edgeSizeTermName, dataParsed[n].relationWithSecondNode[r].widthOfEdge);
                                         }
                                         dataEdges.push(edge);
 
@@ -329,7 +344,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         if ($scope.vis.params.showPopup) {
-                                            enlace.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                            // enlace.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                            enlace.title = getTooltipTitle(edgeSizeTermName, dataParsed[n].relationWithSecondNode[r].widthOfEdge);
                                         }
                                         dataEdges.push(enlace);
                                     } else {
@@ -561,7 +577,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId];
+                                // nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId];
+                                nodeReturn.title = getTooltipTitle(primaryNodeTermName, bucket[firstFirstBucketId], nodeSizeTermName, nodeReturn.value);
                             }
 
                             return nodeReturn;
