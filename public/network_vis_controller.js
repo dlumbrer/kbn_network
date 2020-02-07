@@ -205,10 +205,11 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
 
                             // Assign color and the content of the popup
-                            var inPopup = "<p>" + bucket[firstFirstBucketId] + "</p>"
+                            var inPopup = bucket[firstFirstBucketId]
+                            console.log("inPopup 2: ", inPopup)
                             if (dataParsed[i].nodeColorValue != "default") {
                                 var colorNodeFinal = dataParsed[i].nodeColorValue;
-                                inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
+                                // inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
                             } else {
                                 var colorNodeFinal = $scope.vis.params.firstNodeColor;
                             }
@@ -219,6 +220,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             var nodeReturn = {
                                 id: i,
                                 key: bucket[firstFirstBucketId],
+                                // title: bucket[firstFirstBucketId],
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
                                 value: value,
@@ -234,6 +236,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
+                                console.log("Showing popup: ", inPopup)
                                 nodeReturn.title = inPopup;
                             }
 
@@ -264,7 +267,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     // Clean "undefined" out of the array
                     dataNodes = dataNodes.filter(Boolean);
 
-                    // BUILDING EDGES
+                    // BUILDING EDGES AND SECONDARY NODES
                     var dataEdges = [];
                     for (var n = 0; n < dataParsed.length; n++) {
                         // Find in the array the node with the keyFirstNode
@@ -277,10 +280,11 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                 for (var r = 0; r < dataParsed[n].relationWithSecondNode.length; r++) {
                                     // Find in the relations the second node to relate
                                     var nodeOfSecondType = $.grep(dataNodes, function (e) { return e.key == dataParsed[n].relationWithSecondNode[r].keySecondNode; });
+                                    
                                     if (nodeOfSecondType.length == 0) {
-                                        // Not found, added to the DataNodes - node of type 2
+                                        // This is the first time this secondary node has been processed
                                         i++;
-                                        var newNode = {
+                                        var secondaryNode = {
                                             id: i,
                                             key: dataParsed[n].relationWithSecondNode[r].keySecondNode,
                                             label: dataParsed[n].relationWithSecondNode[r].keySecondNode,
@@ -290,22 +294,33 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             },
                                             shape: $scope.vis.params.shapeSecondNode
                                         };
-                                        // Add new node
-                                        dataNodes.push(newNode);
-                                        // And create the relation (edge)
+                                        if ($scope.vis.params.showPopup) {
+                                            secondaryNode.title = dataParsed[n].relationWithSecondNode[r].keySecondNode
+                                        }
+                                        // Add a new secondary node
+                                        dataNodes.push(secondaryNode);
+
+                                        // Create a new edge between a primary and secondary node
                                         var edge = {
                                             from: result[0].id,
                                             to: dataNodes[dataNodes.length - 1].id,
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
+                                        if ($scope.vis.params.showPopup) {
+                                            edge.title = dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                        }
                                         dataEdges.push(edge);
 
                                     } else if (nodeOfSecondType.length == 1) {
-                                        // The node exists, create only the edge
+                                        // The secondary node being processed already exists,
+                                        //    only a new edge needs to be created 
                                         var enlace = {
                                             from: result[0].id,
                                             to: nodeOfSecondType[0].id,
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                        }
+                                        if ($scope.vis.params.showPopup) {
+                                            enlace.title = dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         dataEdges.push(enlace);
                                     } else {
@@ -359,7 +374,11 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             improvedLayout: !(dataEdges.length > 200)
                         },
                         interaction: {
-                            hover: true
+                            hover: true,
+                            tooltipDelay: 50 
+                        },
+                        manipulation: {
+                            enabled: true
                         }
                     };
                     switch ($scope.vis.params.posArrow) {
@@ -506,10 +525,11 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             };
                             dataParsed[i].relationWithSecondField.push(relation)
 
-                            var inPopup = "<p>" + bucket[firstFirstBucketId] + "</p>"
+                            var inPopup = bucket[firstFirstBucketId]
+                            console.log("inPopup 1: ", inPopup)
                             if (dataParsed[i].nodeColorValue != "default") {
                                 var colorNodeFinal = dataParsed[i].nodeColorValue;
-                                inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
+                                // inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
                             } else {
                                 var colorNodeFinal = $scope.vis.params.firstNodeColor;
                             }
@@ -520,6 +540,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             var nodeReturn = {
                                 id: i,
                                 key: bucket[firstFirstBucketId],
+                                // title: bucket[firstFirstBucketId],
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
                                 value: value,
@@ -535,6 +556,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
+                                console.log("Showing popup 2: ", inPopup)
                                 nodeReturn.title = inPopup;
                             }
 
@@ -656,7 +678,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         },
                         interaction: {
                             hideEdgesOnDrag: true,
-                            hover: true
+                            hover: true,
+                            tooltipDelay: 100
                         },
                         nodes: {
                             physics: $scope.vis.params.nodePhysics,
@@ -667,6 +690,9 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         },
                         layout: {
                             improvedLayout: false
+                        },
+                        manipulation: {
+                            enabled: true
                         }
                     }
                     console.log("Create network now");
@@ -681,7 +707,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             $scope.drawColorLegend(usedColors, colorDicc);
                         }
                     });
-
                 } else {
                     $scope.errorNodeNodeRelation();
                 }
