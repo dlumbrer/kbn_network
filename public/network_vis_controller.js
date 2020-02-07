@@ -205,11 +205,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
 
                             // Assign color and the content of the popup
-                            var inPopup = bucket[firstFirstBucketId]
-                            console.log("inPopup 2: ", inPopup)
                             if (dataParsed[i].nodeColorValue != "default") {
                                 var colorNodeFinal = dataParsed[i].nodeColorValue;
-                                // inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
                             } else {
                                 var colorNodeFinal = $scope.vis.params.firstNodeColor;
                             }
@@ -220,7 +217,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             var nodeReturn = {
                                 id: i,
                                 key: bucket[firstFirstBucketId],
-                                // title: bucket[firstFirstBucketId],
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
                                 value: value,
@@ -525,11 +521,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             };
                             dataParsed[i].relationWithSecondField.push(relation)
 
-                            var inPopup = bucket[firstFirstBucketId]
-                            console.log("inPopup 1: ", inPopup)
                             if (dataParsed[i].nodeColorValue != "default") {
                                 var colorNodeFinal = dataParsed[i].nodeColorValue;
-                                // inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
                             } else {
                                 var colorNodeFinal = $scope.vis.params.firstNodeColor;
                             }
@@ -540,7 +533,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             var nodeReturn = {
                                 id: i,
                                 key: bucket[firstFirstBucketId],
-                                // title: bucket[firstFirstBucketId],
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
                                 value: value,
