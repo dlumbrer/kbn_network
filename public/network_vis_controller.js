@@ -70,10 +70,15 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
         // variables for agg ids
         let secondBucketAggId, colorNodeAggId
-
         let edgeSizeSet = false
+        let primaryNodeTermName, secondaryNodeTermName, edgeSizeTermName, nodeSizeTermName
 
         if (resp) {
+
+            // TOREMOVE
+            console.log(resp);
+            console.log($scope.vis.aggs)
+
             // helper function to get column id
             var getColumnIdByAggId = function getColumnIdByAggId(aggId) {
                 return resp.columns.find(function (col) {
@@ -92,7 +97,12 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                 } else {
                     return ""
                 }
-            };            
+            };
+
+            function getColumnNameFromColumnId(columnId) {
+                console.log("Looking for: ", columnId)
+                return resp.columns.find(colObj => colObj.id == columnId).name
+            }
 
             $scope.vis.aggs.aggs.forEach((agg) => {
                 if (agg.__schema.name === "first") {
@@ -100,8 +110,10 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     // it also has a schema name of 'first', so set it if the first node is already set
                     if (firstFirstBucketId) {
                         firstSecondBucketId = getColumnIdByAggId(agg.id)
+                        secondaryNodeTermName = getColumnNameFromColumnId(firstSecondBucketId).split(':')[0]
                     } else {
                         firstFirstBucketId = getColumnIdByAggId(agg.id)
+                        primaryNodeTermName = getColumnNameFromColumnId(firstFirstBucketId).split(':')[0]
                     }
                 } else if (agg.__schema.name === "second") {
                     secondBucketAggId = agg.id
@@ -111,11 +123,13 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     colorBucketId = getColorNodeColumnId(agg.id)
                 } else if (agg.__schema.name === "size_node") {
                     nodeSizeId = getColumnIdByAggId(agg.id)
+                    nodeSizeTermName = getColumnNameFromColumnId(nodeSizeId)
                 } else if (agg.__schema.name === "size_edge") {
                     // set edge id for node-node or node-relation
                     if (firstFirstBucketId && (firstSecondBucketId || secondBucketId)) {
                         edgeSizeSet = true
                         edgeSizeId = "col-5-" + agg.id
+                        edgeSizeTermName = getColumnNameFromColumnId(edgeSizeId)
                     }
                 }
             });
@@ -232,8 +246,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                console.log("Showing popup: ", inPopup)
-                                nodeReturn.title = inPopup;
+                                nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId]
                             }
 
                             return nodeReturn;
@@ -291,7 +304,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             shape: $scope.vis.params.shapeSecondNode
                                         };
                                         if ($scope.vis.params.showPopup) {
-                                            secondaryNode.title = dataParsed[n].relationWithSecondNode[r].keySecondNode
+                                            secondaryNode.title = secondaryNodeTermName + ": " + dataParsed[n].relationWithSecondNode[r].keySecondNode
                                         }
                                         // Add a new secondary node
                                         dataNodes.push(secondaryNode);
@@ -303,7 +316,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         if ($scope.vis.params.showPopup) {
-                                            edge.title = dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                            edge.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         dataEdges.push(edge);
 
@@ -316,7 +329,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         if ($scope.vis.params.showPopup) {
-                                            enlace.title = dataParsed[n].relationWithSecondNode[r].widthOfEdge
+                                            enlace.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         dataEdges.push(enlace);
                                     } else {
@@ -548,8 +561,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                console.log("Showing popup 2: ", inPopup)
-                                nodeReturn.title = inPopup;
+                                nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId];
                             }
 
                             return nodeReturn;
