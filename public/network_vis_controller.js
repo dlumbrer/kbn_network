@@ -97,7 +97,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     return "col-2-" + aggId
                 } else if ((!firstSecondBucketId && !secondBucketId) && edgeSizeId) { 
                     return "col-3-" + aggId
-                }  else if ((firstSecondBucketId || secondBucketId) && !edgeSizeId) {
+                } else if ((firstSecondBucketId || secondBucketId) && !edgeSizeId) {
                     return "col-4-" + aggId
                 } else if ((firstSecondBucketId || secondBucketId) && edgeSizeId) {
                     return "col-6-" + aggId
