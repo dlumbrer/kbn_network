@@ -75,22 +75,13 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
         function getTooltipTitle(termName, termValue, sizeTerm = null, sizeValue = null) {
             let tooltipTitle = termName + ": " + termValue;
             if (sizeTerm !== null) {
-                // Comment graveyard of things that didn't work
-                // tooltipTitle += "&#013;"+sizeTerm + ": " + sizeValue; 
-                // tooltipTitle +='<style type="text/css">\n'+sizeTerm + ": " + sizeValue; 
-                // tooltipTitle += "\n"+sizeTerm + ": " + sizeValue; 
-                tooltipTitle += "<br/><script>alert('hello')</script>"+sizeTerm + ": " + sizeValue; 
+                tooltipTitle += "<br/>"+sizeTerm + ": " + sizeValue; 
             }
             return tooltipTitle;
         }
 
 
         if (resp) {
-
-            // TOREMOVE
-            console.log(resp);
-            console.log($scope.vis.aggs)
-
             // helper function to get column id
             var getColumnIdByAggId = function getColumnIdByAggId(aggId) {
                 return resp.columns.find(function (col) {
@@ -112,7 +103,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
             };
 
             function getColumnNameFromColumnId(columnId) {
-                console.log("Looking for: ", columnId)
                 return resp.columns.find(colObj => colObj.id == columnId).name
             }
 
@@ -120,6 +110,10 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                 if (agg.__schema.name === "first") {
                     // firstSecondBucketId is the secondary node in a node-node
                     // it also has a schema name of 'first', so set it if the first node is already set
+                    //
+                    // The metric used to return both primary and secondary nodes will always contain a colon,
+                    // since it will take the form of "metric: order", for example, "DestIP: Descending"
+                    // This might look confusing in a tooltip, so only the term name is used here
                     if (firstFirstBucketId) {
                         firstSecondBucketId = getColumnIdByAggId(agg.id)
                         secondaryNodeTermName = getColumnNameFromColumnId(firstSecondBucketId).split(':')[0]
@@ -258,7 +252,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                // nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId]
                                 nodeReturn.title = getTooltipTitle(primaryNodeTermName, bucket[firstFirstBucketId], nodeSizeTermName, nodeReturn.value);
                             }
 
@@ -317,7 +310,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             shape: $scope.vis.params.shapeSecondNode
                                         };
                                         if ($scope.vis.params.showPopup) {
-                                            // secondaryNode.title = secondaryNodeTermName + ": " + dataParsed[n].relationWithSecondNode[r].keySecondNode
                                             secondaryNode.title = getTooltipTitle(secondaryNodeTermName, dataParsed[n].relationWithSecondNode[r].keySecondNode);
                                         }
                                         // Add a new secondary node
@@ -330,7 +322,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         if ($scope.vis.params.showPopup) {
-                                            // edge.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                             edge.title = getTooltipTitle(edgeSizeTermName, dataParsed[n].relationWithSecondNode[r].widthOfEdge);
                                         }
                                         dataEdges.push(edge);
@@ -344,7 +335,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
                                         if ($scope.vis.params.showPopup) {
-                                            // enlace.title = edgeSizeTermName + ": " + dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                             enlace.title = getTooltipTitle(edgeSizeTermName, dataParsed[n].relationWithSecondNode[r].widthOfEdge);
                                         }
                                         dataEdges.push(enlace);
@@ -577,7 +567,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                // nodeReturn.title = primaryNodeTermName + ": " + bucket[firstFirstBucketId];
                                 nodeReturn.title = getTooltipTitle(primaryNodeTermName, bucket[firstFirstBucketId], nodeSizeTermName, nodeReturn.value);
                             }
 
