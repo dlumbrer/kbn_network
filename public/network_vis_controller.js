@@ -321,7 +321,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             to: dataNodes[dataNodes.length - 1].id,
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
-                                        if ($scope.vis.params.showPopup) {
+                                        if ($scope.vis.params.showPopup && edgeSizeSet) {
                                             edge.title = getTooltipTitle(edgeSizeTermName, dataParsed[n].relationWithSecondNode[r].widthOfEdge);
                                         }
                                         dataEdges.push(edge);
