@@ -39,8 +39,6 @@ function NetworkVisTypeProvider(Private) {
         shapeArrow: 'arrow',
         smoothType: 'continuous',
         scaleArrow: 1,
-        maxCutMetricSizeNode: 5000,
-        maxCutMetricSizeEdge: 5000,
         minCutMetricSizeNode: 0,
         maxNodeSize: 80,
         minNodeSize: 8,
@@ -65,8 +63,6 @@ function NetworkVisTypeProvider(Private) {
           defaults: [
             { type: 'count', schema: 'size_node' }
           ]
-          
-          //aggFilter: ['count', 'avg', 'sum', 'min', 'max', 'cardinality', 'std_dev']
         },
         {
           group: 'metrics',
@@ -105,13 +101,10 @@ function NetworkVisTypeProvider(Private) {
     responseHandlerConfig: {
       asAggConfigResults: true
     },
-    ////////MIRAR THIS
+    // structures the data tables (returned by kibana in resp and in UI Inspect)
     hierarchicalData: function (vis) {
       return true;
     },
-    ////////////////////
-
-
   });
 }
 
