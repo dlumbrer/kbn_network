@@ -79,9 +79,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
         let firstFirstBucketId, firstSecondBucketId, secondBucketId, colorBucketId, nodeSizeId, edgeSizeId
 
         // variables for agg ids
-        let secondBucketAggId, colorNodeAggId
-
-        let edgeSizeSet = false
+        let secondBucketAggId, colorNodeAggId, edgeSizeAggId
 
         if (resp) {
             // helper function to get column id
@@ -92,7 +90,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
             };
 
             // helper function to get column id for colornode
-            var getColorNodeColumnId = function getColumnIdByAggId(aggId) {
+            var getColorNodeColumnId = function getColorNodeColumnId(aggId) {
                 if ((!firstSecondBucketId && !secondBucketId) && !edgeSizeId) {
                     return "col-2-" + aggId
                 } else if ((!firstSecondBucketId && !secondBucketId) && edgeSizeId) { 
@@ -120,17 +118,28 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     secondBucketId = getColumnIdByAggId(agg.id)
                 } else if (agg.__schema.name === "colornode") {
                     colorNodeAggId = agg.id
-                    colorBucketId = getColorNodeColumnId(agg.id)
                 } else if (agg.__schema.name === "size_node") {
                     nodeSizeId = getColumnIdByAggId(agg.id)
                 } else if (agg.__schema.name === "size_edge") {
-                    // set edge id for node-node or node-relation
-                    if (firstFirstBucketId && (firstSecondBucketId || secondBucketId)) {
-                        edgeSizeSet = true
-                        edgeSizeId = "col-5-" + agg.id
-                    }
+                    edgeSizeAggId = agg.id
                 }
             });
+
+            // Getting edge size id here to ensure all other buckets were located in the aggs already (future-proofing
+            // in case the order of the aggs being returned changes)
+            if (edgeSizeAggId) {
+                if (firstFirstBucketId && (firstSecondBucketId || secondBucketId)) {
+                    edgeSizeId = "col-5-" + edgeSizeAggId;
+                } else if (firstFirstBucketId && (!firstSecondBucketId && !secondBucketId)) {
+                    edgeSizeId = "col-2-" + edgeSizeAggId;
+                }
+            }
+
+            // Set the color bucket id last, because 'colornode' is returned in the aggs before 'size_edge'
+            // and we need to know whether an edge has been set to know which column to use 
+            if (colorNodeAggId) {
+                colorBucketId = getColorNodeColumnId(colorNodeAggId);
+            }
 
             // Get the buckets of the aggregation
             var buckets = resp.rows;
@@ -181,7 +190,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
                             // Iterate rows and choose the edge size
                             if (firstSecondBucketId) {
-                                if (edgeSizeSet) {
+                                if (edgeSizeId) {
                                     var sizeEdgeVal = bucket[edgeSizeId];
                                 } else {
                                     var sizeEdgeVal = 0.1;
@@ -256,7 +265,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             var dataParsed_node_exist = result[0]
                             //Iterate rows and choose the edge size
                             if (firstSecondBucketId) {
-                                if (edgeSizeSet) {
+                                if (edgeSizeId) {
                                     var sizeEdgeVal = bucket[edgeSizeId];
                                 } else {
                                     var sizeEdgeVal = 0.1;
@@ -281,7 +290,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         // Find in the array the node with the keyFirstNode
                         var result = $.grep(dataNodes, function (e) { return e.key == dataParsed[n].keyFirstNode; });
                         if (result.length == 0) {
-                            console.log("Error: Node not found");
+                            console.log("Network Plugin Error: Node not found");
                         } else if (result.length == 1) {
                             // Found the node, access to its id
                             if (firstSecondBucketId) {
@@ -320,12 +329,12 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                         }
                                         dataEdges.push(enlace);
                                     } else {
-                                        console.log("Error: Multiple nodes with same id found");
+                                        console.log("Network Plugin Error: Multiple nodes with same id found");
                                     }
                                 }
                             }
                         } else {
-                            console.log("Error: Multiple nodes with same id found");
+                            console.log("Network Plugin Error: Multiple nodes with same id found");
                         }
                     }
 
@@ -482,7 +491,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             dataParsed[i].relationWithSecondField = []
 
                             // Add relation edges
-                            if (edgeSizeSet) {
+                            if (edgeSizeId) {
                                 var sizeEdgeVal = bucket[edgeSizeId];
                             } else {
                                 var sizeEdgeVal = 0.1;
@@ -551,7 +560,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             return nodeReturn;
                         } else if (result.length == 1) {  // we already have this node id in dataNodes, so update with new info
                             var dataParsed_node_exist = result[0]
-                            if (edgeSizeSet) {
+                            if (edgeSizeId) {
                                 var sizeEdgeVal = bucket[edgeSizeId];
                             } else {
                                 var sizeEdgeVal = 0.1;
@@ -577,7 +586,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         // Obtain id of the node
                         var NodoFrom = $.grep(dataNodes, function (e) { return e.key == dataParsed[n].keyNode; });
                         if (NodoFrom.length == 0) {
-                            console.log("Error: Node not found");
+                            console.log("Network Plugin Error: Node not found");
                         } else if (NodoFrom.length == 1) {
                             var id_from = NodoFrom[0].id;
                             // Iterate relations that have with the second field selected
@@ -588,7 +597,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                     if (dataParsed[n] != dataParsed[z]) {
                                         var NodoTo = $.grep(dataNodes, function (e) { return e.key == dataParsed[z].keyNode; });
                                         if (NodoTo.length == 0) {
-                                            console.log("Error: Node not found");
+                                            console.log("Network Plugin Error: Node not found");
                                         } else if (NodoTo.length == 1) {
                                             var id_to = NodoTo[0].id;
                                             // Have relation?
@@ -608,14 +617,14 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                                 }
                                             }
                                         } else {
-                                            console.log("Error: Multiples nodes with same id found");
+                                            console.log("Network Plugin Error: Multiples nodes with same id found");
                                         }
                                     }
                                 }
                             }
 
                         } else {
-                            console.log("Error: Multiples nodes with same id found");
+                            console.log("Network Plugin Error: Multiples nodes with same id found");
                         }
                     }
 
@@ -676,7 +685,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             improvedLayout: false
                         }
                     }
-                    console.log("Create network now");
+                    console.log("Network Plugin: Create network now");
                     var network = new visN.Network(container, data, options);
 
                     $scope.startDynamicResize(network);
