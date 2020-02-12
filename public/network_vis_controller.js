@@ -79,6 +79,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
 
         // variables for agg ids
         let secondBucketAggId, colorNodeAggId, edgeSizeAggId
+        // variables for tooltip text
         let primaryNodeTermName, secondaryNodeTermName, edgeSizeTermName, nodeSizeTermName
 
         function getTooltipTitle(termName, termValue, sizeTerm = null, sizeValue = null) {
