@@ -74,11 +74,12 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
     }
 
     $scope.$watchMulti(['esResponse', 'vis.params.secondNodeColor'], function ([resp]) {
-        // variables for column ids
+        // variables for column ids, ex. id: "col-0-3" from one of the 'columns' in the resp
         let firstFirstBucketId, firstSecondBucketId, secondBucketId, colorBucketId, nodeSizeId, edgeSizeId
 
-        // variables for agg ids
+        // variables for agg ids, ex. id: "3" from one of the aggs (currently in $scope.vis.aggs)
         let secondBucketAggId, colorNodeAggId, edgeSizeAggId
+
         // variables for tooltip text
         let primaryNodeTermName, secondaryNodeTermName, edgeSizeTermName, nodeSizeTermName
 
@@ -96,21 +97,6 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                 return resp.columns.find(function (col) {
                     return col.id.split('-')[2] === aggId;
                 }).id;
-            };
-
-            // helper function to get column id for colornode
-            var getColorNodeColumnId = function getColorNodeColumnId(aggId) {
-                if ((!firstSecondBucketId && !secondBucketId) && !edgeSizeId) {
-                    return "col-2-" + aggId
-                } else if ((!firstSecondBucketId && !secondBucketId) && edgeSizeId) { 
-                    return "col-3-" + aggId
-                } else if ((firstSecondBucketId || secondBucketId) && !edgeSizeId) {
-                    return "col-4-" + aggId
-                } else if ((firstSecondBucketId || secondBucketId) && edgeSizeId) {
-                    return "col-6-" + aggId
-                } else {
-                    return ""
-                }
             };
 
             function getColumnNameFromColumnId(columnId) {
@@ -137,6 +123,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     secondBucketId = getColumnIdByAggId(agg.id)
                 } else if (agg.__schema.name === "colornode") {
                     colorNodeAggId = agg.id
+                    colorBucketId = getColumnIdByAggId(agg.id);
                 } else if (agg.__schema.name === "size_node") {
                     nodeSizeId = getColumnIdByAggId(agg.id)
                     nodeSizeTermName = getColumnNameFromColumnId(nodeSizeId)
@@ -151,17 +138,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                 if (firstFirstBucketId && (firstSecondBucketId || secondBucketId)) {
                     edgeSizeId = "col-5-" + edgeSizeAggId;
                     edgeSizeTermName = getColumnNameFromColumnId(edgeSizeId)
-                } else if (firstFirstBucketId && (!firstSecondBucketId && !secondBucketId)) {
-                    // This case will not actually draw edges, and is only here so that we can correctly
-                    // get the ID of the Color Node properly
-                    edgeSizeId = "col-2-" + edgeSizeAggId;
                 }
-            }
-
-            // Set the color bucket id last, because 'colornode' is returned in the aggs before 'size_edge'
-            // and we need to know whether an edge has been set to know which column to use 
-            if (colorNodeAggId) {
-                colorBucketId = getColorNodeColumnId(colorNodeAggId);
             }
 
             // Get the buckets of the aggregation
@@ -178,7 +155,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     $scope.initialShows();
                     $(".secondNode").show();
 
-                    if (colorNodeAggId) {
+                    if (colorBucketId) {
                         var colorDicc = {};
                         var usedColors = [];
                     }
@@ -229,7 +206,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
 
 
-                            if (colorNodeAggId) {
+                            if (colorBucketId) {
                                 if (colorDicc[bucket[colorBucketId]]) {
                                     dataParsed[i].nodeColorKey = bucket[colorBucketId];
                                     dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
@@ -488,7 +465,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                     });
 
                   // NODE-RELATION Type
-                } else if (secondBucketId) {
+                } else if (secondBucketId && !firstSecondBucketId) {
                     $scope.initialShows();
                     $(".secondNode").hide();
 
@@ -535,7 +512,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
 
                             // Get the color of the node, save in the dictionary
-                            if (colorNodeAggId) {
+                            if (colorBucketId) {
                                 if (colorDicc[bucket[colorBucketId]]) {
                                     dataParsed[i].nodeColorKey = bucket[colorBucketId];
                                     dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
