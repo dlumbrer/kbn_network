@@ -78,7 +78,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
         let firstFirstBucketId, firstSecondBucketId, secondBucketId, colorBucketId, nodeSizeId, edgeSizeId
 
         // variables for agg ids, ex. id: "3" from one of the aggs (currently in $scope.vis.aggs)
-        let secondBucketAggId, colorNodeAggId, edgeSizeAggId
+        let edgeSizeAggId
 
         // variables for tooltip text
         let primaryNodeTermName, secondaryNodeTermName, edgeSizeTermName, nodeSizeTermName
@@ -119,10 +119,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         primaryNodeTermName = getColumnNameFromColumnId(firstFirstBucketId).split(':')[0]
                     }
                 } else if (agg.__schema.name === "second") {
-                    secondBucketAggId = agg.id
                     secondBucketId = getColumnIdByAggId(agg.id)
                 } else if (agg.__schema.name === "colornode") {
-                    colorNodeAggId = agg.id
                     colorBucketId = getColumnIdByAggId(agg.id);
                 } else if (agg.__schema.name === "size_node") {
                     nodeSizeId = getColumnIdByAggId(agg.id)
@@ -474,7 +472,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         var usedColors = [];
 
                         // Check if "Node Color" is the last selection
-                        if (colorNodeAggId <= secondBucketAggId) {
+                        if (colorBucketId <= secondBucketId) {
                             $scope.errorNodeColor();
                             return;
                         }
