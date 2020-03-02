@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+import { AggConfig } from 'ui/agg_types/agg_config';
 
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
@@ -8,7 +9,6 @@ const visN = require('vis-network');
 const randomColor = require('randomcolor');
 const ElementQueries = require('css-element-queries/src/ElementQueries');
 const ResizeSensor = require('css-element-queries/src/ResizeSensor');
-
 
 // add a controller to the module, which will transform the esResponse into a
 // tabular format that we can pass to the table directive
@@ -45,161 +45,155 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
         var canvas = document.getElementsByTagName("canvas")[0];
         var context = canvas.getContext("2d");
 
-        context.fillStyle = "#FFE8D6";
-        var totalheight = usedColors.length * 25
-        context.fillRect(canvas.width * (-2) - 10, canvas.height * (-2) - 18, 350, totalheight);
-
+        // Fill in text
         context.fillStyle = "black";
         context.font = "bold 30px Arial";
         context.textAlign = "start";
-        context.fillText("LEGEND OF COLORS:", canvas.width * (-2), canvas.height * (-2));
+        context.fillText("COLOR LEGEND:", canvas.width * (-1), canvas.height * (-1));
 
-        var p = canvas.height * (-2) + 40;
+        var height = 40; // adds a preliminary buffer for the legend title
+        var currentHeightOnCanvas = canvas.height * (-1) + height;
+        var largestWidth = context.measureText("COLOR LEGEND:").width;
+
         for (var key in colorDicc) {
             context.fillStyle = colorDicc[key];
             context.font = "bold 20px Arial";
-            context.fillText(key, canvas.width * (-2), p);
-            p = p + 22;
+            context.fillText(key, canvas.width * (-1), currentHeightOnCanvas);
+            height += 22;
+            currentHeightOnCanvas = canvas.height * (-1) + height;
+
+            var currentWidth = context.measureText(key).width;
+            if (currentWidth > largestWidth) {
+                largestWidth = currentWidth; 
+            }
         }
+
+        // Shade in the legend
+        context.fillStyle = "rgba(218, 218, 218, 0.25)";
+        context.fillRect(canvas.width * (-1) - 20, canvas.height * (-1) - 40, largestWidth + 40, height + 60);
     }
 
     $scope.$watchMulti(['esResponse', 'vis.params.secondNodeColor'], function ([resp]) {
+        // variables for column ids, ex. id: "col-0-3" from one of the 'columns' in the resp
         let firstFirstBucketId, firstSecondBucketId, secondBucketId, colorBucketId, nodeSizeId, edgeSizeId
+
+        // variables for agg ids, ex. id: "3" from one of the aggs (currently in $scope.vis.aggs)
+        let edgeSizeAggId
+
+        // variables for tooltip text
+        let primaryNodeTermName, secondaryNodeTermName, edgeSizeTermName, nodeSizeTermName
+
+        function getTooltipTitle(termName, termValue, sizeTerm = null, sizeValue = null) {
+            let tooltipTitle = termName + ": " + termValue;
+            if (sizeTerm !== null) {
+                tooltipTitle += "<br/>"+sizeTerm + ": " + sizeValue; 
+            }
+            return tooltipTitle;
+        }
+
         if (resp) {
-            // new in 7.2
             // helper function to get column id
             var getColumnIdByAggId = function getColumnIdByAggId(aggId) {
                 return resp.columns.find(function (col) {
-                return col.id.split('-')[2] === aggId;
+                    return col.id.split('-')[2] === aggId;
                 }).id;
             };
 
-            if ($scope.vis.aggs.bySchemaName.size_node) {
-                nodeSizeId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.size_node[0].id);
+            function getColumnNameFromColumnId(columnId) {
+                return resp.columns.find(colObj => colObj.id == columnId).name
             }
 
-            if ($scope.vis.aggs.bySchemaName.size_edge) {
-                edgeSizeId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.size_edge[0].id);
+            $scope.vis.aggs.aggs.forEach((agg) => {
+                if (agg.__schema.name === "first") {
+                    // firstSecondBucketId is the secondary node in a node-node
+                    // it also has a schema name of 'first', so set it if the first node is already set
+                    //
+                    // The metric used to return both primary and secondary nodes will always contain a colon,
+                    // since it will take the form of "metric: order", for example, "DestIP: Descending"
+                    // This might look confusing in a tooltip, so only the term name is used here
+                    if (firstFirstBucketId) {
+                        firstSecondBucketId = getColumnIdByAggId(agg.id)
+                        secondaryNodeTermName = getColumnNameFromColumnId(firstSecondBucketId).split(':')[0]
+                    } else {
+                        firstFirstBucketId = getColumnIdByAggId(agg.id)
+                        primaryNodeTermName = getColumnNameFromColumnId(firstFirstBucketId).split(':')[0]
+                    }
+                } else if (agg.__schema.name === "second") {
+                    secondBucketId = getColumnIdByAggId(agg.id)
+                } else if (agg.__schema.name === "colornode") {
+                    colorBucketId = getColumnIdByAggId(agg.id);
+                } else if (agg.__schema.name === "size_node") {
+                    nodeSizeId = getColumnIdByAggId(agg.id)
+                    nodeSizeTermName = getColumnNameFromColumnId(nodeSizeId)
+                } else if (agg.__schema.name === "size_edge") {
+                    edgeSizeAggId = agg.id
+                }
+            });
+
+            // Getting edge size id here to ensure all other buckets were located in the aggs already (future-proofing
+            // in case the order of the aggs being returned changes)
+            if (edgeSizeAggId) {
+                if (firstFirstBucketId && (firstSecondBucketId || secondBucketId)) {
+                    edgeSizeId = "col-5-" + edgeSizeAggId;
+                    edgeSizeTermName = getColumnNameFromColumnId(edgeSizeId)
+                }
             }
 
-            if ($scope.vis.aggs.bySchemaName.first) {
-                var nodeAggs = $scope.vis.aggs.bySchemaName.first;
-                firstFirstBucketId = getColumnIdByAggId(nodeAggs[0].id);
-                firstSecondBucketId = nodeAggs.length > 1 ? getColumnIdByAggId(nodeAggs[1].id) : null;
-            }
+            // Get the buckets of the aggregation
+            var buckets = resp.rows;
 
-            if ($scope.vis.aggs.bySchemaName.second) {
-                secondBucketId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.second[0].id);
-            }
-
-            if ($scope.vis.aggs.bySchemaName.colornode) {
-                colorBucketId = getColumnIdByAggId($scope.vis.aggs.bySchemaName.colornode[0].id);
-            }
-
-            ///// It is neccessary to add Timeout in order to have more than 1 net in the same dashboard
+            // It is neccessary to add a timeout in order to have more than 1 net in the same dashboard
             $timeout(function () {
                 network_id = "net_" + $scope.$id;
                 loading_id = "loading_" + $scope.$parent.$id;
                 $("#" + loading_id).hide();
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                ///////////////////////////////////////////////////////////////////////NODE-NODE Type///////////////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                if ($scope.vis.aggs.bySchemaName['first'].length >= 1 && !$scope.vis.aggs.bySchemaName['second']) {
+
+                // Single NODE or NODE-NODE Type
+                if ((firstFirstBucketId || firstSecondBucketId) && !secondBucketId) {
                     $scope.initialShows();
                     $(".secondNode").show();
-                    // Retrieve the id of the configured tags aggregation
-                    var firstFieldAggId = $scope.vis.aggs.bySchemaName['first'][0].id;
-                    if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
-                        var secondFieldAggId = $scope.vis.aggs.bySchemaName['first'][1].id;
-                    }
 
-                    if ($scope.vis.aggs.bySchemaName['colornode']) {
-                        var colorNodeAggId = $scope.vis.aggs.bySchemaName['colornode'][0].id;
-                        var colorNodeAggName = $scope.vis.aggs.bySchemaName['colornode'][0].params.field.displayName;
+                    if (colorBucketId) {
                         var colorDicc = {};
                         var usedColors = [];
                     }
 
-                    //Names of the terms that have been selected
-                    var firstFieldAggName = $scope.vis.aggs.bySchemaName['first'][0].params.field.displayName;
-                    if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
-                        var secondFieldAggName = $scope.vis.aggs.bySchemaName['first'][1].params.field.displayName;
-                    }
-
-                    // Retrieve the metrics aggregation configured
-                    if ($scope.vis.aggs.bySchemaName['size_node']) {
-                        var metricsAgg_sizeNode = $scope.vis.aggs.bySchemaName['size_node'][0];
-                    }
-                    if ($scope.vis.aggs.bySchemaName['size_edge']) {
-                        var metricsAgg_sizeEdge = $scope.vis.aggs.bySchemaName['size_edge'][0];
-                    }
-
-                    // Get the buckets of that aggregation
-                    var buckets = resp.rows;
-
-                    ///////////////////////////////////////////////////////////////DATA PARSED AND BUILDING NODES///////////////////////////////////////////////////////////////
+                    /// DATA PARSED AND BUILDING NODES
                     var dataParsed = [];
                     // Iterate the buckets
                     var i = 0;
                     var dataNodes = buckets.map(function (bucket) {
 
                         var result = $.grep(dataParsed, function (e) { return e.keyFirstNode == bucket[firstFirstBucketId]; });
+                        // first time we've parsed a node with this id
                         if (result.length == 0) {
                             dataParsed[i] = {};
 
                             dataParsed[i].keyFirstNode = bucket[firstFirstBucketId];
 
-                            //Metrics are for the sizes
-                            if (metricsAgg_sizeNode) {
-                                // Use the getValue function of the aggregation to get the value of a bucket
-                                var value = bucket[nodeSizeId]//metricsAgg_sizeNode.getValue(bucket);
-                                var sizeVal = Math.max($scope.vis.params.maxCutMetricSizeNode, value);
+                            var value = bucket[nodeSizeId]
 
-                                //No show nodes under the value
-                                if ($scope.vis.params.minCutMetricSizeNode > value) {
-                                    dataParsed.splice(i, 1);
-                                    return;
-                                }
-                            } else {
-                                var sizeVal = 20;
+                            // Don't show nodes under the value
+                            if ($scope.vis.params.minCutMetricSizeNode > value) {
+                                dataParsed.splice(i, 1);
+                                return;
                             }
 
-                            dataParsed[i].valorSizeNode = sizeVal;
+                            dataParsed[i].valorSizeNode = value;
                             dataParsed[i].nodeColorValue = "default";
                             dataParsed[i].nodeColorKey = "default";
                             if (!dataParsed[i].relationWithSecondNode) {
                                 dataParsed[i].relationWithSecondNode = [];
                             }
 
-
-                            //Iterate rows and choose the edge size
-                            if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
-                                if (metricsAgg_sizeEdge) {
-                                    var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                            // Iterate rows and choose the edge size
+                            if (firstSecondBucketId) {
+                                if (edgeSizeId) {
+                                    var sizeEdgeVal = bucket[edgeSizeId];
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
 
-                                if (colorNodeAggId) {
-                                    if (colorDicc[bucket[colorBucketId]]) {
-                                        dataParsed[i].nodeColorKey = bucket[colorBucketId];
-                                        dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
-                                    } else {
-                                        //repeat to find a NO-REPEATED color
-                                        while (true) {
-                                            var confirmColor = randomColor();
-                                            if (usedColors.indexOf(confirmColor) == -1) {
-                                                colorDicc[bucket[colorBucketId]] = confirmColor;
-                                                dataParsed[i].nodeColorKey = bucket[colorBucketId];
-                                                dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
-                                                usedColors.push(confirmColor);
-                                                break;
-                                            }
-                                        }
-
-                                    }
-                                }
 
                                 var relation = {
                                     keySecondNode: bucket[firstSecondBucketId],
@@ -209,50 +203,66 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                 dataParsed[i].relationWithSecondNode.push(relation)
                             }
 
-                            //assigning color and the content of the popup
-                            var inPopup = "<p>" + bucket[firstFirstBucketId] + "</p>"
+
+                            if (colorBucketId) {
+                                if (colorDicc[bucket[colorBucketId]]) {
+                                    dataParsed[i].nodeColorKey = bucket[colorBucketId];
+                                    dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
+                                } else {
+                                    //repeat to find a NO-REPEATED color
+                                    while (true) {
+                                        var confirmColor = randomColor();
+                                        if (usedColors.indexOf(confirmColor) == -1) {
+                                            colorDicc[bucket[colorBucketId]] = confirmColor;
+                                            dataParsed[i].nodeColorKey = bucket[colorBucketId];
+                                            dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
+                                            usedColors.push(confirmColor);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Assign color and the content of the popup
                             if (dataParsed[i].nodeColorValue != "default") {
                                 var colorNodeFinal = dataParsed[i].nodeColorValue;
-                                inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
                             } else {
                                 var colorNodeFinal = $scope.vis.params.firstNodeColor;
                             }
 
                             i++;
-                            //Return the node totally built
+
+                            // Return the node totally built
                             var nodeReturn = {
                                 id: i,
                                 key: bucket[firstFirstBucketId],
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
-                                //size: sizeVal
-                                value: sizeVal,
+                                value: value,
                                 font: {
                                     color: $scope.vis.params.labelColor
                                 }
                             }
 
-                            //If activated, show the labels
+                            // If activated, show the labels
                             if ($scope.vis.params.showLabels) {
                                 nodeReturn.label = bucket[firstFirstBucketId];
                             }
 
-                            //If activated, show the popups
+                            // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                nodeReturn.title = inPopup;
+                                nodeReturn.title = getTooltipTitle(primaryNodeTermName, bucket[firstFirstBucketId], nodeSizeTermName, nodeReturn.value);
                             }
 
                             return nodeReturn;
 
 
-                        } else if (result.length == 1) {
-                            //Repetido el nodo, solo añadimos sus relaciones
+                        } else if (result.length == 1) { // we already have this node id in dataNodes, so update with new info
                             var dataParsed_node_exist = result[0]
                             //Iterate rows and choose the edge size
-                            if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
-                                if (metricsAgg_sizeEdge) {
-                                    var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                            if (firstSecondBucketId) {
+                                if (edgeSizeId) {
+                                    var sizeEdgeVal = bucket[edgeSizeId];
                                 } else {
                                     var sizeEdgeVal = 0.1;
                                 }
@@ -266,31 +276,28 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             }
                             return undefined
                         }
-
-
-
                     });
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                    ///////////////////////////////////////////////////////////////////////BUILDING EDGES///////////////////////////////////////////////////////////////////////
-                    //Clean "undefined" in the array
+                    // Clean "undefined" out of the array
                     dataNodes = dataNodes.filter(Boolean);
+
+                    // BUILDING EDGES AND SECONDARY NODES
                     var dataEdges = [];
                     for (var n = 0; n < dataParsed.length; n++) {
-                        //Find in the array the node with the keyFirstNode
+                        // Find in the array the node with the keyFirstNode
                         var result = $.grep(dataNodes, function (e) { return e.key == dataParsed[n].keyFirstNode; });
                         if (result.length == 0) {
-                            console.log("Error: Node not found");
+                            console.log("Network Plugin Error: Node not found");
                         } else if (result.length == 1) {
-                            //Found the node, access to its id
-                            if ($scope.vis.aggs.bySchemaName['first'].length > 1) {
+                            // Found the node, access to its id
+                            if (firstSecondBucketId) {
                                 for (var r = 0; r < dataParsed[n].relationWithSecondNode.length; r++) {
-                                    //Find in the relations the second node to relate
+                                    // Find in the relations the second node to relate
                                     var nodeOfSecondType = $.grep(dataNodes, function (e) { return e.key == dataParsed[n].relationWithSecondNode[r].keySecondNode; });
+                                    
                                     if (nodeOfSecondType.length == 0) {
-                                        //Not found, added to the DataNodes - node of type 2
+                                        // This is the first time this secondary node has been processed
                                         i++;
-                                        var newNode = {
+                                        var secondaryNode = {
                                             id: i,
                                             key: dataParsed[n].relationWithSecondNode[r].keySecondNode,
                                             label: dataParsed[n].relationWithSecondNode[r].keySecondNode,
@@ -300,41 +307,49 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                             },
                                             shape: $scope.vis.params.shapeSecondNode
                                         };
-                                        //Add new node
-                                        dataNodes.push(newNode);
-                                        //And create the relation (edge)
+                                        if ($scope.vis.params.showPopup) {
+                                            secondaryNode.title = getTooltipTitle(secondaryNodeTermName, dataParsed[n].relationWithSecondNode[r].keySecondNode);
+                                        }
+                                        // Add a new secondary node
+                                        dataNodes.push(secondaryNode);
+
+                                        // Create a new edge between a primary and secondary node
                                         var edge = {
                                             from: result[0].id,
                                             to: dataNodes[dataNodes.length - 1].id,
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
+                                        if ($scope.vis.params.showPopup && edgeSizeId) {
+                                            edge.title = getTooltipTitle(edgeSizeTermName, dataParsed[n].relationWithSecondNode[r].widthOfEdge);
+                                        }
                                         dataEdges.push(edge);
 
                                     } else if (nodeOfSecondType.length == 1) {
-                                        //The node exists, creates only the edge
+                                        // The secondary node being processed already exists,
+                                        //    only a new edge needs to be created 
                                         var enlace = {
                                             from: result[0].id,
                                             to: nodeOfSecondType[0].id,
                                             value: dataParsed[n].relationWithSecondNode[r].widthOfEdge
                                         }
+                                        if ($scope.vis.params.showPopup && edgeSizeId) {
+                                            enlace.title = getTooltipTitle(edgeSizeTermName, dataParsed[n].relationWithSecondNode[r].widthOfEdge);
+                                        }
                                         dataEdges.push(enlace);
                                     } else {
-                                        console.log("Error: Multiples nodes with same id found");
+                                        console.log("Network Plugin Error: Multiple nodes with same id found");
                                     }
                                 }
                             }
                         } else {
-                            console.log("Error: Multiples nodes with same id found");
+                            console.log("Network Plugin Error: Multiple nodes with same id found");
                         }
                     }
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-                    //////////////////////////////////////////////////////////Creation of the network with the library//////////////////////////////////////////////////////////
+                    // Creation of the network with the library
                     var nodesDataSet = new visN.DataSet(dataNodes);
                     var edgesDataSet = new visN.DataSet(dataEdges);
 
-                    //var container = document.getElementById(network_id);
                     var container = document.getElementById(network_id);
                     container.style.height = container.getBoundingClientRect().height;
                     container.height = container.getBoundingClientRect().height;
@@ -342,7 +357,7 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         nodes: nodesDataSet,
                         edges: edgesDataSet
                     };
-                    //CHANGE: Options controlled by user directly
+                    // Options controlled by user directly
                     var options_1 = {
                         height: container.getBoundingClientRect().height.toString(),
                         physics: {
@@ -372,7 +387,11 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             improvedLayout: !(dataEdges.length > 200)
                         },
                         interaction: {
-                            hover: true
+                            hover: true,
+                            tooltipDelay: 50 
+                        },
+                        manipulation: {
+                            enabled: true
                         }
                     };
                     switch ($scope.vis.params.posArrow) {
@@ -430,103 +449,73 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                             break;
                     }
                     var options = angular.merge(options_1, options_2);
-                    console.log("Create network now");
+                    console.log("Network Plugin: Create network now");
                     var network = new visN.Network(container, data, options);
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     $scope.startDynamicResize(network);
 
                     network.on("afterDrawing", function (canvasP) {
                         $("#" + loading_id).hide();
                         // Draw the color legend if Node Color is activated
-                        if ($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend) {
+                        if (colorBucketId  && $scope.vis.params.showColorLegend) {
                             $scope.drawColorLegend(usedColors, colorDicc);
                         }
                     });
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    /////////////////////////////////////////////////////////////////////NODE-RELATION Type/////////////////////////////////////////////////////////////////////
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                } else if ($scope.vis.aggs.bySchemaName['first'].length == 1 && $scope.vis.aggs.bySchemaName['second']) {
+
+                  // NODE-RELATION Type
+                } else if (secondBucketId && !firstSecondBucketId) {
                     $scope.initialShows();
                     $(".secondNode").hide();
-                    // Retrieve the id of the configured tags aggregation
-                    var firstFieldAggId = $scope.vis.aggs.bySchemaName['first'][0].id;
-                    var secondFieldAggId = $scope.vis.aggs.bySchemaName['second'][0].id;
 
-                    if ($scope.vis.aggs.bySchemaName['colornode']) {
-                        var colorNodeAggId = $scope.vis.aggs.bySchemaName['colornode'][0].id;
-                        var colorNodeAggName = $scope.vis.aggs.bySchemaName['colornode'][0].params.field.displayName;
+                    if (colorBucketId) {
                         var colorDicc = {};
                         var usedColors = [];
 
-                        //Check if "Node Color" is the last selection
-                        if ($scope.vis.aggs.indexOf($scope.vis.aggs.bySchemaName['colornode'][0]) <= $scope.vis.aggs.indexOf($scope.vis.aggs.bySchemaName['second'][0])) {
+                        // Check if "Node Color" is the last selection
+                        if (colorBucketId <= secondBucketId) {
                             $scope.errorNodeColor();
                             return;
                         }
                     }
 
-                    //Names of the terms that have been selected
-                    var firstFieldAggName = $scope.vis.aggs.bySchemaName['first'][0].params.field.displayName;
-                    var secondFieldAggName = $scope.vis.aggs.bySchemaName['second'][0].params.field.displayName;
-
-                    // Retrieve the metrics aggregation configured
-                    if ($scope.vis.aggs.bySchemaName['size_node']) {
-                        var metricsAgg_sizeNode = $scope.vis.aggs.bySchemaName['size_node'][0];
-                    }
-                    if ($scope.vis.aggs.bySchemaName['size_edge']) {
-                        var metricsAgg_sizeEdge = $scope.vis.aggs.bySchemaName['size_edge'][0];
-                    }
-
-                    // Get the buckets of that aggregation
-                    var buckets = resp.rows;
-
-                    ///////////////////////////////////////////////////////////////DATA PARSED AND BUILDING NODES///////////////////////////////////////////////////////////////
+                    // DATA PARSED AND BUILDING NODES
                     var dataParsed = [];
                     // Iterate the buckets
                     var i = 0;
                     var dataNodes = buckets.map(function (bucket) {
-                        //New structure, needed to search after algorimt
                         var result = $.grep(dataParsed, function (e) { return e.keyNode == bucket[firstFirstBucketId]; });
+                        // first time we've parsed a node with this id
                         if (result.length == 0) {
                             dataParsed[i] = {};
                             dataParsed[i].keyNode = bucket[firstFirstBucketId];
 
-                            //Metrics are for the sizes
-                            if (metricsAgg_sizeNode) {
-                                // Use the getValue function of the aggregation to get the value of a bucket
-                                var value = bucket[nodeSizeId];
-                                var sizeVal = Math.max($scope.vis.params.maxCutMetricSizeNode, value);
+                            var value = bucket[nodeSizeId];
 
-                                //No show nodes under the value
-                                if ($scope.vis.params.minCutMetricSizeNode > value) {
-                                    dataParsed.splice(i, 1);
-                                    return;
-                                }
-                            } else {
-                                var sizeVal = 20;
+                            // Don't show nodes under the value
+                            if ($scope.vis.params.minCutMetricSizeNode > value) {
+                                dataParsed.splice(i, 1);
+                                return;
                             }
-
-                            dataParsed[i].valorSizeNode = sizeVal;
+                  
+                            dataParsed[i].valorSizeNode = value;
                             dataParsed[i].nodeColorValue = "default";
                             dataParsed[i].nodeColorKey = "default";
                             dataParsed[i].relationWithSecondField = []
 
-                            //RELATION//////////////////////////////
-                            if (metricsAgg_sizeEdge) {
-                                var value_sizeEdge = bucket[edgeSizeId];
-                                var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
+                            // Add relation edges
+                            if (edgeSizeId) {
+                                var sizeEdgeVal = bucket[edgeSizeId];
                             } else {
                                 var sizeEdgeVal = 0.1;
                             }
 
-                            //Get the color of the node, save in the dictionary
-                            if (colorNodeAggId) {
+                            // Get the color of the node, save in the dictionary
+                            if (colorBucketId) {
                                 if (colorDicc[bucket[colorBucketId]]) {
                                     dataParsed[i].nodeColorKey = bucket[colorBucketId];
                                     dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
                                 } else {
-                                    //repeat to find a NO-REPEATED color
+                                    // repeat to find a NO-REPEATED color
                                     while (true) {
                                         var confirmColor = randomColor();
                                         if (usedColors.indexOf(confirmColor) == -1) {
@@ -547,95 +536,87 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                 widthOfEdge: sizeEdgeVal
                             };
                             dataParsed[i].relationWithSecondField.push(relation)
-                            /////////////////////////////
 
-                            var inPopup = "<p>" + bucket[firstFirstBucketId] + "</p>"
                             if (dataParsed[i].nodeColorValue != "default") {
                                 var colorNodeFinal = dataParsed[i].nodeColorValue;
-                                inPopup += "<p>" + dataParsed[i].nodeColorKey + "</p>";
                             } else {
                                 var colorNodeFinal = $scope.vis.params.firstNodeColor;
                             }
 
                             i++;
-                            //Return the node totally built
+
+                            // Return the node totally built
                             var nodeReturn = {
                                 id: i,
                                 key: bucket[firstFirstBucketId],
                                 color: colorNodeFinal,
                                 shape: $scope.vis.params.shapeFirstNode,
-                                //size: sizeVal
-                                value: sizeVal,
+                                value: value,
                                 font: {
                                     color: $scope.vis.params.labelColor
                                 }
                             }
 
-                            //If activated, show the labels
+                            // If activated, show the labels
                             if ($scope.vis.params.showLabels) {
                                 nodeReturn.label = bucket[firstFirstBucketId];
                             }
 
-                            //If activated, show the popups
+                            // If activated, show the popups
                             if ($scope.vis.params.showPopup) {
-                                nodeReturn.title = inPopup;
+                                nodeReturn.title = getTooltipTitle(primaryNodeTermName, bucket[firstFirstBucketId], nodeSizeTermName, nodeReturn.value);
                             }
 
                             return nodeReturn;
-                        } else if (result.length == 1) {
-                            //Repetido el nodo, solo añadimos sus relaciones
+                        } else if (result.length == 1) {  // we already have this node id in dataNodes, so update with new info
                             var dataParsed_node_exist = result[0]
-                            if ($scope.vis.aggs.bySchemaName['second'].length > 0) {
-                                if (metricsAgg_sizeEdge) {
-                                    var value_sizeEdge = bucket[edgeSizeId];
-                                    var sizeEdgeVal = Math.max($scope.vis.params.maxCutMetricSizeEdge, value_sizeEdge);
-                                } else {
-                                    var sizeEdgeVal = 0.1;
-                                }
-
-                                var relation = {
-                                    keyRelation: bucket[secondBucketId],
-                                    countMetric: bucket[nodeSizeId],
-                                    widthOfEdge: sizeEdgeVal
-                                }
-                                dataParsed_node_exist.relationWithSecondField.push(relation)
+                            if (edgeSizeId) {
+                                var sizeEdgeVal = bucket[edgeSizeId];
+                            } else {
+                                var sizeEdgeVal = 0.1;
                             }
+
+                            var relation = {
+                                keyRelation: bucket[secondBucketId],
+                                countMetric: bucket[nodeSizeId],
+                                widthOfEdge: sizeEdgeVal
+                            }
+                            dataParsed_node_exist.relationWithSecondField.push(relation)
                             return undefined
                         }
                     });
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                    ///////////////////////////////////////////////////////////////////////BUILDING EDGES///////////////////////////////////////////////////////////////////////
-                    //Clean "undefinded" in the array
+                    // BUILDING EDGES
+                    // Clean "undefinded" in the array
                     dataNodes = dataNodes.filter(Boolean);
                     var dataEdges = [];
 
-                    //Iterate parsed nodes
+                    // Iterate parsed nodes
                     for (var n = 0; n < dataParsed.length; n++) {
-                        //Obtain id of the node
+                        // Obtain id of the node
                         var NodoFrom = $.grep(dataNodes, function (e) { return e.key == dataParsed[n].keyNode; });
                         if (NodoFrom.length == 0) {
-                            console.log("Error: Node not found");
+                            console.log("Network Plugin Error: Node not found");
                         } else if (NodoFrom.length == 1) {
                             var id_from = NodoFrom[0].id;
-                            //Iterate relations that have with the second field selected
+                            // Iterate relations that have with the second field selected
                             for (var p = 0; p < dataParsed[n].relationWithSecondField.length; p++) {
-                                //Iterate again the nodes
+                                // Iterate again the nodes
                                 for (var z = 0; z < dataParsed.length; z++) {
-                                    //Check that we don't compare the same node
+                                    // Check that we don't compare the same node
                                     if (dataParsed[n] != dataParsed[z]) {
                                         var NodoTo = $.grep(dataNodes, function (e) { return e.key == dataParsed[z].keyNode; });
                                         if (NodoTo.length == 0) {
-                                            console.log("Error: Node not found");
+                                            console.log("Network Plugin Error: Node not found");
                                         } else if (NodoTo.length == 1) {
                                             var id_to = NodoTo[0].id;
-                                            //Have relation?
+                                            // Have relation?
                                             var sameRelation = $.grep(dataParsed[z].relationWithSecondField, function (e) { return e.keyRelation == dataParsed[n].relationWithSecondField[p].keyRelation; });
                                             if (sameRelation.length == 1) {
-                                                //Nodes have a relation, creating the edge
+                                                // Nodes have a relation, creating the edge
                                                 var edgeExist = $.grep(dataEdges, function (e) { return (e.to == id_from && e.from == id_to) || (e.to == id_to && e.from == id_from); });
                                                 if (edgeExist.length == 0) {
-                                                    //The size of the edge is the total of the common
+                                                    // The size of the edge is the total of the common
                                                     var sizeEdgeTotal = sameRelation[0].widthOfEdge + dataParsed[n].relationWithSecondField[p].widthOfEdge;
                                                     var edge = {
                                                         from: id_from,
@@ -646,34 +627,33 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                                                 }
                                             }
                                         } else {
-                                            console.log("Error: Multiples nodes with same id found");
+                                            console.log("Network Plugin Error: Multiples nodes with same id found");
                                         }
                                     }
                                 }
                             }
 
                         } else {
-                            console.log("Error: Multiples nodes with same id found");
+                            console.log("Network Plugin Error: Multiples nodes with same id found");
                         }
                     }
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                    //////////////////////////////////////////////////////////Creation of the network with the library//////////////////////////////////////////////////////////
+                    // Creation of the network with the library
                     var nodesDataSet = new visN.DataSet(dataNodes);
                     var edgesDataSet = new visN.DataSet(dataEdges);
 
 
                     // Creation of the network
                     var container = document.getElementById(network_id);
-                    //Set the Height
+                    // Set the Height
                     container.style.height = container.getBoundingClientRect().height;
                     container.height = container.getBoundingClientRect().height;
-                    //Set the Data
+                    // Set the Data
                     var data = {
                         nodes: nodesDataSet,
                         edges: edgesDataSet
                     };
-                    //Set the Options
+                    // Set the Options
                     var options = {
                         height: container.getBoundingClientRect().height.toString(),
                         physics: {
@@ -702,7 +682,8 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         },
                         interaction: {
                             hideEdgesOnDrag: true,
-                            hover: true
+                            hover: true,
+                            tooltipDelay: 100
                         },
                         nodes: {
                             physics: $scope.vis.params.nodePhysics,
@@ -713,22 +694,23 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
                         },
                         layout: {
                             improvedLayout: false
+                        },
+                        manipulation: {
+                            enabled: true
                         }
                     }
-                    console.log("Create network now");
+                    console.log("Network Plugin: Create network now");
                     var network = new visN.Network(container, data, options);
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     $scope.startDynamicResize(network);
 
                     network.on("afterDrawing", function (canvasP) {
                         $("#" + loading_id).hide();
                         // Draw the color legend if Node Color is activated
-                        if ($scope.vis.aggs.bySchemaName['colornode'] && $scope.vis.params.showColorLegend) {
+                        if (colorBucketId && $scope.vis.params.showColorLegend) {
                             $scope.drawColorLegend(usedColors, colorDicc);
                         }
                     });
-
                 } else {
                     $scope.errorNodeNodeRelation();
                 }
@@ -736,3 +718,4 @@ module.controller('KbnNetworkVisController', function ($scope, $sce, $timeout, P
         }
     });
 });
+

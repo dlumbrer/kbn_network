@@ -1,6 +1,6 @@
-# Network Plugin for Kibana 5.5.X
+# Network Plugin for Kibana 7.5.X
 
-This is a plugin developed for Kibana 5 that displays a network node that link two fields that have been previously selected.
+This is a plugin developed for Kibana 7.5.x that displays a network node that link two fields that have been previously selected.
 
 ###### Link to the page: https://dlumbrer.github.io/kbn_network/
 

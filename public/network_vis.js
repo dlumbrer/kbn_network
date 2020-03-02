@@ -1,38 +1,36 @@
 import "plugins/network_vis/network_vis.less";
 
 import { KbnNetworkVisController } from './network_vis_controller'
-import { VisFactoryProvider } from 'ui/vis/vis_factory';
+import { visFactory } from 'ui/vis/vis_factory';
 import { Schemas } from 'ui/vis/editors/default/schemas';
-import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
+import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
 import image from './images/icon-network.svg';
 import networkVisTemplate from 'plugins/network_vis/network_vis.html';
 import networkVisParamsTemplate from 'plugins/network_vis/network_vis_params.html';
-
-
-
+import { AngularVisController } from 'ui/vis/vis_types/angular_vis_type';
 
 // register the provider with the visTypes registry
-VisTypesRegistryProvider.register(NetworkVisTypeProvider);
+visualizations.types.registerVisualization(NetworkVisTypeProvider);
 
 // define the TableVisType
 function NetworkVisTypeProvider(Private) {
-  const VisFactory = Private(VisFactoryProvider);
 
   // return the visType object, which kibana will use to display and configure new
   // Vis object of this type.
-  return VisFactory.createAngularVisualization({
+  return visFactory.createBaseVisualization({
     name: 'network',
     title: 'Network',
     image,
     description: 'Displays a network node that link two fields that have been selected.',
+    visualization: AngularVisController,
     visConfig: {
       defaults: {
         showLabels: true,
-        showPopup: false,
+        showPopup: true,
         showColorLegend: true,
         nodePhysics: true,
-        firstNodeColor: '#FD7BC4',
-        secondNodeColor: '#00d1ff',
+        firstNodeColor: '#6F86D7',
+        secondNodeColor: '#DAA05D',
         canvasBackgroundColor: '#FFFFFF',
         shapeFirstNode: 'dot',
         shapeSecondNode: 'box',
@@ -41,8 +39,6 @@ function NetworkVisTypeProvider(Private) {
         shapeArrow: 'arrow',
         smoothType: 'continuous',
         scaleArrow: 1,
-        maxCutMetricSizeNode: 5000,
-        maxCutMetricSizeEdge: 5000,
         minCutMetricSizeNode: 0,
         maxNodeSize: 80,
         minNodeSize: 8,
@@ -67,8 +63,6 @@ function NetworkVisTypeProvider(Private) {
           defaults: [
             { type: 'count', schema: 'size_node' }
           ]
-          
-          //aggFilter: ['count', 'avg', 'sum', 'min', 'max', 'cardinality', 'std_dev']
         },
         {
           group: 'metrics',
@@ -107,14 +101,12 @@ function NetworkVisTypeProvider(Private) {
     responseHandlerConfig: {
       asAggConfigResults: true
     },
-    ////////MIRAR THIS
+    // structures the data tables (returned by kibana in resp and in UI Inspect)
     hierarchicalData: function (vis) {
       return true;
     },
-    ////////////////////
-
-
   });
 }
 
 export default NetworkVisTypeProvider;
+
