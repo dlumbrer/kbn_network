@@ -1,4 +1,4 @@
-# Network Plugin for Kibana
+# Network Plugin for Kibana 5, 6 and 7
 
 This is a plugin developed for Kibana that displays a network node that link two fields that have been previously selected.
 
@@ -17,6 +17,9 @@ Now this plugin is avalible for differents versions of Kibana (6, 5 and 4), in [
 
 1. Move into plugins folder:  `cd KIBANA_HOME/plugins`
 2. Clone the source code (**it depends on your Kibana's version**):
+    - Kibana 7.5 and upper: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 7-dev`
+    - Kibana 7.0 to 7.4: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 7.4-dev`
+    - Kibana 6.6 and upper: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 6-dev`
     - Kibana 6.5: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 6.5-dev`
     - Kibana 6.3 or 6.4: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 6.4-dev`
     - Kibana 6.0, 6.1 or 6.2: `git clone https://github.com/dlumbrer/kbn_network.git network_vis -b 6.2-dev`
