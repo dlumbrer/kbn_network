@@ -1,9 +1,6 @@
 {
   "name": "network_vis",
-  "version": "7.5.2",
-  "kibana": {
-    "version": "kibana"
-  },
+  "version": "7.6.2",
   "authors": [
     "David Moreno Lumbreras <dmorenolumb@gmail.com>"
   ],
@@ -13,12 +10,11 @@
     "url": "https://github.com/dlumbrer/kbn_network"
   },
   "dependencies": {
-    "vis-network": "7.2.0",
-    "randomcolor": "0.5.0",
-    "css-element-queries": "0.3.2",
+    "vis-network": "^7.4.0",
+    "randomcolor": "^0.5.0",
     "keycharm": "^0.2.0",
     "moment": "^2.24.0",
-    "vis-data": "^6.2.1",
+    "vis-data": "^6.5.1",
     "vis-util": "^1.1.8"
   }
 }

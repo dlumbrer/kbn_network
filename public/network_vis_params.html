@@ -1,24 +1,20 @@
 <br>
 <h5><strong>Color Options</strong></h5>
 <br>
-<div>
-  <span>Background:</span>
-  <input type="color" ng-model="vis.params.canvasBackgroundColor" class="form-control"/>
-</div>
 
 <div>
   <span>Primary Nodes:</span>
-  <input type="color" ng-model="vis.params.firstNodeColor" class="form-control"/>
+  <input type="color" ng-model="editorState.params.firstNodeColor" class="form-control"/>
 </div>
 
 <div>
   <span>Secondary Nodes:</span>
-  <input type="color" ng-model="vis.params.secondNodeColor" class="form-control"/>
+  <input type="color" ng-model="editorState.params.secondNodeColor" class="form-control"/>
 </div>
 
 <div>
   <span>Labels:</span>
-  <input type="color" ng-model="vis.params.labelColor" class="form-control"/>
+  <input type="color" ng-model="editorState.params.labelColor" class="form-control"/>
 </div>
 
 <br>
@@ -30,19 +26,19 @@
     <tbody>
         <tr>
             <td>Max Node Size&nbsp;</td>
-            <td><input type="number" ng-model="vis.params.maxNodeSize" min="1"></td>
+            <td><input class="euiFieldNumber" type="number" ng-model="editorState.params.maxNodeSize" min="1"></td>
         </tr>
         <tr>
             <td>Min Node Size&nbsp;</td>
-            <td><input type="number" ng-model="vis.params.minNodeSize" min="1"></td>
+            <td><input class="euiFieldNumber" type="number" ng-model="editorState.params.minNodeSize" min="1"></td>
         </tr>
         <tr>
             <td>Max Edge Width&nbsp;</td>
-            <td><input type="number" ng-model="vis.params.maxEdgeSize" min="1"></td>
+            <td><input class="euiFieldNumber" type="number" ng-model="editorState.params.maxEdgeSize" min="1"></td>
         </tr>
         <tr>
             <td>Min Edge Width&nbsp;</td>
-            <td><input type="number" ng-model="vis.params.minEdgeSize" min="0.1"></td>
+            <td><input class="euiFieldNumber" type="number" ng-model="editorState.params.minEdgeSize" min="0.1"></td>
         </tr>
     </tbody>
 </table>
@@ -54,7 +50,7 @@
 <br>
 <div class="form-group">
   <label for="sel1">Primary Nodes: </label>
-   <select class="form-control" ng-model="vis.params.shapeFirstNode" id="sel1">
+   <select class="form-control" ng-model="editorState.params.shapeFirstNode" id="sel1">
      <option value="circle">Circle</option>
      <option value="dot">Dot</option>
      <option value="ellipse">Ellipse</option>
@@ -71,7 +67,7 @@
 
 <div class="form-group">
   <label for="sel2">Secondary Nodes: </label>
-   <select class="form-control" ng-model="vis.params.shapeSecondNode" id="sel2">
+   <select class="form-control" ng-model="editorState.params.shapeSecondNode" id="sel2">
      <option value="circle">Circle</option>
      <option value="dot">Dot</option>
      <option value="ellipse">Ellipse</option>
@@ -94,12 +90,12 @@
     <tbody>
         <tr>
             <td>Display directional edge:&nbsp;</td>
-            <td><input type="checkbox" ng-model="vis.params.displayArrow"></td>
+            <td><input class="euiCheckbox__input" type="checkbox" ng-model="editorState.params.displayArrow"></td>
         </tr>
         <tr>
             <td>Endpoint position:&nbsp;</td>
             <td>
-                <select class="form-control" ng-model="vis.params.posArrow" id="sel4">
+                <select class="form-control" ng-model="editorState.params.posArrow" id="sel4">
                     <option value="from">Beginning</option>
                     <option value="middle">Middle</option>
                     <option value="to">End side</option>
@@ -109,7 +105,7 @@
         <tr>
             <td>Endpoint Type:</td>
             <td>
-                <select class="form-control" ng-model="vis.params.shapeArrow" id="sel3">
+                <select class="form-control" ng-model="editorState.params.shapeArrow" id="sel3">
                     <option value="arrow">Arrow</option>
                     <option value="circle">Circle</option>
                 </select>
@@ -117,12 +113,12 @@
         </tr>
         <tr>
             <td>Scale Factor:</td>
-            <td><input type="number" ng-model="vis.params.scaleArrow" min="0"></td>
+            <td><input type="number" class="euiFieldNumber" ng-model="editorState.params.scaleArrow" min="0"></td>
         </tr>
         <tr>
             <td>Smooth type:</td>
             <td>
-                <select class="form-control" ng-model="vis.params.smoothType" id="sel5">
+                <select class="form-control" ng-model="editorState.params.smoothType" id="sel5">
                     <option value="dynamic">Dynamic</option>
                     <option value="continuous">Continuous Anchor</option>
                     <option value="discrete">Discrete Anchor</option>
@@ -145,19 +141,19 @@
 <h5><strong>Extra</strong></h5>
 <div class="checkbox">
   <label>
-    <input type="checkbox" ng-model="vis.params.showLabels">
+    <input class="euiCheckbox__input" type="checkbox" ng-model="editorState.params.showLabels">
     Show Labels
   </label>
   <label>
-    <input type="checkbox" ng-model="vis.params.showPopup">
+    <input class="euiCheckbox__input" type="checkbox" ng-model="editorState.params.showPopup">
     Show Popup
   </label>
   <label>
-    <input type="checkbox" ng-model="vis.params.showColorLegend">
+    <input class="euiCheckbox__input" type="checkbox" ng-model="editorState.params.showColorLegend">
     Show Color Legend (Node Color selected)
   </label>
   <label>
-    <input type="checkbox" ng-model="vis.params.nodePhysics">
+    <input class="euiCheckbox__input" type="checkbox" ng-model="editorState.params.nodePhysics">
     Nodes Acting like Springs
   </label>
 </div>
@@ -168,11 +164,11 @@
 <br>
 <div>
   Attraction Force
-  <input type="number" ng-model="vis.params.gravitationalConstant" id="gravC">
+  <input class="euiFieldNumber" type="number" ng-model="editorState.params.gravitationalConstant" id="gravC">
 </div>
 <div>
   Spring Force
-  <input type="number" ng-model="vis.params.springConstant" id="springC">
+  <input class="euiFieldNumber" step="0.001" type="number" ng-model="editorState.params.springConstant" id="springC">
 </div>
 
 <br>
@@ -180,7 +176,7 @@
 <h4>Don't show nodes below this value:</h4>
 <div>
   Node Size
-  <input type="number" ng-model="vis.params.minCutMetricSizeNode" min="0">
+  <input class="euiFieldNumber" type="number" ng-model="editorState.params.minCutMetricSizeNode" min="0">
 </div>
 
 <br>
