@@ -1,0 +1,19 @@
+visualization.enhanced-table {
+  padding: 0px 5px;
+}
+
+.enhanced-table-vis {
+  $euiColorLightestShade: #F5F7FA;
+  @import 'agg_table/index';
+  @import 'paginated_table/index';
+  @import 'enhanced-table-vis';
+}
+
+.theme-dark.enhanced-table-vis {
+  $euiColorLightestShade: #25262E;
+  @import 'agg_table/index';
+  @import 'paginated_table/index';
+  @import 'enhanced-table-vis';
+}
+
+@import 'enhanced-table-vis-params';
