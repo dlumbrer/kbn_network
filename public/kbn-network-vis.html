@@ -1,0 +1,55 @@
+<div id="errorHtml"></div>
+<div ng-controller="KbnNetworkVisController" class="network-vis" id="net_{{$id}}">
+</div>
+<div id="loading_{{$id}}">
+  <div class="loading_msg">
+    <p><strong>Loading network...</strong><i class="fa fa-clock-o" aria-hidden="true"></i></p>
+  </div>
+</div>
+
+<!--div ng-controller="KbnNetworkVisController" class="table-vis kbn-network-vis" ng-class="{'theme-dark': isDarkTheme}">
+
+  <div ng-show="visState.params.showFilterBar && tableGroups && (hasSomeRows || activeFilter !== '')" class="filterBar">
+    <div ng-hide="showFilterInput()" align="right">
+      <a ng-click="enableFilterInput()" class="filterText" i18n-id="visTypeTable.vis.filterLink" i18n-default-message="Filter"></a>
+    </div>
+
+    <div class="kuiLocalSearch" ng-show="showFilterInput()" style="width:{{visState.params.filterBarWidth}}">
+      <div class="kuiLocalSearchAssistedInput">
+        <input type="text" ng-model="vis.filterInput" ng-keyup="(visState.params.filterAsYouType || $event.keyCode == 13) && doFilter()" placeholder="{{ ::'visTypeTable.vis.filterPlaceholder' | i18n: {defaultMessage: 'Filter...'} }}" class="kuiLocalSearchInput filterInput" autocomplete="off" aria-label="{{ ::'visTypeTable.vis.filterAriaLabel' | i18n: {defaultMessage: 'Filter input'} }}">
+      </div>
+      <button ng-click="doFilter()" aria-label="Filter" class="kuiButton kuiLocalSearchButton filterButton" ng-disabled="visState.params.filterAsYouType">
+        <span class="fa fa-search" aria-hidden="true"></span>
+      </button>
+      <button ng-click="disableFilterInput()" ng-show="visState.params.filterBarHideable" aria-label="Hide" class="kuiButton kuiButton--danger filterButton">
+        <span aria-hidden="true" class="fa fa-times"></span>
+      </button>
+    </div>
+  </div>
+
+  <div ng-if="!hasSomeRows && hasSomeRows !== null" class="visError">
+    <div class="euiText euiText--extraSmall euiTextColor euiTextColor--subdued">
+      <icon type="'visualizeApp'" size="'m'" color="'subdued'"></icon>
+
+      <br>
+      <br>
+
+      <p
+        i18n-id="visTypeTable.vis.noResultsFoundTitle"
+        i18n-default-message="No results found">
+      </p>
+    </div>
+  </div>
+
+  <div ng-if="hasSomeRows" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
+    <kbn-network-agg-table-group
+      filter="vis.API.events.filter"
+      group="tableGroups"
+      export-title="visState.title"
+      per-page="visState.params.perPage"
+      sort="sort"
+      show-total="visState.params.showTotal"
+      total-func="visState.params.totalFunc">
+    </kbn-network-agg-table-group>
+  </div>
+</div-->

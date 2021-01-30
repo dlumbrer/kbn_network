@@ -1,6 +1,10 @@
 {
-  "name": "network_vis",
-  "version": "7.6.2",
+  "name": "kbn_network",
+  "version": "7.10.0",
+  "description": "Network plugin for visualizing networks",
+  "kibana": {
+    "version": "7.10.0"
+  },
   "authors": [
     "David Moreno Lumbreras <dmorenolumb@gmail.com>"
   ],

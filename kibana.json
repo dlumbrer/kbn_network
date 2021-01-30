@@ -1,0 +1,18 @@
+{
+  "id": "kbnNetwork",
+  "version": "7.10.0",
+  "server": false,
+  "ui": true,
+  "requiredPlugins": [
+    "visualizations",
+    "data",
+    "inspector",
+    "kibanaLegacy"
+  ],
+  "requiredBundles": [
+    "kibanaUtils",
+    "visDefaultEditor",
+    "share",
+    "charts"
+  ]
+}

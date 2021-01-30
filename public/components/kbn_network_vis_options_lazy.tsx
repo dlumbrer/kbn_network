@@ -16,10 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import './index.scss';
-import { PluginInitializerContext } from 'kibana/public';
-import { KbnNetworkPlugin as Plugin } from './plugin';
+import React, { lazy, Suspense } from 'react';
+import { EuiLoadingSpinner } from '@elastic/eui';
+import { VisOptionsProps } from '../../../../src/plugins/vis_default_editor/public';
+import { KbnNetworkVisParams } from './kbn_network_vis_options';
 
-export function plugin(initializerContext: PluginInitializerContext) {
-  return new Plugin(initializerContext);
-}
+const KbnNetworkOptionsComponent = lazy(() => import('./kbn_network_vis_options'));
+
+export const KbnNetworkOptions = (props: VisOptionsProps<KbnNetworkVisParams>) => (
+  <Suspense fallback={<EuiLoadingSpinner />}>
+    <KbnNetworkOptionsComponent {...props} />
+  </Suspense>
+);
