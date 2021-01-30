@@ -1,5 +1,5 @@
 {
-  "name": "network-plugin",
+  "name": "kbn_network",
   "version": "7.10.0",
   "description": "Network plugin for visualizing networks",
   "kibana": {
@@ -14,7 +14,6 @@
     "url": "https://github.com/dlumbrer/kbn_network"
   },
   "dependencies": {
-    "expr-eval": "2.0.2",
     "vis-network": "^7.4.0",
     "randomcolor": "^0.5.0",
     "keycharm": "^0.2.0",

@@ -9,15 +9,15 @@
   <tbody>
     <tr>
       <td>
-        <kbn-enhanced-agg-table-group
+        <kbn-network-agg-table-group
           ng-if="table.tables"
           group="table"
           filter="filter"
           per-page="perPage"
           sort="sort"
           show-total="showTotal"
-          total-func="totalFunc"></kbn-enhanced-agg-table-group>
-        <kbn-enhanced-agg-table
+          total-func="totalFunc"></kbn-network-agg-table-group>
+        <kbn-network-agg-table
           ng-if="table.rows"
           filter="filter"
           table="table"
@@ -26,7 +26,7 @@
           sort="sort"
           show-total="showTotal"
           total-func="totalFunc">
-        </kbn-enhanced-agg-table>
+        </kbn-network-agg-table>
       </td>
     </tr>
   </tbody>
@@ -43,15 +43,15 @@
   <tbody>
     <tr>
       <td ng-repeat="table in columns">
-        <kbn-enhanced-agg-table-group
+        <kbn-network-agg-table-group
           ng-if="table.tables"
           filter="filter"
           group="table"
           per-page="perPage"
           sort="sort"
           show-total="showTotal"
-          total-func="totalFunc"></kbn-enhanced-agg-table-group>
-        <kbn-enhanced-agg-table
+          total-func="totalFunc"></kbn-network-agg-table-group>
+        <kbn-network-agg-table
           ng-if="table.rows"
           filter="filter"
           table="table"
@@ -60,7 +60,7 @@
           sort="sort"
           show-total="showTotal"
           total-func="totalFunc">
-        </kbn-enhanced-agg-table>
+        </kbn-network-agg-table>
       </td>
     </tr>
   </tbody>

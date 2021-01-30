@@ -19,8 +19,7 @@
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
 import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
 
-import { enhancedTableVisTypeDefinition } from './enhanced-table-vis';
-import { documentTableVisTypeDefinition } from './document-table-vis';
+import { kbnNetworkVisTypeDefinition } from './kbn-network-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { setFormatService, setKibanaLegacy, setNotifications, setQueryService, setSearchService } from './services';
@@ -39,7 +38,7 @@ export interface TablePluginStartDependencies {
 }
 
 /** @internal */
-export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
+export class KbnNetworkPlugin implements Plugin<Promise<void>, void> {
   initializerContext: PluginInitializerContext;
   createBaseVisualization: any;
 
@@ -52,12 +51,9 @@ export class EnhancedTablePlugin implements Plugin<Promise<void>, void> {
     { visualizations }: TablePluginSetupDependencies
   ) {
     visualizations.createBaseVisualization(
-      enhancedTableVisTypeDefinition(core, this.initializerContext)
+      kbnNetworkVisTypeDefinition(core, this.initializerContext)
     );
 
-    visualizations.createBaseVisualization(
-      documentTableVisTypeDefinition(core, this.initializerContext)
-      );
   }
 
   public start(core: CoreStart, { data, kibanaLegacy }: TablePluginStartDependencies) {

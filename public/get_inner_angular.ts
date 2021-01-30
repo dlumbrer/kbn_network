@@ -46,7 +46,7 @@ export function getAngularModule(name: string, core: CoreStart, context: PluginI
 
 let initialized = false;
 
-export function getInnerAngular(name = 'kibana/enhanced_table_vis', core: CoreStart) {
+export function getInnerAngular(name = 'kibana/kbn_network_vis', core: CoreStart) {
   if (!initialized) {
     createLocalPrivateModule();
     createLocalI18nModule();

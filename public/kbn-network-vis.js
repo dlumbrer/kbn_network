@@ -21,57 +21,34 @@ import { i18n } from '@kbn/i18n';
 import { AggGroupNames } from '../../../src/plugins/data/public';
 import { Schemas } from '../../../src/plugins/vis_default_editor/public';
 
-import tableVisTemplate from './enhanced-table-vis.html';
-import { getEnhancedTableVisualizationController } from './vis_controller';
-import { enhancedTableRequestHandler } from './data_load/enhanced-table-request-handler';
-import { enhancedTableResponseHandler } from './data_load/enhanced-table-response-handler';
-import { EnhancedTableOptions } from './components/enhanced_table_vis_options_lazy';
+import tableVisTemplate from './kbn-network-vis.html';
+import { getKbnNetworkVisualizationController } from './vis_controller';
+import { kbnNetworkRequestHandler } from './data_load/kbn-network-request-handler';
+import { kbnNetworkResponseHandler } from './data_load/kbn-network-response-handler';
+import { KbnNetworkOptions } from './components/kbn_network_vis_options_lazy';
 import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
-import './enhanced-table-vis.scss'
+import './index.scss'
+import image from './images/icon-network.svg';
 
 
 // define the visType object, which kibana will use to display and configure new Vis object of this type.
-export function enhancedTableVisTypeDefinition(core, context) {
+export function kbnNetworkVisTypeDefinition(core, context) {
   return {
     type: 'table',
-    name: 'enhanced-table',
-    title: i18n.translate('visTypeEnhancedTable.visTitle', {
-      defaultMessage: 'Enhanced Table'
+    name: 'kbn_network',
+    title: i18n.translate('visTypeKbnNetwork.visTitle', {
+      defaultMessage: 'Network'
     }),
-    icon: 'visTable',
-    description: i18n.translate('visTypeEnhancedTable.visDescription', {
-      defaultMessage: 'Same functionality than Data Table, but with enhanced features like computed columns, filter bar and pivot table.'
+    icon: image,
+    description: i18n.translate('visTypeKbnNetwork.visDescription', {
+      defaultMessage: 'Network plugin for visualizing data as networks'
     }),
-    visualization: getEnhancedTableVisualizationController(core, context),
+    visualization: getKbnNetworkVisualizationController(core, context),
     getSupportedTriggers: () => {
       return [VIS_EVENT_TO_TRIGGER.filter];
     },
     visConfig: {
       defaults: {
-        perPage: 10,
-        showPartialRows: false,
-        showMetricsAtAllLevels: false,
-        sort: {
-          columnIndex: null,
-          direction: null
-        },
-        showTotal: false,
-        totalFunc: 'sum',
-        computedColumns: [],
-        computedColsPerSplitCol: false,
-        hideExportLinks: false,
-        stripedRows: false,
-        addRowNumberColumn: false,
-        showFilterBar: false,
-        filterCaseSensitive: false,
-        filterBarHideable: false,
-        filterAsYouType: false,
-        filterTermsSeparately: false,
-        filterHighlightResults: false,
-        filterBarWidth: '25%',
-
-
-
         showLabels: true,
         showPopup: true,
         showColorLegend: true,
@@ -97,7 +74,7 @@ export function enhancedTableVisTypeDefinition(core, context) {
       template: tableVisTemplate
     },
     editorConfig: {
-      optionsTemplate: EnhancedTableOptions,
+      optionsTemplate: KbnNetworkOptions,
       schemas: new Schemas([
         {
           group: AggGroupNames.Metrics,
@@ -153,8 +130,8 @@ export function enhancedTableVisTypeDefinition(core, context) {
         }
       ])
     },
-    requestHandler: enhancedTableRequestHandler,
-    responseHandler: enhancedTableResponseHandler,
+    requestHandler: kbnNetworkRequestHandler,
+    responseHandler: kbnNetworkResponseHandler,
     hierarchicalData: (vis) => {
       return true;
     }

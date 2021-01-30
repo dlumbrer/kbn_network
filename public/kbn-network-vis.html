@@ -1,5 +1,5 @@
 <div id="errorHtml"></div>
-<div ng-controller="EnhancedTableVisController" class="network-vis" id="net_{{$id}}">
+<div ng-controller="KbnNetworkVisController" class="network-vis" id="net_{{$id}}">
 </div>
 <div id="loading_{{$id}}">
   <div class="loading_msg">
@@ -7,7 +7,7 @@
   </div>
 </div>
 
-<!--div ng-controller="EnhancedTableVisController" class="table-vis enhanced-table-vis" ng-class="{'theme-dark': isDarkTheme}">
+<!--div ng-controller="KbnNetworkVisController" class="table-vis kbn-network-vis" ng-class="{'theme-dark': isDarkTheme}">
 
   <div ng-show="visState.params.showFilterBar && tableGroups && (hasSomeRows || activeFilter !== '')" class="filterBar">
     <div ng-hide="showFilterInput()" align="right">
@@ -42,7 +42,7 @@
   </div>
 
   <div ng-if="hasSomeRows" class="table-vis-container" ng-class="tableVisContainerClass" data-test-subj="tableVis">
-    <kbn-enhanced-agg-table-group
+    <kbn-network-agg-table-group
       filter="vis.API.events.filter"
       group="tableGroups"
       export-title="visState.title"
@@ -50,6 +50,6 @@
       sort="sort"
       show-total="visState.params.showTotal"
       total-func="visState.params.totalFunc">
-    </kbn-enhanced-agg-table-group>
+    </kbn-network-agg-table-group>
   </div>
 </div-->

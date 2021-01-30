@@ -23,7 +23,7 @@ import aggTableTemplate from './agg_table.html';
 import { getFormatService } from '../services';
 import { fieldFormatter } from '../field_formatter';
 
-export function KbnEnhancedAggTable(config, RecursionHelper) {
+export function KbnNetworkAggTable(config, RecursionHelper) {
   const fieldFormats = getFormatService();
   const numberFormatter = fieldFormats.getDefaultInstance('number').getConverterFor('text');
 

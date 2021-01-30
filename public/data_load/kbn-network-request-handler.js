@@ -23,7 +23,7 @@ import { getSearchService, getQueryService } from '../services';
 import { handleCourierRequest } from './kibana_cloned_code/courier';
 import { serializeAggConfig } from './kibana_cloned_code/utils';
 
-export async function enhancedTableRequestHandler ({
+export async function kbnNetworkRequestHandler ({
   partialRows,
   metricsAtAllLevels,
   visParams,

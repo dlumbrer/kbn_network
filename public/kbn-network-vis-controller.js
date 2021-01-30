@@ -23,16 +23,11 @@ import randomColor from 'randomcolor';
 import { Network } from 'vis-network';
 import $ from 'jquery';
 
-import { computeColumnTotal } from './column_total_computer';
 import AggConfigResult from './data_load/agg_config_result';
 import { getNotifications, getFormatService } from './services';
 
-// third-party dependencies
-import { Parser } from 'expr-eval';
-import handlebars from 'handlebars/dist/handlebars';
-
-// EnhancedTableVis AngularJS controller
-function EnhancedTableVisController($scope, config, $timeout) {
+// KbnNetworkVis AngularJS controller
+function KbnNetworkVisController($scope, config, $timeout) {
 
   let networkId;
   let loadingId;
@@ -96,7 +91,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
     );
   };
 
-  $scope.$watchMulti(['esResponse', 'vis.params.secondNodeColor'], function([resp]) {
+  $scope.$watchMulti(['esResponse', 'visParams'], function([resp]) {
     // constiables for column ids, ex. id: "col-0-3" from one of the 'columns' in the resp
     let firstFirstBucketId;
     let firstSecondBucketId;
@@ -204,7 +199,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
               const value = bucket[nodeSizeId];
 
               // Don't show nodes under the value
-              if ($scope.vis.params.minCutMetricSizeNode > value) {
+              if ($scope.visParams.minCutMetricSizeNode > value) {
                 dataParsed.splice(i, 1);
                 return;
               }
@@ -251,7 +246,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
                 }
               }
 
-              let colorNodeFinal = $scope.vis.params.firstNodeColor;
+              let colorNodeFinal = $scope.visParams.firstNodeColor;
               // Assign color and the content of the popup
               if (dataParsed[i].nodeColorValue !== 'default') {
                 colorNodeFinal = dataParsed[i].nodeColorValue;
@@ -264,20 +259,20 @@ function EnhancedTableVisController($scope, config, $timeout) {
                 id: i,
                 key: bucket[firstFirstBucketId],
                 color: colorNodeFinal,
-                shape: $scope.vis.params.shapeFirstNode,
+                shape: $scope.visParams.shapeFirstNode,
                 value: value,
                 font: {
-                  color: $scope.vis.params.labelColor,
+                  color: $scope.visParams.labelColor,
                 },
               };
 
               // If activated, show the labels
-              if ($scope.vis.params.showLabels) {
+              if ($scope.visParams.showLabels) {
                 nodeReturn.label = bucket[firstFirstBucketId];
               }
 
               // If activated, show the popups
-              if ($scope.vis.params.showPopup) {
+              if ($scope.visParams.showPopup) {
                 nodeReturn.title = getTooltipTitle(
                   primaryNodeTermName,
                   bucket[firstFirstBucketId],
@@ -336,13 +331,13 @@ function EnhancedTableVisController($scope, config, $timeout) {
                       id: i,
                       key: dataParsed[n].relationWithSecondNode[r].keySecondNode,
                       label: dataParsed[n].relationWithSecondNode[r].keySecondNode,
-                      color: $scope.vis.params.secondNodeColor,
+                      color: $scope.visParams.secondNodeColor,
                       font: {
-                        color: $scope.vis.params.labelColor,
+                        color: $scope.visParams.labelColor,
                       },
-                      shape: $scope.vis.params.shapeSecondNode,
+                      shape: $scope.visParams.shapeSecondNode,
                     };
-                    if ($scope.vis.params.showPopup) {
+                    if ($scope.visParams.showPopup) {
                       secondaryNode.title = getTooltipTitle(
                         secondaryNodeTermName,
                         dataParsed[n].relationWithSecondNode[r].keySecondNode
@@ -357,7 +352,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
                       to: dataNodes[dataNodes.length - 1].id,
                       value: dataParsed[n].relationWithSecondNode[r].widthOfEdge,
                     };
-                    if ($scope.vis.params.showPopup && edgeSizeId) {
+                    if ($scope.visParams.showPopup && edgeSizeId) {
                       edge.title = getTooltipTitle(
                         edgeSizeTermName,
                         dataParsed[n].relationWithSecondNode[r].widthOfEdge
@@ -372,7 +367,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
                       to: nodeOfSecondType[0].id,
                       value: dataParsed[n].relationWithSecondNode[r].widthOfEdge,
                     };
-                    if ($scope.vis.params.showPopup && edgeSizeId) {
+                    if ($scope.visParams.showPopup && edgeSizeId) {
                       enlace.title = getTooltipTitle(
                         edgeSizeTermName,
                         dataParsed[n].relationWithSecondNode[r].widthOfEdge
@@ -402,25 +397,25 @@ function EnhancedTableVisController($scope, config, $timeout) {
             // height: container.getBoundingClientRect().height.toString(),
             physics: {
               barnesHut: {
-                gravitationalConstant: $scope.vis.params.gravitationalConstant,
-                springConstant: $scope.vis.params.springConstant,
+                gravitationalConstant: $scope.visParams.gravitationalConstant,
+                springConstant: $scope.visParams.springConstant,
               },
             },
             edges: {
               arrowStrikethrough: false,
               smooth: {
-                type: $scope.vis.params.smoothType,
+                type: $scope.visParams.smoothType,
               },
               scaling: {
-                min: $scope.vis.params.minEdgeSize,
-                max: $scope.vis.params.maxEdgeSize,
+                min: $scope.visParams.minEdgeSize,
+                max: $scope.visParams.maxEdgeSize,
               },
             },
             nodes: {
-              physics: $scope.vis.params.nodePhysics,
+              physics: $scope.visParams.nodePhysics,
               scaling: {
-                min: $scope.vis.params.minNodeSize,
-                max: $scope.vis.params.maxNodeSize,
+                min: $scope.visParams.minNodeSize,
+                max: $scope.visParams.maxNodeSize,
               },
             },
             layout: {
@@ -437,15 +432,15 @@ function EnhancedTableVisController($scope, config, $timeout) {
 
           let options2 = null;
 
-          switch ($scope.vis.params.posArrow) {
+          switch ($scope.visParams.posArrow) {
             case 'from':
               options2 = {
                 edges: {
                   arrows: {
                     from: {
-                      enabled: $scope.vis.params.displayArrow,
-                      scaleFactor: $scope.vis.params.scaleArrow,
-                      type: $scope.vis.params.shapeArrow,
+                      enabled: $scope.visParams.displayArrow,
+                      scaleFactor: $scope.visParams.scaleArrow,
+                      type: $scope.visParams.shapeArrow,
                     },
                   },
                 },
@@ -456,9 +451,9 @@ function EnhancedTableVisController($scope, config, $timeout) {
                 edges: {
                   arrows: {
                     middle: {
-                      enabled: $scope.vis.params.displayArrow,
-                      scaleFactor: $scope.vis.params.scaleArrow,
-                      type: $scope.vis.params.shapeArrow,
+                      enabled: $scope.visParams.displayArrow,
+                      scaleFactor: $scope.visParams.scaleArrow,
+                      type: $scope.visParams.shapeArrow,
                     },
                   },
                 },
@@ -469,9 +464,9 @@ function EnhancedTableVisController($scope, config, $timeout) {
                 edges: {
                   arrows: {
                     to: {
-                      enabled: $scope.vis.params.displayArrow,
-                      scaleFactor: $scope.vis.params.scaleArrow,
-                      type: $scope.vis.params.shapeArrow,
+                      enabled: $scope.visParams.displayArrow,
+                      scaleFactor: $scope.visParams.scaleArrow,
+                      type: $scope.visParams.shapeArrow,
                     },
                   },
                 },
@@ -482,9 +477,9 @@ function EnhancedTableVisController($scope, config, $timeout) {
                 edges: {
                   arrows: {
                     from: {
-                      enabled: $scope.vis.params.displayArrow,
-                      scaleFactor: $scope.vis.params.scaleArrow,
-                      type: $scope.vis.params.shapeArrow,
+                      enabled: $scope.visParams.displayArrow,
+                      scaleFactor: $scope.visParams.scaleArrow,
+                      type: $scope.visParams.shapeArrow,
                     },
                   },
                 },
@@ -500,7 +495,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
             $('#' + loadingId).hide();
 
             // Draw the color legend if Node Color is activated
-            if (colorBucketId && $scope.vis.params.showColorLegend) {
+            if (colorBucketId && $scope.visParams.showColorLegend) {
               $scope.drawColorLegend(usedColors, colorDicc);
             }
           });
@@ -534,7 +529,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
               const value = bucket[nodeSizeId];
 
               // Don't show nodes under the value
-              if ($scope.vis.params.minCutMetricSizeNode > value) {
+              if ($scope.visParams.minCutMetricSizeNode > value) {
                 dataParsed.splice(i, 1);
                 return;
               }
@@ -577,7 +572,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
               };
               dataParsed[i].relationWithSecondField.push(relation);
 
-              let colorNodeFinal = $scope.vis.params.firstNodeColor;
+              let colorNodeFinal = $scope.visParams.firstNodeColor;
               if (dataParsed[i].nodeColorValue !== 'default') {
                 colorNodeFinal = dataParsed[i].nodeColorValue;
               }
@@ -589,20 +584,20 @@ function EnhancedTableVisController($scope, config, $timeout) {
                 id: i,
                 key: bucket[firstFirstBucketId],
                 color: colorNodeFinal,
-                shape: $scope.vis.params.shapeFirstNode,
+                shape: $scope.visParams.shapeFirstNode,
                 value: value,
                 font: {
-                  color: $scope.vis.params.labelColor,
+                  color: $scope.visParams.labelColor,
                 },
               };
 
               // If activated, show the labels
-              if ($scope.vis.params.showLabels) {
+              if ($scope.visParams.showLabels) {
                 nodeReturn.label = bucket[firstFirstBucketId];
               }
 
               // If activated, show the popups
-              if ($scope.vis.params.showPopup) {
+              if ($scope.visParams.showPopup) {
                 nodeReturn.title = getTooltipTitle(
                   primaryNodeTermName,
                   bucket[firstFirstBucketId],
@@ -713,26 +708,26 @@ function EnhancedTableVisController($scope, config, $timeout) {
             // height: container.getBoundingClientRect().height.toString(),
             physics: {
               barnesHut: {
-                gravitationalConstant: $scope.vis.params.gravitationalConstant,
-                springConstant: $scope.vis.params.springConstant,
+                gravitationalConstant: $scope.visParams.gravitationalConstant,
+                springConstant: $scope.visParams.springConstant,
                 springLength: 500,
               },
             },
             edges: {
               arrows: {
                 to: {
-                  enabled: $scope.vis.params.displayArrow,
-                  scaleFactor: $scope.vis.params.scaleArrow,
-                  type: $scope.vis.params.shapeArrow,
+                  enabled: $scope.visParams.displayArrow,
+                  scaleFactor: $scope.visParams.scaleArrow,
+                  type: $scope.visParams.shapeArrow,
                 },
               },
               arrowStrikethrough: false,
               smooth: {
-                type: $scope.vis.params.smoothType,
+                type: $scope.visParams.smoothType,
               },
               scaling: {
-                min: $scope.vis.params.minEdgeSize,
-                max: $scope.vis.params.maxEdgeSize,
+                min: $scope.visParams.minEdgeSize,
+                max: $scope.visParams.maxEdgeSize,
               },
             },
             interaction: {
@@ -741,10 +736,10 @@ function EnhancedTableVisController($scope, config, $timeout) {
               tooltipDelay: 100,
             },
             nodes: {
-              physics: $scope.vis.params.nodePhysics,
+              physics: $scope.visParams.nodePhysics,
               scaling: {
-                min: $scope.vis.params.minNodeSize,
-                max: $scope.vis.params.maxNodeSize,
+                min: $scope.visParams.minNodeSize,
+                max: $scope.visParams.maxNodeSize,
               },
             },
             layout: {
@@ -761,7 +756,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
           network.on('afterDrawing', function() {
             $('#' + loadingId).hide();
             // Draw the color legend if Node Color is activated
-            if (colorBucketId && $scope.vis.params.showColorLegend) {
+            if (colorBucketId && $scope.visParams.showColorLegend) {
               $scope.drawColorLegend(usedColors, colorDicc);
             }
           });
@@ -773,7 +768,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
   });
 
 
-//   class EnhancedTableError {
+//   class KbnNetworkError {
 //     constructor(message) {
 //       this.message = message;
 //     }
@@ -845,7 +840,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 //       return getOriginalColIndex(columnIndex, splitColIndex);
 //     }
 //     else {
-//       throw new EnhancedTableError(`Column with label '${colTitle}' does not exist, in ${inputType}: ${input}`);
+//       throw new KbnNetworkError(`Column with label '${colTitle}' does not exist, in ${inputType}: ${input}`);
 //     }
 //   };
 
@@ -875,7 +870,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 //       let colIndex = parseInt(regexMatch[1]);
 //       if (colIndex >= currentCol) {
 //         colIndex = getOriginalColIndex(colIndex, splitColIndex);
-//         throw new EnhancedTableError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
+//         throw new KbnNetworkError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
 //       }
 //       formulaParamsCols.push(colIndex);
 //     }
@@ -896,7 +891,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 
 //     // check 'sumSplitCols/countSplitCols' functions condition
 //     if ((realFormula.indexOf('sumSplitCols') !== -1 || realFormula.indexOf('countSplitCols') !== -1) && splitColIndex === -1) {
-//       throw new EnhancedTableError(`sumSplitCols() and countSplitCols() functions must be used with a "Split cols" bucket, in ${formulaType}: ${inputFormula}`);
+//       throw new KbnNetworkError(`sumSplitCols() and countSplitCols() functions must be used with a "Split cols" bucket, in ${formulaType}: ${inputFormula}`);
 //     }
 
 //     // extract formula param totals
@@ -905,7 +900,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 //       let colIndex = parseInt(regexMatch[1]);
 //       if (colIndex >= currentCol) {
 //         colIndex = getOriginalColIndex(colIndex, splitColIndex);
-//         throw new EnhancedTableError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
+//         throw new KbnNetworkError(`Column number ${colIndex} does not exist, in ${formulaType}: ${inputFormula}`);
 //       }
 //       formulaParamsTotals.push(colIndex);
 //     }
@@ -1015,7 +1010,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 //       };
 //     }
 //     catch (e) {
-//       throw new EnhancedTableError(`${e.message}, invalid expression in ${formulaType}: ${inputFormula}`);
+//       throw new KbnNetworkError(`${e.message}, invalid expression in ${formulaType}: ${inputFormula}`);
 //     }
 //   };
 
@@ -1040,7 +1035,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 //       return value;
 //     }
 //     catch (e) {
-//       throw new EnhancedTableError(`${e.message}, invalid expression in ${formula.formulaType}: ${formula.inputFormula}`);
+//       throw new KbnNetworkError(`${e.message}, invalid expression in ${formula.formulaType}: ${formula.inputFormula}`);
 //     }
 //   };
 
@@ -1140,7 +1135,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 
 //     // check that computed column formula is defined
 //     if (newColumn.formula === undefined) {
-//       throw new EnhancedTableError(`Computed column 'Formula' is required`);
+//       throw new KbnNetworkError(`Computed column 'Formula' is required`);
 //     }
 
 //     // remove the created AggConfig from real aggs
@@ -1664,7 +1659,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 //         if (splitColIndex !== -1) {
 //           const lastBucketIndex = _.findLastIndex(firstTable.columns, col => col.aggConfig.type.type === 'buckets');
 //           if (splitColIndex !== lastBucketIndex) {
-//             throw new EnhancedTableError('"Split cols" bucket must be the last one');
+//             throw new KbnNetworkError('"Split cols" bucket must be the last one');
 //           }
 //         }
 
@@ -1747,7 +1742,7 @@ function EnhancedTableVisController($scope, config, $timeout) {
 
 //     }
 //     catch (e) {
-//       if (e instanceof EnhancedTableError) {
+//       if (e instanceof KbnNetworkError) {
 //         notifyError(e.message);
 //       }
 //       else {
@@ -1758,4 +1753,4 @@ function EnhancedTableVisController($scope, config, $timeout) {
 
 }
 
-export { EnhancedTableVisController };
+export { KbnNetworkVisController };

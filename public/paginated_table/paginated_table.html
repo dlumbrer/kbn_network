@@ -5,12 +5,12 @@
   class="kbnAggTable">
   <div class="kbnAggTable__paginated">
     <table class="table table-condensed">
-      <thead data-test-subj="enhanced-paginated-table-header">
+      <thead data-test-subj="network-paginated-table-header">
         <tr>
           <th
             scope="col"
             ng-repeat="col in columns"
-            ng-click="enhancedPaginatedTable.sortColumn($index)"
+            ng-click="networkPaginatedTable.sortColumn($index)"
             kbn-accessible-click
             tabindex="0"
             class="{{ col.class }} {{ col.titleAlignmentClass }}">
@@ -25,18 +25,18 @@
               ng-if="col.sortable !== false"
               class="fa"
               ng-class="{
-                'fa-sort-asc': enhancedPaginatedTable.sort.columnIndex === $index && enhancedPaginatedTable.sort.direction === 'asc',
-                'fa-sort-desc': enhancedPaginatedTable.sort.columnIndex === $index && enhancedPaginatedTable.sort.direction === 'desc',
-                'fa-sort': enhancedPaginatedTable.sort.columnIndex !== $index || enhancedPaginatedTable.sort.direction === null
+                'fa-sort-asc': networkPaginatedTable.sort.columnIndex === $index && networkPaginatedTable.sort.direction === 'asc',
+                'fa-sort-desc': networkPaginatedTable.sort.columnIndex === $index && networkPaginatedTable.sort.direction === 'desc',
+                'fa-sort': networkPaginatedTable.sort.columnIndex !== $index || networkPaginatedTable.sort.direction === null
               }">
             </i>
           </th>
         </tr>
       </thead>
       <tbody
-        data-test-subj="enhanced-paginated-table-body"
-        kbn-enhanced-rows="page"
-        kbn-enhanced-rows-min="enhancedPaginatedTable.rowsToShow(perPage, page.length)"
+        data-test-subj="network-paginated-table-body"
+        kbn-network-rows="page"
+        kbn-network-rows-min="networkPaginatedTable.rowsToShow(perPage, page.length)"
       >
       </tbody>
       <tfoot ng-if="showTotal">
