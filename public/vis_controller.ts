@@ -22,7 +22,7 @@ import $ from 'jquery';
 
 import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-import { getKibanaLegacy } from './services';
+import { getOpensearchDashboardsLegacy } from './services';
 import { initTableVisLegacyModule } from './table_vis_legacy_module';
 
 const innerAngularName = 'kibana/kbn_network_vis';
@@ -65,7 +65,7 @@ export function getKbnNetworkVisualizationController(
     }
 
     async render(esResponse: object, visParams: VisParams) {
-      getKibanaLegacy().loadFontAwesome();
+      getOpensearchDashboardsLegacy().loadFontAwesome();
       await this.initLocalAngular();
 
       return new Promise(async (resolve, reject) => {

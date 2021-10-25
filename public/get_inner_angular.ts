@@ -24,16 +24,16 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
-import { i18nDirective, i18nFilter, I18nProvider } from '@kbn/i18n/angular';
-import { CoreStart, IUiSettingsClient, PluginInitializerContext } from 'kibana/public';
+import { i18nDirective, i18nFilter, I18nProvider } from '@osd/i18n/angular';
+import { CoreStart, IUiSettingsClient, PluginInitializerContext } from '../../../src/core/public';
 import {
   initAngularBootstrap,
   PaginateDirectiveProvider,
   PaginateControlsDirectiveProvider,
   PrivateProvider,
   watchMultiDecorator,
-  KbnAccessibleClickProvider,
-} from '../../../src/plugins/kibana_legacy/public';
+  OsdAccessibleClickProvider,
+} from '../../../src/plugins/opensearch_dashboards_legacy/public';
 
 initAngularBootstrap();
 
@@ -63,7 +63,7 @@ export function getInnerAngular(name = 'kibana/kbn_network_vis', core: CoreStart
       'tableVisI18n',
     ])
     .config(watchMultiDecorator)
-    .directive('kbnAccessibleClick', KbnAccessibleClickProvider);
+    .directive('osdAccessibleClick', OsdAccessibleClickProvider);
 }
 
 function createLocalPrivateModule() {
