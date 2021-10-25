@@ -2,9 +2,6 @@
   "name": "kbn_network",
   "version": "7.10.0",
   "description": "Network plugin for visualizing networks",
-  "kibana": {
-    "version": "7.10.0"
-  },
   "authors": [
     "David Moreno Lumbreras <dmorenolumb@gmail.com>"
   ],
@@ -20,5 +17,10 @@
     "moment": "^2.24.0",
     "vis-data": "^6.5.1",
     "vis-util": "^1.1.8"
+  },
+  "scripts": {
+    "build": "yarn plugin-helpers build",
+    "plugin-helpers": "node ../../scripts/plugin_helpers",
+    "osd": "node ../../scripts/osd"
   }
 }

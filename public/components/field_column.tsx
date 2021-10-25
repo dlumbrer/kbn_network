@@ -19,7 +19,7 @@
 
 import { clone } from 'lodash';
 import React, { useEffect } from 'react';
-import { i18n } from '@kbn/i18n';
+import { i18n } from '@osd/i18n';
 import { IndexPatternField } from '../../../../src/plugins/data/public';
 import { EuiDraggable, EuiIconTip, EuiSpacer, EuiAccordion, EuiToolTip, EuiButtonIcon, EuiButtonIconProps } from '@elastic/eui';
 

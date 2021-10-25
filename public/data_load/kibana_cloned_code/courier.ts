@@ -1,7 +1,7 @@
 import { hasIn } from 'lodash';
-import { i18n } from '@kbn/i18n';
+import { i18n } from '@osd/i18n';
 
-import { calculateObjectHash } from '../../../../../src/plugins/kibana_utils/public';
+import { calculateObjectHash } from '../../../../../src/plugins/opensearch_dashboards_utils/public';
 import { PersistedState } from '../../../../../src/plugins/visualizations/public';
 import { Adapters } from '../../../../../src/plugins/inspector/public';
 

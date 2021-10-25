@@ -22,8 +22,8 @@ import { VisualizationsSetup } from '../../../src/plugins/visualizations/public'
 import { kbnNetworkVisTypeDefinition } from './kbn-network-vis';
 
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
-import { setFormatService, setKibanaLegacy, setNotifications, setQueryService, setSearchService } from './services';
-import { KibanaLegacyStart } from '../../../src/plugins/kibana_legacy/public';
+import { setFormatService, setOpensearchDashboardsLegacy, setNotifications, setQueryService, setSearchService } from './services';
+import { OpensearchDashboardsLegacyStart } from '../../../src/plugins/opensearch_dashboards_legacy/public';
 
 
 /** @internal */
@@ -34,7 +34,7 @@ export interface TablePluginSetupDependencies {
 /** @internal */
 export interface TablePluginStartDependencies {
   data: DataPublicPluginStart;
-  kibanaLegacy: KibanaLegacyStart;
+  opensearchDashboardsLegacy: OpensearchDashboardsLegacyStart;
 }
 
 /** @internal */
@@ -56,9 +56,9 @@ export class KbnNetworkPlugin implements Plugin<Promise<void>, void> {
 
   }
 
-  public start(core: CoreStart, { data, kibanaLegacy }: TablePluginStartDependencies) {
+  public start(core: CoreStart, { data, opensearchDashboardsLegacy }: TablePluginStartDependencies) {
     setFormatService(data.fieldFormats);
-    setKibanaLegacy(kibanaLegacy);
+    setOpensearchDashboardsLegacy(opensearchDashboardsLegacy);
     setNotifications(core.notifications);
     setQueryService(data.query);
     setSearchService(data.search);
