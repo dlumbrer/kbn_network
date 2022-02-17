@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "vis-network": "^7.4.0",
-    "randomcolor": "^0.5.0",
+    "randomcolor": "0.5.3",
     "keycharm": "^0.2.0",
     "moment": "^2.24.0",
     "vis-data": "^6.5.1",
