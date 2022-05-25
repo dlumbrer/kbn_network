@@ -21,11 +21,27 @@ import { some } from 'lodash';
 import React, { useEffect } from 'react';
 import { i18n } from '@osd/i18n';
 import { FormattedMessage } from '@osd/i18n/react';
-import { EuiButtonEmpty, EuiDragDropContext, euiDragDropReorder, EuiDroppable, EuiFlexGroup, EuiFlexItem, EuiFormErrorText, EuiIconTip, EuiPanel, EuiSpacer, EuiTitle } from '@elastic/eui';
+import {
+  EuiButtonEmpty,
+  EuiDragDropContext,
+  euiDragDropReorder,
+  EuiDroppable,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFormErrorText,
+  EuiIconTip,
+  EuiPanel,
+  EuiSpacer,
+  EuiTitle,
+  EuiSelect,
+  EuiFormRow,
+  EuiColorPicker,
+  EuiFieldNumber
+} from '@elastic/eui';
 
 import { IAggConfigs } from '../../../../src/plugins/data/public';
 import { VisOptionsProps } from '../../../../src/plugins/vis_default_editor/public';
-import { NumberInputOption, SelectOption } from '../../../../src/plugins/charts/public';
+import { NumberInputOption } from './number_input';
 import { SwitchOption } from './switch';
 import { TextInputOption } from './text_input';
 import { totalAggregations, AggTypes } from './utils';
@@ -60,6 +76,36 @@ function KbnNetworkOptions({
   stateParams,
   setValue,
 }: VisOptionsProps<KbnNetworkVisParams>) {
+  const shapeOptions = [
+    { value: 'circle', text: 'Circle' },
+    { value: 'dot', text: 'Dot' },
+    { value: 'ellipse', text: 'Ellipse' },
+    { value: 'database', text: 'Database' },
+    { value: 'box', text: 'Box' },
+    { value: 'text', text: 'Text only' },
+    { value: 'diamond', text: 'Diamond' },
+    { value: 'star', text: 'Star' },
+    { value: 'triangle', text: 'Triangle' },
+    { value: 'triangleDown', text: 'Triangle down' },
+    { value: 'square', text: 'Square' }
+  ];
+  const arrowPositionOptions = [
+    { value: 'from', text: 'Beginning' },
+    { value: 'middle', text: 'Middle' },
+    { value: 'to', text: 'End' },
+  ];
+  const smoothTypeOptions = [
+    { value: 'dynamic', text: 'Dynamic' },
+    { value: 'continuous', text: 'Continous anchor' },
+    { value: 'discrete', text: 'Discrete anchor' },
+    { value: 'diagonalCross', text: 'Diagonal anchor' },
+    { value: 'straightCross', text: 'Straight line' },
+    { value: 'horizontal', text: 'Horizontal anchor' },
+    { value: 'vertical', text: 'Vertical anchor' },
+    { value: 'curvedCW', text: 'Clock-wise curve' },
+    { value: 'curvedCCW', text: 'Counter clock-wise curve' },
+    { value: 'cubicBezier', text: 'Cubic bezier' },
+  ];
 
   return (
     <div className="kbn-network-vis-params">
@@ -110,258 +156,282 @@ function KbnNetworkOptions({
           value={stateParams.nodePhysics}
           setValue={setValue}
         />
-
+        
+        <EuiSpacer />
+        <EuiTitle size="xxs">
+          <h6>Colors</h6>
+        </EuiTitle>
+        
+        <EuiFormRow
+          fullWidth
+          label={
+            <FormattedMessage
+              id="visTypeKbnNetwork.params.firstNodeColor"
+              defaultMessage="First node"
+            />
+          }
+          display="columnCompressed"
+        >
+          <EuiColorPicker
+            compressed={true}
+            onChange={(e) => setValue('firstNodeColor', e)}
+            color={stateParams.firstNodeColor}
+            fullWidth
+          />
+        </EuiFormRow>
+        
+        <EuiFormRow
+          fullWidth
+          label={
+            <FormattedMessage
+              id="visTypeKbnNetwork.params.secondNodeColor"
+              defaultMessage="Second node"
+            />
+          }
+          display="columnCompressed"
+        >
+          <EuiColorPicker
+            compressed={true}
+            onChange={(e) => setValue('secondNodeColor', e)}
+            color={stateParams.secondNodeColor}
+            fullWidth
+          />
+        </EuiFormRow>
+        
+        <EuiFormRow
+          fullWidth
+          label={
+            <FormattedMessage
+              id="visTypeKbnNetwork.params.labelColor"
+              defaultMessage="Label"
+            />
+          }
+          display="columnCompressed"
+        >
+          <EuiColorPicker
+            compressed={true}
+            onChange={(e) => setValue('labelColor', e)}
+            color={stateParams.labelColor}
+            fullWidth
+          />
+        </EuiFormRow>
+        
+        <EuiSpacer />
+        <EuiTitle size="xxs">
+          <h6>Shapes</h6>
+        </EuiTitle>
+        
+        <EuiFormRow label="Shape of first node" fullWidth display="columnCompressed">
+          <EuiSelect
+            fullWidth
+            compressed={true}
+            options={shapeOptions}
+            value={stateParams.shapeFirstNode}
+            onChange={(e) => setValue('shapeFirstNode', e.target.value)}
+          />
+        </EuiFormRow>
+        
+        <EuiFormRow label="Shape of second node" fullWidth display="columnCompressed">
+          <EuiSelect
+            fullWidth
+            compressed={true}
+            options={shapeOptions}
+            value={stateParams.shapeSecondNode}
+            onChange={(e) => setValue('shapeSecondNode', e.target.value)}
+          />
+        </EuiFormRow>
+        
+        <EuiSpacer/>
+        <EuiTitle size="xxs">
+          <h6>Size</h6>
+        </EuiTitle>
+        
+        <NumberInputOption
+          label={
+            <FormattedMessage
+              id="visTypeTable.params.maxNodeSize"
+              defaultMessage="Max node size"
+            />
+          }
+          value={stateParams.maxNodeSize}
+          paramName="maxNodeSize"
+          setValue={setValue}
+        />
+        
+        <NumberInputOption
+          label={
+            <FormattedMessage
+              id="visTypeTable.params.minNodeSize"
+              defaultMessage="Min node size"
+            />
+          }
+          value={stateParams.minNodeSize}
+          paramName="minNodeSize"
+          setValue={setValue}
+        />
+        
+        <NumberInputOption
+          label={
+            <FormattedMessage
+              id="visTypeTable.params.maxEdgeSize"
+              defaultMessage="Max edge width"
+            />
+          }
+          value={stateParams.maxEdgeSize}
+          paramName="maxEdgeSize"
+          setValue={setValue}
+        />
+        
+        <NumberInputOption
+          label={
+            <FormattedMessage
+              id="visTypeTable.params.minEdgeSize"
+              defaultMessage="Min edge width"
+            />
+          }
+          value={stateParams.minEdgeSize}
+          paramName="minEdgeSize"
+          setValue={setValue}
+        />
+        
+        <EuiSpacer/>
+        <EuiTitle size="xxs">
+          <h6>Directional Edges</h6>
+        </EuiTitle>
+        <EuiSpacer size="s"/>
+        
         <SwitchOption
           label={i18n.translate('visTypeKbnNetwork.params.displayArrow', {
-            defaultMessage: 'Display arrows',
+            defaultMessage: 'Display directional edges',
           })}
           paramName="displayArrow"
           value={stateParams.displayArrow}
           setValue={setValue}
         />
-
-        <TextInputOption
+        
+        <EuiFormRow label="Endpoint position" fullWidth display="columnCompressed">
+          <EuiSelect
+            fullWidth
+            compressed={true}
+            options={arrowPositionOptions}
+            value={stateParams.posArrow}
+            onChange={(e) => setValue('posArrow', e.target.value)}
+          />
+        </EuiFormRow>
+        
+        <EuiFormRow label="Endpoint type" fullWidth display="columnCompressed">
+          <EuiSelect
+            fullWidth
+            compressed={true}
+            options={[
+              { value: 'arrow', text: 'Arrow' },
+              { value: 'circle', text: 'Circle' },
+            ]}
+            value={stateParams.shapeArrow}
+            onChange={(e) => setValue('shapeArrow', e.target.value)}
+          />
+        </EuiFormRow>
+        
+        <EuiFormRow
           label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.firstNodeColor"
-                defaultMessage="First node color"
-              />
-              &nbsp;
-            </>
+            <FormattedMessage
+              id="visTypeKbnNetwork.params.smoothType"
+              defaultMessage="Smooth Type"
+            />
           }
-          placeholder="#000000"
-          paramName="firstNodeColor"
-          value={stateParams.firstNodeColor}
-          setValue={setValue}
-        />
-
-        <TextInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.secondNodeColor"
-                defaultMessage="Second node color"
-              />
-              &nbsp;
-            </>
-          }
-          placeholder="#000000"
-          paramName="secondNodeColor"
-          value={stateParams.secondNodeColor}
-          setValue={setValue}
-        />
-
-        <TextInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.shapeFirstNode"
-                defaultMessage="Shape of first node"
-              />
-              &nbsp;
-            </>
-          }
-          placeholder="dot"
-          paramName="shapeFirstNode"
-          value={stateParams.shapeFirstNode}
-          setValue={setValue}
-        />
-
-        <TextInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.shapeSecondNode"
-                defaultMessage="Shape of second node"
-              />
-              &nbsp;
-            </>
-          }
-          placeholder="dot"
-          paramName="shapeSecondNode"
-          value={stateParams.shapeSecondNode}
-          setValue={setValue}
-        />
-
-        <TextInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.posArrow"
-                defaultMessage="Arrow position"
-              />
-              &nbsp;
-            </>
-          }
-          placeholder="to"
-          paramName="posArrow"
-          value={stateParams.posArrow}
-          setValue={setValue}
-        />
-
-        <TextInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.shapeArrow"
-                defaultMessage="Shape of the arrow"
-              />
-              &nbsp;
-            </>
-          }
-          placeholder="arrow"
-          paramName="shapeArrow"
-          value={stateParams.shapeArrow}
-          setValue={setValue}
-        />
-
-        <TextInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.smoothType"
-                defaultMessage="Smooth Type"
-              />
-              &nbsp;
-            </>
-          }
-          placeholder="continous"
-          paramName="smoothType"
-          value={stateParams.smoothType}
-          setValue={setValue}
-        />
-
-        <TextInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeKbnNetwork.params.labelColor"
-                defaultMessage="Label color"
-              />
-              &nbsp;
-            </>
-          }
-          placeholder="#000000"
-          paramName="labelColor"
-          value={stateParams.labelColor}
-          setValue={setValue}
-        />
-
+          fullWidth
+          display="columnCompressed"
+        >
+          <EuiSelect
+            fullWidth
+            compressed={true}
+            options={smoothTypeOptions}
+            value={stateParams.smoothType}
+            onChange={(e) => setValue('smoothType', e.target.value)}
+          />
+        </EuiFormRow>
+        
         <NumberInputOption
           label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.scaleArrow"
-                defaultMessage="Arrow scale"
-              />{' '}
-            </>
+            <FormattedMessage
+              id="visTypeTable.params.scaleArrow"
+              defaultMessage="Scale factor"
+            />
           }
-          paramName="scaleArrow"
           value={stateParams.scaleArrow}
+          paramName="scaleArrow"
           setValue={setValue}
         />
-
+        
+        <EuiSpacer/>
+        <EuiTitle size="xxs">
+          <h6>Network constants</h6>
+        </EuiTitle>
+        
         <NumberInputOption
           label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.minCutMetricSizeNode"
-                defaultMessage="Don't show nodes below this value:"
-              />{' '}
-            </>
+            <FormattedMessage
+              id="visTypeTable.params.springConstant"
+              defaultMessage="Spring Force"
+            />
           }
-          paramName="minCutMetricSizeNode"
-          value={stateParams.minCutMetricSizeNode}
-          setValue={setValue}
-        />
-
-        <NumberInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.maxNodeSize"
-                defaultMessage="Max node size"
-              />{' '}
-            </>
-          }
-          paramName="maxNodeSize"
-          value={stateParams.maxNodeSize}
-          setValue={setValue}
-        />
-
-        <NumberInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.minNodeSize"
-                defaultMessage="Min node size"
-              />{' '}
-            </>
-          }
-          paramName="minNodeSize"
-          value={stateParams.minNodeSize}
-          setValue={setValue}
-        />
-
-        <NumberInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.maxEdgeSize"
-                defaultMessage="Max edge size"
-              />{' '}
-            </>
-          }
-          paramName="maxEdgeSize"
-          value={stateParams.maxEdgeSize}
-          setValue={setValue}
-        />
-
-        <NumberInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.minEdgeSize"
-                defaultMessage="Min edge size"
-              />{' '}
-            </>
-          }
-          paramName="minEdgeSize"
-          value={stateParams.minEdgeSize}
-          setValue={setValue}
-        />
-
-        <NumberInputOption
-          label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.springConstant"
-                defaultMessage="Spring Force"
-              />{' '}
-            </>
-          }
-          paramName="springConstant"
           value={stateParams.springConstant}
+          paramName="springConstant"
+          setValue={setValue}
+        />
+        
+        <NumberInputOption
+          label={
+            <FormattedMessage
+              id="visTypeTable.params.gravitationalConstant"
+              defaultMessage="Attraction Force"
+            />
+          }
+          value={stateParams.gravitationalConstant}
+          paramName="gravitationalConstant"
+          setValue={setValue}
+        />
+        
+        <EuiSpacer/>
+        <EuiTitle size="xxs">
+          <h6>Top values</h6>
+        </EuiTitle>
+        
+        <NumberInputOption
+          label={
+            <FormattedMessage
+              id="visTypeTable.params.maxCutMetricSizeNode"
+              defaultMessage="Node size"
+            />
+          }
+          value={stateParams.maxCutMetricSizeNode}
+          paramName="maxCutMetricSizeNode"
+          setValue={setValue}
+        />
+        
+        <NumberInputOption
+          label={
+            <FormattedMessage
+              id="visTypeTable.params.maxCutMetricSizeEdge"
+              defaultMessage="Edge size"
+            />
+          }
+          value={stateParams.maxCutMetricSizeEdge}
+          paramName="maxCutMetricSizeEdge"
           setValue={setValue}
         />
 
         <NumberInputOption
           label={
-            <>
-              <FormattedMessage
-                id="visTypeTable.params.gravitationalConstant"
-                defaultMessage="Attraction Force"
-              />{' '}
-            </>
+            <FormattedMessage
+              id="visTypeTable.params.minCutMetricSizeNode"
+              defaultMessage="Don't show nodes below this value"
+            />
           }
-          paramName="gravitationalConstant"
-          value={stateParams.gravitationalConstant}
+          value={stateParams.minCutMetricSizeNode}
+          paramName="minCutMetricSizeNode"
           setValue={setValue}
         />
-
-
-
 
       </EuiPanel>
       {/* /NETOWRK SETTINGS SECTION */}
