@@ -196,7 +196,11 @@ function KbnNetworkVisController($scope, config, $timeout) {
 
               dataParsed[i].keyFirstNode = bucket[firstFirstBucketId];
 
-              const value = bucket[nodeSizeId];
+              let value = bucket[nodeSizeId];
+              
+              if ($scope.vis.params.maxCutMetricSizeNode) {
+                value = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
+              }
 
               // Don't show nodes under the value
               if ($scope.visParams.minCutMetricSizeNode > value) {
@@ -217,6 +221,10 @@ function KbnNetworkVisController($scope, config, $timeout) {
 
                 if (edgeSizeId) {
                   sizeEdgeVal = bucket[edgeSizeId];
+                  
+                  if ($scope.vis.params.maxCutMetricSizeEdge) {
+                    sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, sizeEdgeVal);
+                  }
                 }
 
                 const relation = {
@@ -526,7 +534,11 @@ function KbnNetworkVisController($scope, config, $timeout) {
               dataParsed[i] = {};
               dataParsed[i].keyNode = bucket[firstFirstBucketId];
 
-              const value = bucket[nodeSizeId];
+              let value = bucket[nodeSizeId];
+              
+              if ($scope.vis.params.maxCutMetricSizeNode) {
+                value = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
+              }
 
               // Don't show nodes under the value
               if ($scope.visParams.minCutMetricSizeNode > value) {
@@ -543,6 +555,10 @@ function KbnNetworkVisController($scope, config, $timeout) {
               let sizeEdgeVal = 0.1;
               if (edgeSizeId) {
                 sizeEdgeVal = bucket[edgeSizeId];
+                
+                if ($scope.vis.params.maxCutMetricSizeEdge) {
+                  sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, sizeEdgeVal);
+                }
               }
 
               // Get the color of the node, save in the dictionary
