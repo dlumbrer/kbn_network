@@ -126,7 +126,6 @@ export function kbnNetworkVisTypeDefinition(core, context) {
           group: AggGroupNames.Buckets,
           name: 'colornode',
           title: "Node Color",
-          mustBeFirst: 'true',
           max: 1,
           aggFilter: ['terms']
         }
