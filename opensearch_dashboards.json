@@ -1,7 +1,7 @@
 {
   "id": "kbnNetwork",
   "version": "1.0.0",
-  "opensearchDashboardsVersion": "1.2.0",
+  "opensearchDashboardsVersion": "1.3.2",
   "server": false,
   "ui": true,
   "requiredPlugins": [
