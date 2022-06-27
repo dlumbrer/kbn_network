@@ -41,3 +41,41 @@ div.vis-tooltip {
   text-align: center;
   line-height: 40px;
 }
+
+.vis-network-legend {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(218, 218, 218, 0.25);
+  padding: 12px;
+  font-size: 14px;
+
+  .vis-network-legend-line {
+    display: flex;
+    align-items: center;
+
+    input {
+      visibility: hidden;
+      width: 0;
+      height: 0;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      padding: 3px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      .vis-network-legend-color {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin-right: 6px;
+      }
+    }
+  }
+}
