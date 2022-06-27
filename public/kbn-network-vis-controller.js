@@ -22,15 +22,17 @@ import _ from 'lodash';
 import randomColor from 'randomcolor';
 import { Network } from 'vis-network';
 import $ from 'jquery';
+import { euiPaletteColorBlind } from '@elastic/eui';
 
 import AggConfigResult from './data_load/agg_config_result';
 import { getNotifications, getFormatService } from './services';
 
 // KbnNetworkVis AngularJS controller
 function KbnNetworkVisController($scope, config, $timeout) {
-
   let networkId;
   let loadingId;
+
+  $scope.resp = [];
 
   $scope.errorNodeColor = function() {
     $('#' + networkId).hide();
@@ -54,44 +56,48 @@ function KbnNetworkVisController($scope, config, $timeout) {
     $('#errorHtml').hide();
   };
 
+  $scope.defaultPalette = euiPaletteColorBlind({rotations: 2});
+
   $scope.drawColorLegend = function(usedColors, colorDicc) {
-    const canvas = document.getElementsByTagName('canvas')[0];
-    const context = canvas.getContext('2d');
+    const legend = document.createElement('div');
+    const options = $scope.defaultPalette
+      .map((color) => `<option>${color}</option>`)
+      .join('');
 
-    // Fill in text
-    context.fillStyle = 'black';
-    context.font = 'bold 30px Arial';
-    context.textAlign = 'start';
-    context.fillText('COLOR LEGEND:', canvas.width * -1, canvas.height * -1);
-
-    let height = 40; // adds a preliminary buffer for the legend title
-    let currentHeightOnCanvas = canvas.height * -1 + height;
-    let largestWidth = context.measureText('COLOR LEGEND:').width;
+    legend.classList.add('vis-network-legend');
 
     for (const key of Object.keys(colorDicc)) {
-      context.fillStyle = colorDicc[key];
-      context.font = 'bold 20px Arial';
-      context.fillText(key, canvas.width * -1, currentHeightOnCanvas);
-      height += 22;
-      currentHeightOnCanvas = canvas.height * -1 + height;
-
-      const currentWidth = context.measureText(key).width;
-      if (currentWidth > largestWidth) {
-        largestWidth = currentWidth;
+      if (usedColors.find(color => color === colorDicc[key])) {
+        const item = document.createElement('div');
+        item.classList.add('vis-network-legend-line');
+        item.innerHTML = `
+          <input type="color" id="${key}" name="${key}" value="${colorDicc[key]}" list="color">
+          <label for="${key}">
+            <div class="vis-network-legend-color" style="background-color:${colorDicc[key]}"></div>
+            ${key}
+          </label>
+          <datalist id="color">
+            ${options}
+          </datalist>
+        `;
+        legend.appendChild(item);
+        item.addEventListener('change', $scope.saveVisColors)
       }
     }
 
-    // Shade in the legend
-    context.fillStyle = 'rgba(218, 218, 218, 0.25)';
-    context.fillRect(
-      canvas.width * -1 - 20,
-      canvas.height * -1 - 40,
-      largestWidth + 40,
-      height + 60
-    );
+    document.querySelector('.vis-network').appendChild(legend);
   };
 
-  $scope.$watchMulti(['esResponse', 'visParams'], function([resp]) {
+  $scope.saveVisColors = function(event) {
+    const colorDicc = $scope.uiState.get('vis.colors', {});
+    colorDicc[event.target.id] = event.target.value;
+    $scope.uiState.set('vis.colors', colorDicc);
+    $scope.renderVis($scope.resp);
+  };
+
+  $scope.renderVis = function([resp]) {
+    $scope.resp = [resp];
+
     // constiables for column ids, ex. id: "col-0-3" from one of the 'columns' in the resp
     let firstFirstBucketId;
     let firstSecondBucketId;
@@ -167,7 +173,7 @@ function KbnNetworkVisController($scope, config, $timeout) {
 
       // Get the buckets of the aggregation
       const buckets = resp.tables[0].rows;
-      const colorDicc = {};
+      const colorDicc = $scope.uiState.get('vis.colors', {});
       const usedColors = [];
 
       // It is neccessary to add a timeout in order to have more than 1 net in the same dashboard
@@ -197,7 +203,7 @@ function KbnNetworkVisController($scope, config, $timeout) {
               dataParsed[i].keyFirstNode = bucket[firstFirstBucketId];
 
               let value = bucket[nodeSizeId];
-              
+
               if ($scope.vis.params.maxCutMetricSizeNode) {
                 value = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
               }
@@ -221,7 +227,7 @@ function KbnNetworkVisController($scope, config, $timeout) {
 
                 if (edgeSizeId) {
                   sizeEdgeVal = bucket[edgeSizeId];
-                  
+
                   if ($scope.vis.params.maxCutMetricSizeEdge) {
                     sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, sizeEdgeVal);
                   }
@@ -239,18 +245,18 @@ function KbnNetworkVisController($scope, config, $timeout) {
                 if (colorDicc[bucket[colorBucketId]]) {
                   dataParsed[i].nodeColorKey = bucket[colorBucketId];
                   dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
+                  usedColors.push(colorDicc[bucket[colorBucketId]]);
                 } else {
-                  //repeat to find a NO-REPEATED color
-                  while (true) {
-                    const confirmColor = randomColor();
-                    if (usedColors.indexOf(confirmColor) === -1) {
-                      colorDicc[bucket[colorBucketId]] = confirmColor;
-                      dataParsed[i].nodeColorKey = bucket[colorBucketId];
-                      dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
-                      usedColors.push(confirmColor);
-                      break;
-                    }
-                  }
+                  const confirmColor =
+                    $scope.defaultPalette.find(
+                      (color) =>
+                        Object.values(colorDicc).indexOf(color) === -1 &&
+                        usedColors.indexOf(color) === -1
+                    ) || randomColor();
+                  colorDicc[bucket[colorBucketId]] = confirmColor;
+                  dataParsed[i].nodeColorKey = bucket[colorBucketId];
+                  dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
+                  usedColors.push(confirmColor);
                 }
               }
 
@@ -499,14 +505,13 @@ function KbnNetworkVisController($scope, config, $timeout) {
           console.log('Network Plugin: Create network now');
           const network = new Network(container, data, options);
 
-          network.on('afterDrawing', function() {
-            $('#' + loadingId).hide();
-
-            // Draw the color legend if Node Color is activated
-            if (colorBucketId && $scope.visParams.showColorLegend) {
-              $scope.drawColorLegend(usedColors, colorDicc);
-            }
-          });
+          $('#' + loadingId).hide();
+          
+          // Draw the color legend if Node Color is activated
+          if (colorBucketId && $scope.visParams.showColorLegend) {
+            $scope.uiState.set('vis.colors', colorDicc);
+            $scope.drawColorLegend(usedColors, colorDicc);
+          }
 
           // NODE-RELATION Type
         } else if (secondBucketId && !firstSecondBucketId) {
@@ -535,7 +540,7 @@ function KbnNetworkVisController($scope, config, $timeout) {
               dataParsed[i].keyNode = bucket[firstFirstBucketId];
 
               let value = bucket[nodeSizeId];
-              
+
               if ($scope.vis.params.maxCutMetricSizeNode) {
                 value = Math.min($scope.vis.params.maxCutMetricSizeNode, value);
               }
@@ -555,7 +560,7 @@ function KbnNetworkVisController($scope, config, $timeout) {
               let sizeEdgeVal = 0.1;
               if (edgeSizeId) {
                 sizeEdgeVal = bucket[edgeSizeId];
-                
+
                 if ($scope.vis.params.maxCutMetricSizeEdge) {
                   sizeEdgeVal = Math.min($scope.vis.params.maxCutMetricSizeEdge, sizeEdgeVal);
                 }
@@ -566,19 +571,20 @@ function KbnNetworkVisController($scope, config, $timeout) {
                 if (colorDicc[bucket[colorBucketId]]) {
                   dataParsed[i].nodeColorKey = bucket[colorBucketId];
                   dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
+                  usedColors.push(colorDicc[bucket[colorBucketId]]);
                 } else {
-                  // repeat to find a NO-REPEATED color
-                  while (true) {
-                    const confirmColor = randomColor();
-                    if (usedColors.indexOf(confirmColor) === -1) {
-                      colorDicc[bucket[colorBucketId]] = confirmColor;
-                      dataParsed[i].nodeColorKey = bucket[colorBucketId];
-                      dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
-                      usedColors.push(confirmColor);
-                      break;
-                    }
-                  }
+                  const confirmColor =
+                    $scope.defaultPalette.find(
+                      (color) =>
+                        Object.values(colorDicc).indexOf(color) === -1 &&
+                        usedColors.indexOf(color) === -1
+                    ) || randomColor();
+                  colorDicc[bucket[colorBucketId]] = confirmColor;
+                  dataParsed[i].nodeColorKey = bucket[colorBucketId];
+                  dataParsed[i].nodeColorValue = colorDicc[bucket[colorBucketId]];
+                  usedColors.push(confirmColor);
                 }
+              }
               }
 
               const relation = {
@@ -620,7 +626,6 @@ function KbnNetworkVisController($scope, config, $timeout) {
                   nodeSizeTermName,
                   nodeReturn.value
                 );
-              }
 
               return nodeReturn;
             } else if (result.length === 1) {
@@ -773,6 +778,7 @@ function KbnNetworkVisController($scope, config, $timeout) {
             $('#' + loadingId).hide();
             // Draw the color legend if Node Color is activated
             if (colorBucketId && $scope.visParams.showColorLegend) {
+              $scope.uiState.set('vis.colors', colorDicc);
               $scope.drawColorLegend(usedColors, colorDicc);
             }
           });
@@ -781,6 +787,10 @@ function KbnNetworkVisController($scope, config, $timeout) {
         }
       });
     }
+  }
+
+  $scope.$watchMulti(['esResponse', 'visParams'], function(resp) {
+    $scope.renderVis(resp)
   });
 
 
