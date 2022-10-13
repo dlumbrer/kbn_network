@@ -506,7 +506,7 @@ function KbnNetworkVisController($scope, config, $timeout) {
           const network = new Network(container, data, options);
 
           $('#' + loadingId).hide();
-          
+
           // Draw the color legend if Node Color is activated
           if (colorBucketId && $scope.visParams.showColorLegend) {
             $scope.uiState.set('vis.colors', colorDicc);
@@ -585,7 +585,6 @@ function KbnNetworkVisController($scope, config, $timeout) {
                   usedColors.push(confirmColor);
                 }
               }
-              }
 
               const relation = {
                 keyRelation: bucket[secondBucketId],
@@ -626,7 +625,8 @@ function KbnNetworkVisController($scope, config, $timeout) {
                   nodeSizeTermName,
                   nodeReturn.value
                 );
-
+              }
+              
               return nodeReturn;
             } else if (result.length === 1) {
               // we already have this node id in dataNodes, so update with new info
