@@ -36,7 +36,7 @@ jobs:
         id: versions
         run: |
           echo "::set-output name=node_version::$(node -p "(require('./osd/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./osd/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "require('./osd/package.json').engines.yarn")"
       - name: Setup node
         uses: actions/setup-node@v2
         with:
@@ -44,7 +44,7 @@ jobs:
       - name: Setup yarn
         run: |
           npm uninstall -g yarn
-          echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
+          echo "Installing yarn ${{ steps.versions.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions.outputs.yarn_version }}
       - name: Move plugin to OpenSearch Dashboards folder
         run: |
